@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "generatedAt": "2026-10-03T07:20:10.383Z",
+  "schemaVersion": 3,
+  "generatedAt": "2026-10-03T09:08:33.458Z",
   "metricDefinition": "Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.",
   "scope": {
     "skillAuraProjects": 12,
@@ -10,11 +10,18 @@
     "externalProjects": 3
   },
   "activity": {
-    "year": 2026,
-    "currentYear": 411,
+    "window": {
+      "start": "2025-10-04",
+      "end": "2026-10-03",
+      "gridStart": "2025-09-28",
+      "gridEnd": "2026-10-03",
+      "weeks": 54
+    },
+    "last12Months": 413,
     "last90Days": 8,
     "last30Days": 0,
     "daily": {
+      "2025-10-06": 2,
       "2026-01-25": 6,
       "2026-01-26": 6,
       "2026-03-04": 13,

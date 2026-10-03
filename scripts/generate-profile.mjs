@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import { buildRollingWindow, renderActivityMonitor, renderActivityMonitorMobile, stabilizeGeneratedAt, sumDaily } from './activity-monitor.mjs';
 
 const root = process.cwd();
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'data', 'projects.json'), 'utf8'));
@@ -9,8 +10,8 @@ const token = process.env.PROFILE_DATA_TOKEN || '';
 if (!token) throw new Error('PROFILE_DATA_TOKEN is required to refresh approved public and private repository data.');
 
 const now = new Date();
-const currentYear = now.getUTCFullYear();
-const yearStart = new Date(Date.UTC(currentYear, 0, 1));
+const activityWindow = buildRollingWindow(now);
+const activityStart = new Date(`${activityWindow.start}T00:00:00Z`);
 const headers = {
   Accept: 'application/vnd.github+json',
   Authorization: `Bearer ${token}`,
@@ -44,7 +45,7 @@ async function collectProject(project) {
   const [metadata, languages, commits] = await Promise.all([
     json(`https://api.github.com/repos/${fullName}`),
     json(`https://api.github.com/repos/${fullName}/languages`),
-    commitsSince(fullName, yearStart)
+    commitsSince(fullName, activityStart)
   ]);
   return {
     project,
@@ -93,12 +94,12 @@ const publicProjects = collected
 
 const cutoff90 = new Date(now.getTime() - 90 * 86400000).toISOString().slice(0, 10);
 const cutoff30 = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
-const currentYearActivity = Object.values(daily).reduce((sum, value) => sum + value, 0);
-const recent90 = Object.entries(daily).filter(([day]) => day >= cutoff90).reduce((sum, [, value]) => sum + value, 0);
-const recent30 = Object.entries(daily).filter(([day]) => day >= cutoff30).reduce((sum, [, value]) => sum + value, 0);
+const last12MonthsActivity = sumDaily(daily, activityWindow.start, activityWindow.end);
+const recent90 = sumDaily(daily, cutoff90, activityWindow.end);
+const recent30 = sumDaily(daily, cutoff30, activityWindow.end);
 
 const stats = {
-  schemaVersion: 2,
+  schemaVersion: 3,
   generatedAt: now.toISOString(),
   metricDefinition: 'Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.',
   scope: {
@@ -109,8 +110,8 @@ const stats = {
     externalProjects: manifest.external.length
   },
   activity: {
-    year: currentYear,
-    currentYear: currentYearActivity,
+    window: activityWindow,
+    last12Months: last12MonthsActivity,
     last90Days: recent90,
     last30Days: recent30,
     daily: Object.fromEntries(Object.entries(daily).sort(([a], [b]) => a.localeCompare(b)))
@@ -121,9 +122,7 @@ const stats = {
 
 try {
   const previous = JSON.parse(await fs.readFile(path.join(root, 'data', 'stats.json'), 'utf8'));
-  const { generatedAt: previousGeneratedAt, ...previousComparable } = previous;
-  const { generatedAt: currentGeneratedAt, ...currentComparable } = stats;
-  if (JSON.stringify(previousComparable) === JSON.stringify(currentComparable)) stats.generatedAt = previousGeneratedAt;
+  Object.assign(stats, stabilizeGeneratedAt(previous, stats));
 } catch {
   // First generation has no prior snapshot.
 }
@@ -195,57 +194,13 @@ function renderEngineeringStats() {
     ['12', 'APPROVED PROJECTS', 'Original SkillAura scope', '#38bdf8'],
     ['4', 'CLOSED-SOURCE', 'Approved for public naming', '#8b5cf6'],
     [String(languageCount), 'LANGUAGES DETECTED', 'GitHub language data', '#f59e0b'],
-    [stats.activity.currentYear.toLocaleString('en-US'), `${currentYear} ACTIVITY`, 'Default-branch commits', '#34d399']
+    [stats.activity.last12Months.toLocaleString('en-US'), '12M ACTIVITY', 'Default-branch commits', '#34d399']
   ];
   const groups = cards.map(([value, label, note, color], index) => {
     const x = 18 + index * 246;
     return `<g transform="translate(${x} 60)"><rect width="228" height="116" rx="16" fill="#101827" stroke="#263247"/><rect x="0" width="5" height="116" rx="3" fill="${color}"/><text x="22" y="43" class="value">${escapeXml(value)}</text><text x="22" y="70" class="label">${escapeXml(label)}</text><text x="22" y="94" class="note">${escapeXml(note)}</text></g>`;
   }).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="205" viewBox="0 0 1000 205" role="img" aria-labelledby="statsTitle statsDescription"><title id="statsTitle">SkillAura engineering snapshot</title><desc id="statsDescription">Twelve approved projects, four closed-source projects, ${Object.keys(stats.languages).length} detected languages, and ${stats.activity.currentYear} current-year repository commits.</desc><style>.heading{font:700 19px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 12px ui-sans-serif,system-ui;fill:#64748b}.value{font:800 30px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 11px ui-sans-serif,system-ui;fill:#cbd5e1;letter-spacing:.6px}.note{font:400 10px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="205" rx="22" fill="#080e1b"/><text x="20" y="32" class="heading">Engineering Snapshot</text><text x="980" y="31" text-anchor="end" class="sub">Refreshed ${escapeXml(stats.generatedAt.slice(0, 10))} UTC</text>${groups}</svg>`;
-}
-
-function utcDate(day) {
-  return new Date(`${day}T00:00:00Z`);
-}
-
-function renderActivity() {
-  const start = new Date(yearStart);
-  start.setUTCDate(start.getUTCDate() - start.getUTCDay());
-  const gridX = 70;
-  const gridY = 104;
-  const step = 16;
-  const cell = 12;
-  const values = Object.values(stats.activity.daily);
-  const max = Math.max(1, ...values);
-  const levels = ['#172033', '#1d4ed8', '#2563eb', '#7c3aed', '#c084fc'];
-  const colorFor = (count) => {
-    if (!count) return levels[0];
-    const ratio = count / max;
-    if (ratio <= 0.25) return levels[1];
-    if (ratio <= 0.5) return levels[2];
-    if (ratio <= 0.75) return levels[3];
-    return levels[4];
-  };
-  const cells = [];
-  const monthLabels = [];
-  let previousMonth = -1;
-  for (let week = 0; week < 53; week += 1) {
-    for (let weekday = 0; weekday < 7; weekday += 1) {
-      const date = new Date(start);
-      date.setUTCDate(start.getUTCDate() + week * 7 + weekday);
-      const day = date.toISOString().slice(0, 10);
-      const inYear = date.getUTCFullYear() === currentYear;
-      const isFuture = date > now;
-      const count = inYear && !isFuture ? (stats.activity.daily[day] || 0) : 0;
-      const fill = inYear && !isFuture ? colorFor(count) : '#0d1422';
-      cells.push(`<rect x="${gridX + week * step}" y="${gridY + weekday * step}" width="${cell}" height="${cell}" rx="3" fill="${fill}"><title>${day}: ${count} repository commit${count === 1 ? '' : 's'}</title></rect>`);
-      if (weekday === 0 && inYear && date.getUTCMonth() !== previousMonth) {
-        previousMonth = date.getUTCMonth();
-        monthLabels.push(`<text x="${gridX + week * step}" y="88" class="month">${date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase()}</text>`);
-      }
-    }
-  }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-labelledby="activityTitle activityDescription"><title id="activityTitle">${currentYear} SkillAura repository activity</title><desc id="activityDescription">A daily heatmap of ${stats.activity.currentYear} default-branch commits across twelve approved SkillAura repositories.</desc><style>.heading{font:700 20px ui-sans-serif,system-ui;fill:#f8fafc}.metric{font:700 13px ui-sans-serif,system-ui;fill:#cbd5e1}.muted{font:400 11px ui-sans-serif,system-ui;fill:#64748b}.month{font:700 9px ui-sans-serif,system-ui;fill:#64748b}.day{font:600 9px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="300" rx="22" fill="#080e1b"/><text x="24" y="36" class="heading">${currentYear} Repository Activity</text><text x="976" y="34" text-anchor="end" class="metric">${stats.activity.currentYear.toLocaleString('en-US')} this year · ${stats.activity.last90Days.toLocaleString('en-US')} last 90d · ${stats.activity.last30Days.toLocaleString('en-US')} last 30d</text>${monthLabels.join('')}<text x="24" y="118" class="day">SUN</text><text x="24" y="150" class="day">TUE</text><text x="24" y="182" class="day">THU</text><text x="24" y="214" class="day">SAT</text>${cells.join('')}<g transform="translate(744 252)"><text x="0" y="11" class="muted">LESS</text>${levels.map((color, index) => `<rect x="${38 + index * 18}" y="0" width="12" height="12" rx="3" fill="${color}"/>`).join('')}<text x="136" y="11" class="muted">MORE</text></g><text x="24" y="274" class="muted">Daily density across approved SkillAura repositories · all authors and automation accounts</text></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="205" viewBox="0 0 1000 205" role="img" aria-labelledby="statsTitle statsDescription"><title id="statsTitle">SkillAura engineering snapshot</title><desc id="statsDescription">Twelve approved projects, four closed-source projects, ${Object.keys(stats.languages).length} detected languages, and ${stats.activity.last12Months} rolling twelve-month repository commits.</desc><style>.heading{font:700 19px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 12px ui-sans-serif,system-ui;fill:#64748b}.value{font:800 30px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 11px ui-sans-serif,system-ui;fill:#cbd5e1;letter-spacing:.6px}.note{font:400 10px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="205" rx="22" fill="#080e1b"/><text x="20" y="32" class="heading">Engineering Snapshot</text><text x="980" y="31" text-anchor="end" class="sub">Data snapshot ${escapeXml(stats.generatedAt.slice(0, 10))} UTC</text>${groups}</svg>`;
 }
 
 function polar(cx, cy, radius, angle) {
@@ -319,16 +274,19 @@ async function writeIfChanged(relativePath, content) {
   const destination = path.join(root, relativePath);
   let existing = null;
   try { existing = await fs.readFile(destination, 'utf8'); } catch {}
-  if (existing !== content) {
+  const normalizedExisting = existing?.replace(/\r\n/g, '\n');
+  const normalizedContent = content.replace(/\r\n/g, '\n');
+  if (normalizedExisting !== normalizedContent) {
     await fs.mkdir(path.dirname(destination), { recursive: true });
-    await fs.writeFile(destination, content, 'utf8');
+    await fs.writeFile(destination, normalizedContent, 'utf8');
   }
 }
 
 await writeIfChanged('README.md', readme.trimEnd() + '\n');
 await writeIfChanged('assets/hero.svg', renderHero() + '\n');
 await writeIfChanged('assets/engineering-stats.svg', renderEngineeringStats() + '\n');
-await writeIfChanged('assets/activity.svg', renderActivity() + '\n');
+await writeIfChanged('assets/activity.svg', renderActivityMonitor(stats) + '\n');
+await writeIfChanged('assets/activity-mobile.svg', renderActivityMonitorMobile(stats) + '\n');
 await writeIfChanged('assets/languages.svg', renderLanguages() + '\n');
 await writeIfChanged('data/stats.json', JSON.stringify(stats, null, 2) + '\n');
 

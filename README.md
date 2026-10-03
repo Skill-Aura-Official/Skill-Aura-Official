@@ -14,9 +14,12 @@ A verified portfolio of software products, web platforms, automation projects, a
 
 ![Live SkillAura engineering statistics](./assets/engineering-stats.svg)
 
-## Live Engineering Activity
+## Engineering Activity Monitor
 
-![Current-year repository activity heatmap across approved SkillAura projects](./assets/activity.svg)
+<picture>
+  <source media="(max-width: 600px)" srcset="./assets/activity-mobile.svg">
+  <img alt="Rolling twelve-month SkillAura engineering activity monitor" src="./assets/activity.svg" width="100%">
+</picture>
 
 ## Language Footprint
 
@@ -61,5 +64,5 @@ A verified portfolio of software products, web platforms, automation projects, a
 ---
 
 <div align="center">
-  <sub>Metrics reflect approved tracked repository data across all authors and automation accounts; they are not a measure of individual expertise or personal contribution.</sub>
+  <sub>Activity is generated from approved tracked GitHub repository data across all authors and automation accounts and updated automatically.</sub>
 </div>

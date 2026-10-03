@@ -18,6 +18,7 @@ This repository is the GitHub user profile for `Skill-Aura-Official`. The visito
 - `assets/hero.svg`
 - `assets/engineering-stats.svg`
 - `assets/activity.svg`
+- `assets/activity-mobile.svg`
 - `assets/languages.svg`
 
 Generated output is written only when content changes. The previous `generatedAt` value is retained when the underlying repository data is unchanged, which keeps scheduled runs idempotent.
@@ -26,7 +27,9 @@ Generated output is written only when content changes. The previous `generatedAt
 
 Activity counts default-branch commits across all authors and automation accounts for the twelve approved SkillAura projects. It is repository activity and is not described as personal contribution.
 
-The heatmap aggregates commit-author dates by UTC day for the current calendar year. The 30-day and 90-day figures use rolling UTC cutoffs at generation time.
+The engineering activity monitor aggregates commit-author dates by UTC day over a rolling 365-day window ending on the UTC generation date. The visual calendar includes month labels, weekday labels, daily intensity cells, an accessible tooltip per cell, a legend, and the data-snapshot timestamp. The 30-day and 90-day figures use rolling UTC cutoffs at generation time.
+
+The snapshot timestamp advances only when repository-derived output changes. This preserves the six-hour refresh workflow without creating empty timestamp-only commits. It therefore means "data snapshot represented by this generated asset," rather than a claim of real-time streaming.
 
 Language percentages use GitHub's language-byte API and aggregate the twelve approved SkillAura projects. Repository language data describes code composition and is not an expertise score.
 

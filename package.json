@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "generate": "node scripts/generate-profile.mjs",
-    "validate": "node scripts/validate-profile.mjs"
+    "validate": "node scripts/validate-profile.mjs",
+    "test": "node tests/activity-monitor.test.mjs"
   },
   "engines": {
     "node": ">=20"

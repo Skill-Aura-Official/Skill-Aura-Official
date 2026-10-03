@@ -30,6 +30,9 @@ jobs:
         env:
           PROFILE_DATA_TOKEN: ${{ secrets.SKILLAURA_PROFILE_TOKEN }}
 
+      - name: Test activity monitor behavior
+        run: npm test
+
       - name: Validate generated profile
         run: npm run validate
 
@@ -42,6 +45,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md assets/hero.svg assets/engineering-stats.svg assets/activity.svg assets/languages.svg data/stats.json
+          git add README.md assets/hero.svg assets/engineering-stats.svg assets/activity.svg assets/activity-mobile.svg assets/languages.svg data/stats.json
           git commit -m "chore: refresh profile data"
           git push
