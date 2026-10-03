@@ -1,0 +1,13 @@
+{
+  "name": "skillaura-profile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-profile.mjs",
+    "validate": "node scripts/validate-profile.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

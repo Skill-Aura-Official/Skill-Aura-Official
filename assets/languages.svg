@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-labelledby="title description">
+  <title id="title">Language footprint across tracked public SkillAura projects</title>
+  <desc id="description">GitHub language bytes aggregated across eight approved public SkillAura repositories.</desc>
+  <style>
+    .heading{font:700 24px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 13px ui-sans-serif,system-ui;fill:#94a3b8}.lang{font:600 13px ui-sans-serif,system-ui;fill:#cbd5e1}.pct{font:700 12px ui-sans-serif,system-ui;fill:#e2e8f0}.foot{font:400 11px ui-sans-serif,system-ui;fill:#64748b}
+  </style>
+  <rect width="1120" height="430" rx="24" fill="#0b1120"/>
+  <text x="28" y="40" class="heading">Language Footprint Across Tracked Projects</text>
+  <text x="28" y="64" class="sub">GitHub language statistics for 8 approved public SkillAura repositories</text>
+  <g transform="translate(28 94)">
+    <text x="0" y="14" class="lang">TypeScript</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="406.3" height="17" rx="8" fill="#7c3aed"/>
+    <text x="925" y="14" class="pct">53.5%</text>
+  </g><g transform="translate(28 132)">
+    <text x="0" y="14" class="lang">Python</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="234.7" height="17" rx="8" fill="#2563eb"/>
+    <text x="925" y="14" class="pct">30.9%</text>
+  </g><g transform="translate(28 170)">
+    <text x="0" y="14" class="lang">JavaScript</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="88.7" height="17" rx="8" fill="#0891b2"/>
+    <text x="925" y="14" class="pct">11.7%</text>
+  </g><g transform="translate(28 208)">
+    <text x="0" y="14" class="lang">CSS</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="19.1" height="17" rx="8" fill="#059669"/>
+    <text x="925" y="14" class="pct">2.5%</text>
+  </g><g transform="translate(28 246)">
+    <text x="0" y="14" class="lang">PLpgSQL</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="7.6" height="17" rx="8" fill="#ca8a04"/>
+    <text x="925" y="14" class="pct">1.0%</text>
+  </g><g transform="translate(28 284)">
+    <text x="0" y="14" class="lang">HTML</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="3.0" height="17" rx="8" fill="#ea580c"/>
+    <text x="925" y="14" class="pct">0.2%</text>
+  </g><g transform="translate(28 322)">
+    <text x="0" y="14" class="lang">Shell</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="3.0" height="17" rx="8" fill="#db2777"/>
+    <text x="925" y="14" class="pct">0.2%</text>
+  </g><g transform="translate(28 360)">
+    <text x="0" y="14" class="lang">Other</text>
+    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
+    <rect x="145" y="0" width="3.0" height="17" rx="8" fill="#64748b"/>
+    <text x="925" y="14" class="pct">0.1%</text>
+  </g>
+  <text x="28" y="405" class="foot">Repository language bytes describe code composition; they are not a rating of individual expertise.</text>
+</svg>

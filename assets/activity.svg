@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title description">
+  <title id="title">Repository activity across approved public projects</title>
+  <desc id="description">Default branch activity grouped into SkillAura, forked, and external categories.</desc>
+  <style>
+    .heading{font:700 24px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 13px ui-sans-serif,system-ui;fill:#94a3b8}.label{font:700 14px ui-sans-serif,system-ui;fill:#cbd5e1;text-transform:uppercase;letter-spacing:.7px}.value{font:800 34px ui-sans-serif,system-ui;fill:#f8fafc}.muted{font:400 12px ui-sans-serif,system-ui;fill:#94a3b8}.small{font:600 12px ui-sans-serif,system-ui;fill:#cbd5e1}.tiny{font:400 11px ui-sans-serif,system-ui;fill:#64748b}
+  </style>
+  <rect width="1120" height="360" rx="24" fill="#0b1120"/>
+  <text x="24" y="38" class="heading">Live Engineering Activity</text>
+  <text x="24" y="62" class="sub">Repository activity across all authors and automation accounts · refreshed 2026-10-03 UTC</text>
+  <g transform="translate(24 92)">
+    <rect width="350" height="212" rx="18" fill="#111827" stroke="#29354b"/>
+    <rect width="6" height="212" rx="3" fill="#7c3aed"/>
+    <text x="28" y="38" class="label">Public SkillAura projects</text>
+    <text x="28" y="83" class="value">300</text>
+    <text x="28" y="108" class="muted">default-branch commits</text>
+    <text x="28" y="145" class="small">2026: 287 · 90d: 8 · 30d: 0</text>
+    <text x="28" y="176" class="small">Tracked repositories: 8</text>
+    <text x="28" y="198" class="tiny">Latest repository activity: 2026-07-06</text>
+  </g>
+  <g transform="translate(385 92)">
+    <rect width="350" height="212" rx="18" fill="#111827" stroke="#29354b"/>
+    <rect width="6" height="212" rx="3" fill="#0891b2"/>
+    <text x="28" y="38" class="label">Forked / derived work</text>
+    <text x="28" y="83" class="value">21</text>
+    <text x="28" y="108" class="muted">default-branch commits</text>
+    <text x="28" y="145" class="small">2026: 0 · 90d: 0 · 30d: 0</text>
+    <text x="28" y="176" class="small">Tracked repositories: 1</text>
+    <text x="28" y="198" class="tiny">Latest repository activity: 2025-07-08</text>
+  </g>
+  <g transform="translate(746 92)">
+    <rect width="350" height="212" rx="18" fill="#111827" stroke="#29354b"/>
+    <rect width="6" height="212" rx="3" fill="#059669"/>
+    <text x="28" y="38" class="label">External public reference</text>
+    <text x="28" y="83" class="value">6</text>
+    <text x="28" y="108" class="muted">default-branch commits</text>
+    <text x="28" y="145" class="small">2026: 6 · 90d: 6 · 30d: 6</text>
+    <text x="28" y="176" class="small">Tracked repositories: 1</text>
+    <text x="28" y="198" class="tiny">Latest repository activity: 2026-10-02</text>
+  </g>
+  <text x="24" y="338" class="tiny">Private repositories are named in the README but excluded from automated metrics because the workflow uses only its built-in GitHub token.</text>
+</svg>

@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-03T06:47:51.131Z",
+  "metricDefinition": "Default-branch repository activity across all authors and automation accounts. These values are not personal contribution counts.",
+  "scope": {
+    "skillAuraProjects": 12,
+    "skillAuraPublicTracked": 8,
+    "skillAuraPrivateNamed": 4,
+    "forkedProjects": 1,
+    "externalProjects": 3,
+    "externalPublicTracked": 1
+  },
+  "categories": {
+    "skillAuraPublic": {
+      "trackedRepositories": 8,
+      "commits": 300,
+      "currentYearCommits": 287,
+      "commits90Days": 8,
+      "commits30Days": 0,
+      "latestActivity": "2026-07-06T19:47:51Z",
+      "languages": {
+        "Python": 697054,
+        "Shell": 4418,
+        "Dockerfile": 517,
+        "Procfile": 50,
+        "TypeScript": 1206642,
+        "PLpgSQL": 22552,
+        "CSS": 56679,
+        "HTML": 4848,
+        "JavaScript": 263300,
+        "PowerShell": 895
+      }
+    },
+    "forkedPublic": {
+      "trackedRepositories": 1,
+      "commits": 21,
+      "currentYearCommits": 0,
+      "commits90Days": 0,
+      "commits30Days": 0,
+      "latestActivity": "2025-07-08T15:15:19Z",
+      "languages": {
+        "JavaScript": 64781,
+        "HTML": 361,
+        "CSS": 22
+      }
+    },
+    "externalPublic": {
+      "trackedRepositories": 1,
+      "commits": 6,
+      "currentYearCommits": 6,
+      "commits90Days": 6,
+      "commits30Days": 6,
+      "latestActivity": "2026-10-02T09:47:48Z",
+      "languages": {
+        "HTML": 72678,
+        "JavaScript": 31493,
+        "Dockerfile": 376
+      }
+    }
+  },
+  "repositories": {
+    "skillAura": [
+      {
+        "repository": "Skill-Aura-Official/Anisha",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-05-30T20:15:36Z",
+        "commits": 22,
+        "currentYearCommits": 22,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "Python": 259045,
+          "Shell": 4418,
+          "Dockerfile": 343,
+          "Procfile": 21
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/attractive-beauty-parlour",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-07-06T19:47:51Z",
+        "commits": 145,
+        "currentYearCommits": 144,
+        "commits90Days": 8,
+        "commits30Days": 0,
+        "languages": {
+          "TypeScript": 459180,
+          "PLpgSQL": 11686,
+          "CSS": 8550,
+          "HTML": 1220,
+          "JavaScript": 846
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/EmpireRPG_Bot",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-06-08T14:32:51Z",
+        "commits": 31,
+        "currentYearCommits": 31,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "Python": 437795,
+          "Dockerfile": 174,
+          "Procfile": 29
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/Innovathon-Public",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-04-26T05:17:45Z",
+        "commits": 9,
+        "currentYearCommits": 9,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "JavaScript": 260730,
+          "CSS": 35842,
+          "TypeScript": 29453,
+          "PowerShell": 895,
+          "HTML": 884
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/Shivratri",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2025-07-23T13:55:44Z",
+        "commits": 3,
+        "currentYearCommits": 0,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "Python": 214
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/SkillAura-Pathfinder",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-05-10T15:59:52Z",
+        "commits": 70,
+        "currentYearCommits": 69,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "TypeScript": 333630,
+          "CSS": 4754,
+          "HTML": 1840,
+          "JavaScript": 878
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/skillpath-launch",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2025-10-06T07:58:14Z",
+        "commits": 8,
+        "currentYearCommits": 0,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "TypeScript": 384379,
+          "PLpgSQL": 10866,
+          "CSS": 7533,
+          "HTML": 904,
+          "JavaScript": 846
+        }
+      },
+      {
+        "repository": "Skill-Aura-Official/TSB-Council",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-05-30T23:05:27Z",
+        "commits": 12,
+        "currentYearCommits": 12,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {}
+      }
+    ],
+    "forked": [
+      {
+        "repository": "Skill-Aura-Official/Hoo-Bank",
+        "defaultBranch": "main",
+        "fork": true,
+        "archived": false,
+        "pushedAt": "2025-07-08T15:15:19Z",
+        "commits": 21,
+        "currentYearCommits": 0,
+        "commits90Days": 0,
+        "commits30Days": 0,
+        "languages": {
+          "JavaScript": 64781,
+          "HTML": 361,
+          "CSS": 22
+        }
+      }
+    ],
+    "external": [
+      {
+        "repository": "Evisionindia/EVMS-website",
+        "defaultBranch": "main",
+        "fork": false,
+        "archived": false,
+        "pushedAt": "2026-10-02T09:47:48Z",
+        "commits": 6,
+        "currentYearCommits": 6,
+        "commits90Days": 6,
+        "commits30Days": 6,
+        "languages": {
+          "HTML": 72678,
+          "JavaScript": 31493,
+          "Dockerfile": 376
+        }
+      }
+    ]
+  }
+}

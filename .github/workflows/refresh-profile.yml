@@ -1,0 +1,47 @@
+name: Refresh profile metrics
+
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-metrics-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Generate metrics from GitHub
+        run: npm run generate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Validate generated profile
+        run: npm run validate
+
+      - name: Commit changed generated files
+        shell: bash
+        run: |
+          if git diff --quiet -- assets data/stats.json; then
+            echo "Profile metrics are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/activity.svg assets/languages.svg data/stats.json
+          git commit -m "chore: refresh profile metrics"
+          git push

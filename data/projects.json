@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "metricPolicy": "Only public repositories are queried by automation. Private approved projects are named without repository-level metrics.",
+  "categories": {
+    "skillAura": [
+      { "repository": "Skill-Aura-Official/Anisha", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/attractive-beauty-parlour", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/EmpireRPG_Bot", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/Innovathon-Public", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/Shivratri", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/SkillAura-Pathfinder", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/skillpath-launch", "visibility": "public", "trackMetrics": true },
+      { "repository": "Skill-Aura-Official/TSB-Council", "visibility": "public", "trackMetrics": true },
+      { "name": "kiru", "owner": "Skill-Aura-Official", "visibility": "private", "trackMetrics": false },
+      { "name": "SSB", "owner": "Skill-Aura-Official", "visibility": "private", "trackMetrics": false },
+      { "name": "nyther-userbot", "owner": "Skill-Aura-Official", "visibility": "private", "trackMetrics": false },
+      { "name": "TenderIQ", "owner": "Skill-Aura-Official", "visibility": "private", "trackMetrics": false }
+    ],
+    "forked": [
+      { "repository": "Skill-Aura-Official/Hoo-Bank", "visibility": "public", "trackMetrics": true, "classification": "forked-derived" }
+    ],
+    "external": [
+      { "name": "E-VMS", "owner": "Evisionindia", "visibility": "private", "trackMetrics": false },
+      { "name": "VMS", "owner": "Evisionindia", "visibility": "private", "trackMetrics": false },
+      { "repository": "Evisionindia/EVMS-website", "visibility": "public", "trackMetrics": true }
+    ]
+  }
+}
