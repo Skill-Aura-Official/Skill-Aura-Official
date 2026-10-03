@@ -1,22 +1,28 @@
 {
-  "schemaVersion": 4,
-  "generatedAt": "2026-10-03T09:33:13.871Z",
-  "metricDefinition": "Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.",
+  "schemaVersion": 5,
+  "generatedAt": "2026-10-03T10:07:43.226Z",
+  "metricModel": {
+    "trackedCommits": "All commits reachable from each tracked repository default branch, across all authors and automation accounts.",
+    "rollingCommits": "Qualifying default-branch commits dated inside the rolling 365-day window.",
+    "contributionDays": "UTC calendar days in the rolling window containing at least one qualifying tracked commit.",
+    "currentStreak": "Consecutive contribution days ending at the latest qualifying date.",
+    "longestStreak": "Maximum consecutive contribution-day run inside the rolling window.",
+    "activeCoverage": "Tracked projects with at least one qualifying commit in the rolling window divided by all tracked SkillAura projects."
+  },
   "scope": {
-    "skillAuraProjects": 12,
+    "statsProjects": 12,
+    "activityProjects": 12,
+    "languageProjects": 12,
     "publicProjects": 8,
     "privateProjects": 4,
-    "forkedProjects": 1,
-    "externalProjects": 3
+    "externalProjects": 1,
+    "forkProjects": 1
   },
   "activity": {
     "window": {
       "start": "2025-10-04",
       "end": "2026-10-03"
     },
-    "last12Months": 413,
-    "last90Days": 8,
-    "last30Days": 0,
     "daily": {
       "2025-10-06": 2,
       "2026-01-25": 6,
@@ -61,20 +67,96 @@
     }
   },
   "githubStats": {
-    "totalStars": 0,
-    "totalCommits": 424,
-    "totalPullRequests": 13,
-    "totalIssues": 0,
-    "contributedRepositoriesLastYear": 11
+    "stars": 0,
+    "allTimeDefaultBranchCommits": 424,
+    "pullRequests": 13,
+    "issues": 0,
+    "activeRepositories12Months": 11
   },
   "contributionActivity": {
-    "totalTrackedContributions": 413,
-    "currentStreak": 0,
-    "currentStart": null,
-    "currentEnd": null,
+    "rollingCommits": 413,
+    "contributionDays": 40,
+    "currentStreak": 1,
+    "currentStart": "2026-07-06",
+    "currentEnd": "2026-07-06",
+    "latestActivityDate": "2026-07-06",
     "longestStreak": 5,
     "longestStart": "2026-05-15",
-    "longestEnd": "2026-05-19"
+    "longestEnd": "2026-05-19",
+    "monthly": [
+      {
+        "key": "2025-11",
+        "label": "Nov",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2025-12",
+        "label": "Dec",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-01",
+        "label": "Jan",
+        "commits": 12,
+        "days": 2
+      },
+      {
+        "key": "2026-02",
+        "label": "Feb",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-03",
+        "label": "Mar",
+        "commits": 124,
+        "days": 13
+      },
+      {
+        "key": "2026-04",
+        "label": "Apr",
+        "commits": 44,
+        "days": 2
+      },
+      {
+        "key": "2026-05",
+        "label": "May",
+        "commits": 104,
+        "days": 9
+      },
+      {
+        "key": "2026-06",
+        "label": "Jun",
+        "commits": 118,
+        "days": 11
+      },
+      {
+        "key": "2026-07",
+        "label": "Jul",
+        "commits": 9,
+        "days": 2
+      },
+      {
+        "key": "2026-08",
+        "label": "Aug",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-09",
+        "label": "Sep",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-10",
+        "label": "Oct",
+        "commits": 0,
+        "days": 0
+      }
+    ]
   },
   "languages": {
     "TypeScript": 1809173,
@@ -88,46 +170,114 @@
     "PowerShell": 1428,
     "Procfile": 107
   },
-  "publicProjects": [
+  "projects": [
     {
       "repository": "Anisha",
+      "displayName": "Anisha",
+      "visibility": "public",
+      "primaryLanguage": "Python",
       "pushedAt": "2026-05-30T20:15:36Z",
-      "primaryLanguage": "Python"
+      "allTimeDefaultBranchCommits": 22,
+      "rollingCommits": 22
     },
     {
       "repository": "attractive-beauty-parlour",
+      "displayName": "Attractive Beauty Parlour",
+      "visibility": "public",
+      "primaryLanguage": "TypeScript",
       "pushedAt": "2026-07-06T19:47:51Z",
-      "primaryLanguage": "TypeScript"
+      "allTimeDefaultBranchCommits": 145,
+      "rollingCommits": 144
     },
     {
       "repository": "EmpireRPG_Bot",
+      "displayName": "Empire RPG Bot",
+      "visibility": "public",
+      "primaryLanguage": "Python",
       "pushedAt": "2026-06-08T14:32:51Z",
-      "primaryLanguage": "Python"
+      "allTimeDefaultBranchCommits": 31,
+      "rollingCommits": 31
     },
     {
       "repository": "Innovathon-Public",
+      "displayName": "Innovathon-Public",
+      "visibility": "public",
+      "primaryLanguage": "JavaScript",
       "pushedAt": "2026-04-26T05:17:45Z",
-      "primaryLanguage": "JavaScript"
+      "allTimeDefaultBranchCommits": 9,
+      "rollingCommits": 9
     },
     {
       "repository": "Shivratri",
+      "displayName": "Shivratri",
+      "visibility": "public",
+      "primaryLanguage": "Python",
       "pushedAt": "2025-07-23T13:55:44Z",
-      "primaryLanguage": "Python"
+      "allTimeDefaultBranchCommits": 3,
+      "rollingCommits": 0
     },
     {
       "repository": "SkillAura-Pathfinder",
+      "displayName": "SkillAura Pathfinder",
+      "visibility": "public",
+      "primaryLanguage": "TypeScript",
       "pushedAt": "2026-05-10T15:59:52Z",
-      "primaryLanguage": "TypeScript"
+      "allTimeDefaultBranchCommits": 70,
+      "rollingCommits": 69
     },
     {
       "repository": "skillpath-launch",
+      "displayName": "SkillPath Launch",
+      "visibility": "public",
+      "primaryLanguage": "TypeScript",
       "pushedAt": "2025-10-06T07:58:14Z",
-      "primaryLanguage": "TypeScript"
+      "allTimeDefaultBranchCommits": 8,
+      "rollingCommits": 2
     },
     {
       "repository": "TSB-Council",
+      "displayName": "TSB Council",
+      "visibility": "public",
+      "primaryLanguage": null,
       "pushedAt": "2026-05-30T23:05:27Z",
-      "primaryLanguage": null
+      "allTimeDefaultBranchCommits": 12,
+      "rollingCommits": 12
+    },
+    {
+      "repository": "kiru",
+      "displayName": "kiru",
+      "visibility": "private",
+      "primaryLanguage": "Python",
+      "pushedAt": "2026-06-29T20:09:25Z",
+      "allTimeDefaultBranchCommits": 73,
+      "rollingCommits": 73
+    },
+    {
+      "repository": "SSB",
+      "displayName": "SSB",
+      "visibility": "private",
+      "primaryLanguage": "Python",
+      "pushedAt": "2026-06-08T13:43:39Z",
+      "allTimeDefaultBranchCommits": 20,
+      "rollingCommits": 20
+    },
+    {
+      "repository": "nyther-userbot",
+      "displayName": "Nyther Userbot",
+      "visibility": "private",
+      "primaryLanguage": "Python",
+      "pushedAt": "2026-07-01T22:44:15Z",
+      "allTimeDefaultBranchCommits": 23,
+      "rollingCommits": 23
+    },
+    {
+      "repository": "TenderIQ",
+      "displayName": "TenderIQ",
+      "visibility": "private",
+      "primaryLanguage": "TypeScript",
+      "pushedAt": "2026-06-18T17:14:42Z",
+      "allTimeDefaultBranchCommits": 8,
+      "rollingCommits": 8
     }
   ]
 }

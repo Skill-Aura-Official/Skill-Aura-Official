@@ -1,31 +1,23 @@
 {
-  "schemaVersion": 2,
-  "profile": {
-    "name": "SkillAura",
-    "subtitle": "Software products · Web platforms · Automation",
-    "summary": "A verified portfolio of software products, web platforms, automation projects, and engineering work."
-  },
-  "technologyFootprint": ["TypeScript", "Python", "JavaScript", "React", "Node.js", "Supabase", "Docker"],
-  "skillAura": [
-    {"owner":"Skill-Aura-Official","repository":"Anisha","visibility":"public","description":"Telegram music-streaming bot implemented primarily in Python.","tags":["Python","Telegram","Docker"]},
-    {"owner":"Skill-Aura-Official","repository":"attractive-beauty-parlour","visibility":"public","description":"Beauty-parlour website with service, gallery, contact, offer, and administration interfaces.","tags":["TypeScript","React","Supabase"]},
-    {"owner":"Skill-Aura-Official","repository":"EmpireRPG_Bot","visibility":"public","description":"Telegram role-playing game bot.","tags":["Python","Telegram"]},
-    {"owner":"Skill-Aura-Official","repository":"Innovathon-Public","visibility":"public","description":"Public hackathon-platform repository.","tags":["JavaScript"]},
-    {"owner":"Skill-Aura-Official","repository":"Shivratri","visibility":"public","description":"Python sketch animation created for Maha Shivratri.","tags":["Python"]},
-    {"owner":"Skill-Aura-Official","repository":"SkillAura-Pathfinder","visibility":"public","description":"Gamified career-intelligence web application.","tags":["TypeScript","React"]},
-    {"owner":"Skill-Aura-Official","repository":"skillpath-launch","visibility":"public","description":"SkillMatchr job and career portal with job-seeker and recruiter interfaces.","tags":["TypeScript","React","Supabase"]},
-    {"owner":"Skill-Aura-Official","repository":"TSB-Council","visibility":"public","description":"Governance documentation repository.","tags":["Documentation"]},
-    {"owner":"Skill-Aura-Official","repository":"kiru","visibility":"private","description":"Closed-source recruitment workflow platform.","tags":["Private / Closed Source"]},
-    {"owner":"Skill-Aura-Official","repository":"SSB","visibility":"private","description":"Closed-source Telegram role-playing game project.","tags":["Private / Closed Source"]},
-    {"owner":"Skill-Aura-Official","repository":"nyther-userbot","visibility":"private","description":"Closed-source Telegram userbot project.","tags":["Private / Closed Source"]},
-    {"owner":"Skill-Aura-Official","repository":"TenderIQ","visibility":"private","description":"Closed-source tender workflow platform.","tags":["Private / Closed Source"]}
-  ],
-  "forked": [
-    {"owner":"Skill-Aura-Official","repository":"Hoo-Bank","visibility":"public","description":"GitHub fork / derived repository. It is not counted as original SkillAura work.","tags":["Forked / Derived"]}
-  ],
-  "external": [
-    {"owner":"Evisionindia","repository":"E-VMS","visibility":"private","description":"Private Evisionindia repository represented as approved external work.","tags":["External / Collaborative"]},
-    {"owner":"Evisionindia","repository":"VMS","visibility":"private","description":"Private Evisionindia repository represented as approved external work.","tags":["External / Collaborative"]},
-    {"owner":"Evisionindia","repository":"EVMS-website","visibility":"public","description":"Public E-VMS website repository owned by Evisionindia.","tags":["External / Collaborative"]}
+  "schemaVersion": 3,
+  "profile": {"name":"SkillAura","subtitle":"Software products · Web platforms · Automation","summary":"A portfolio of software products, web platforms, automation projects, and engineering work."},
+  "technologyFootprint": ["TypeScript","Python","JavaScript","React","Node.js","Docker","PostgreSQL","Supabase"],
+  "projects": [
+    {"owner":"Skill-Aura-Official","repository":"Anisha","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Anisha","description":"Telegram music-streaming bot implemented primarily in Python.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Python","Telegram","Docker"]},
+    {"owner":"Skill-Aura-Official","repository":"attractive-beauty-parlour","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Attractive Beauty Parlour","description":"Beauty-parlour website with service, gallery, contact, offer, and administration interfaces.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["TypeScript","React","Supabase"]},
+    {"owner":"Skill-Aura-Official","repository":"EmpireRPG_Bot","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Empire RPG Bot","description":"Telegram role-playing game bot.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Python","Telegram"]},
+    {"owner":"Skill-Aura-Official","repository":"Innovathon-Public","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Innovathon-Public","description":"Public hackathon-platform repository.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["JavaScript"]},
+    {"owner":"Skill-Aura-Official","repository":"Shivratri","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Shivratri","description":"Python sketch animation created for Maha Shivratri.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Python"]},
+    {"owner":"Skill-Aura-Official","repository":"SkillAura-Pathfinder","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"SkillAura Pathfinder","description":"Gamified career-intelligence web application.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["TypeScript","React"]},
+    {"owner":"Skill-Aura-Official","repository":"skillpath-launch","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"SkillPath Launch","description":"SkillMatchr job and career portal with job-seeker and recruiter interfaces.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["TypeScript","React","Supabase"]},
+    {"owner":"Skill-Aura-Official","repository":"TSB-Council","category":"skillAura","visibility":"public","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"TSB Council","description":"Governance documentation repository.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Documentation"]},
+    {"owner":"Skill-Aura-Official","repository":"kiru","category":"skillAura","visibility":"private","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"kiru","description":"Closed-source recruitment workflow platform.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Private / Closed Source"]},
+    {"owner":"Skill-Aura-Official","repository":"SSB","category":"skillAura","visibility":"private","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"SSB","description":"Closed-source Telegram role-playing game project.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Private / Closed Source"]},
+    {"owner":"Skill-Aura-Official","repository":"nyther-userbot","category":"skillAura","visibility":"private","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"Nyther Userbot","description":"Closed-source Telegram userbot project.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Private / Closed Source"]},
+    {"owner":"Skill-Aura-Official","repository":"TenderIQ","category":"skillAura","visibility":"private","includeInStats":true,"includeInLanguages":true,"includeInActivity":true,"includeInPortfolio":true,"displayName":"TenderIQ","description":"Closed-source tender workflow platform.","image":null,"relatedRepositories":[],"attribution":"SkillAura","tags":["Private / Closed Source"]},
+    {"owner":"Skill-Aura-Official","repository":"Hoo-Bank","category":"fork","visibility":"public","includeInStats":false,"includeInLanguages":false,"includeInActivity":false,"includeInPortfolio":true,"displayName":"Hoo-Bank","description":"GitHub fork / derived repository; kept separate from original SkillAura work.","image":null,"relatedRepositories":[],"attribution":"Original upstream authors; fork maintained under Skill-Aura-Official","tags":["Forked / Derived"]},
+    {"owner":"Evisionindia","repository":"E-VMS","category":"external","visibility":"private","includeInStats":false,"includeInLanguages":false,"includeInActivity":false,"includeInPortfolio":true,"displayName":"E-VMS","description":"Video management system project maintained by Evisionindia.","image":"assets/e-vms-logo.png","relatedRepositories":["Evisionindia/VMS","Evisionindia/EVMS-website"],"attribution":"Evisionindia","tags":["External / Professional Work"]},
+    {"owner":"Evisionindia","repository":"VMS","category":"external-related","visibility":"private","includeInStats":false,"includeInLanguages":false,"includeInActivity":false,"includeInPortfolio":false,"displayName":"VMS","description":"Related Evisionindia repository.","image":null,"relatedRepositories":[],"attribution":"Evisionindia","tags":[]},
+    {"owner":"Evisionindia","repository":"EVMS-website","category":"external-related","visibility":"public","includeInStats":false,"includeInLanguages":false,"includeInActivity":false,"includeInPortfolio":false,"displayName":"E-VMS Website","description":"Public website repository for E-VMS.","image":null,"relatedRepositories":[],"attribution":"Evisionindia","tags":[]}
   ]
 }

@@ -5,138 +5,105 @@ export function toUtcDay(value) {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-export function isoDay(value) {
-  return toUtcDay(value).toISOString().slice(0, 10);
-}
+export function isoDay(value) { return toUtcDay(value).toISOString().slice(0, 10); }
 
 export function buildRollingWindow(now) {
   const end = toUtcDay(now);
-  const start = new Date(end.getTime() - 364 * DAY_MS);
-  return { start: isoDay(start), end: isoDay(end) };
+  return { start: isoDay(new Date(end.getTime() - 364 * DAY_MS)), end: isoDay(end) };
 }
 
 export function sumDaily(daily, start, end) {
   return Object.entries(daily).filter(([day]) => day >= start && day <= end).reduce((sum, [, count]) => sum + count, 0);
 }
 
-export function calculateStreaks(daily, window) {
-  const activeDays = new Set(Object.entries(daily).filter(([, count]) => count > 0).map(([day]) => day));
-  const start = new Date(`${window.start}T00:00:00Z`);
+export function monthlyActivity(daily, window) {
+  const months = [];
   const end = new Date(`${window.end}T00:00:00Z`);
-  let longest = 0;
-  let longestStart = null;
-  let longestEnd = null;
-  let run = 0;
-  let runStart = null;
-  for (let cursor = new Date(start); cursor <= end; cursor = new Date(cursor.getTime() + DAY_MS)) {
-    const day = isoDay(cursor);
-    if (activeDays.has(day)) {
-      if (run === 0) runStart = day;
-      run += 1;
-      if (run > longest) {
-        longest = run;
-        longestStart = runStart;
-        longestEnd = day;
-      }
-    } else {
-      run = 0;
-      runStart = null;
+  for (let offset = 11; offset >= 0; offset -= 1) {
+    const date = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - offset, 1));
+    const key = date.toISOString().slice(0, 7);
+    months.push({ key, label: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }), commits: 0, days: 0 });
+  }
+  const byKey = new Map(months.map((month) => [month.key, month]));
+  for (const [day, count] of Object.entries(daily)) {
+    if (day < window.start || day > window.end || count <= 0) continue;
+    const month = byKey.get(day.slice(0, 7));
+    if (month) { month.commits += count; month.days += 1; }
+  }
+  return months;
+}
+
+export function calculateStreaks(daily, window) {
+  const active = [...new Set(Object.entries(daily).filter(([day, count]) => day >= window.start && day <= window.end && count > 0).map(([day]) => day))].sort();
+  let longest = 0; let longestStart = null; let longestEnd = null;
+  let run = 0; let runStart = null; let previous = null;
+  for (const day of active) {
+    const contiguous = previous && (new Date(`${day}T00:00:00Z`) - new Date(`${previous}T00:00:00Z`) === DAY_MS);
+    if (!contiguous) { run = 0; runStart = day; }
+    run += 1;
+    if (run > longest) { longest = run; longestStart = runStart; longestEnd = day; }
+    previous = day;
+  }
+  const latestActivityDate = active.at(-1) || null;
+  let current = 0; let currentStart = null;
+  if (latestActivityDate) {
+    const activeSet = new Set(active);
+    for (let cursor = new Date(`${latestActivityDate}T00:00:00Z`); cursor >= new Date(`${window.start}T00:00:00Z`); cursor = new Date(cursor.getTime() - DAY_MS)) {
+      const day = isoDay(cursor);
+      if (!activeSet.has(day)) break;
+      current += 1; currentStart = day;
     }
   }
-  let current = 0;
-  let currentStart = null;
-  for (let cursor = new Date(end); cursor >= start; cursor = new Date(cursor.getTime() - DAY_MS)) {
-    const day = isoDay(cursor);
-    if (!activeDays.has(day)) break;
-    current += 1;
-    currentStart = day;
-  }
-  return {
-    current,
-    currentStart,
-    currentEnd: current ? window.end : null,
-    longest,
-    longestStart,
-    longestEnd
-  };
+  return { current, currentStart, currentEnd: latestActivityDate, latestActivityDate, longest, longestStart, longestEnd };
 }
 
 export function stabilizeGeneratedAt(previous, current) {
   if (!previous?.generatedAt) return current;
-  const { generatedAt: _previous, ...previousComparable } = previous;
-  const { generatedAt: _current, ...currentComparable } = current;
-  return JSON.stringify(previousComparable) === JSON.stringify(currentComparable)
-    ? { ...current, generatedAt: previous.generatedAt }
-    : current;
+  const { generatedAt: _a, ...a } = previous;
+  const { generatedAt: _b, ...b } = current;
+  return JSON.stringify(a) === JSON.stringify(b) ? { ...current, generatedAt: previous.generatedAt } : current;
 }
 
-function escapeXml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[character]);
-}
+const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;' })[c]);
+const fmt = (value) => Number(value).toLocaleString('en-US');
+const stamp = (iso) => `${iso.slice(0, 10)} ${iso.slice(11, 16)} UTC`;
+const range = (a, b) => !a ? 'No qualifying activity' : a === b ? a : `${a} → ${b}`;
 
-function compact(value) {
-  return Number(value).toLocaleString('en-US');
-}
-
-function snapshot(isoString) {
-  return `${isoString.slice(0, 10)} ${isoString.slice(11, 16)} UTC`;
-}
-
-function dateRange(start, end) {
-  if (!start || !end) return 'No active streak';
-  if (start === end) return start;
-  return `${start} → ${end}`;
-}
-
-function icon(kind, x, y) {
-  const common = `transform="translate(${x} ${y})" fill="none" stroke="#7dd3fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
-  if (kind === 'star') return `<g ${common}><path d="M12 2.8l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></g>`;
-  if (kind === 'commit') return `<g ${common}><circle cx="5" cy="12" r="3"/><circle cx="19" cy="12" r="3"/><path d="M8 12h8"/></g>`;
-  if (kind === 'pull') return `<g ${common}><circle cx="6" cy="5" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M6 8v9a2 2 0 002 2h7M18 16V8a3 3 0 00-3-3h-3"/></g>`;
-  if (kind === 'issue') return `<g ${common}><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/></g>`;
-  return `<g ${common}><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h10M7 14h6"/></g>`;
+function ring(coverage, mobile) {
+  const r = mobile ? 69 : 77; const circumference = 2 * Math.PI * r; const dash = circumference * coverage / 100;
+  return `<circle r="${r}" fill="#0a1324" stroke="#25334b" stroke-width="13"/><circle r="${r}" fill="none" stroke="#8b5cf6" stroke-width="13" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circumference.toFixed(1)}" transform="rotate(-90)"/>`;
 }
 
 export function renderGitHubStats(stats, mobile = false) {
-  const metrics = stats.githubStats;
-  const coverage = stats.scope.skillAuraProjects ? Math.round(metrics.contributedRepositoriesLastYear / stats.scope.skillAuraProjects * 100) : 0;
-  const circumference = 2 * Math.PI * (mobile ? 70 : 78);
-  const dash = circumference * coverage / 100;
+  const m = stats.githubStats;
+  const coverage = stats.scope.statsProjects ? Math.round(m.activeRepositories12Months / stats.scope.statsProjects * 100) : 0;
   const rows = [
-    ['star', 'TOTAL STARS EARNED', metrics.totalStars],
-    ['commit', 'TRACKED COMMITS', metrics.totalCommits],
-    ['pull', 'PULL REQUESTS', metrics.totalPullRequests],
-    ['issue', 'ISSUES', metrics.totalIssues],
-    ['repo', 'ACTIVE REPOSITORIES · 12M', metrics.contributedRepositoriesLastYear]
+    ['★','STARS ON TRACKED REPOSITORIES',m.stars],
+    ['●','TRACKED COMMITS · ALL TIME',m.allTimeDefaultBranchCommits],
+    ['↗','PULL REQUESTS',m.pullRequests],
+    ['!','ISSUES',m.issues],
+    ['▣','ACTIVE PROJECTS · 12M',m.activeRepositories12Months]
   ];
+  const defs = `<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050914"/><stop offset=".55" stop-color="#10172a"/><stop offset="1" stop-color="#071827"/></linearGradient><linearGradient id="edge"><stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>`;
+  const style = `<style>.t{font:800 31px ui-sans-serif,system-ui;fill:#f8fafc}.k{font:700 11px ui-monospace,monospace;fill:#91a5c0;letter-spacing:.65px}.v{font:800 29px ui-sans-serif,system-ui;fill:#f8fafc}.s{font:600 10px ui-monospace,monospace;fill:#71849e;letter-spacing:.45px}.ok{font:800 10px ui-monospace,monospace;fill:#5ee3bd;letter-spacing:1px}.i{font:800 17px ui-sans-serif,system-ui;fill:#7dd3fc}.score{font:800 45px ui-sans-serif,system-ui;fill:#f8fafc}</style>`;
   if (mobile) {
-    const rowMarkup = rows.map(([kind, label, value], index) => {
-      const y = 198 + index * 70;
-      return `${icon(kind, 54, y - 20)}<text x="94" y="${y - 5}" class="label">${label}</text><text x="650" y="${y + 5}" text-anchor="end" class="value">${compact(value)}</text><line x1="50" y1="${y + 29}" x2="670" y2="${y + 29}" stroke="#1f2c40"/>`;
-    }).join('');
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="700" viewBox="0 0 720 700" role="img" aria-labelledby="statsTitle statsDesc"><title id="statsTitle">SkillAura GitHub Stats</title><desc id="statsDesc">Portfolio repository statistics from the twelve approved SkillAura projects: ${metrics.totalStars} stars, ${metrics.totalCommits} default-branch commits, ${metrics.totalPullRequests} pull requests, ${metrics.totalIssues} issues, and ${metrics.contributedRepositoriesLastYear} repositories active in the last twelve months.</desc><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070b14"/><stop offset=".55" stop-color="#10172a"/><stop offset="1" stop-color="#0a1020"/></linearGradient><linearGradient id="edge"><stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><style>.eyebrow{font:700 12px ui-monospace,monospace;fill:#879bb6;letter-spacing:1.4px}.title{font:800 31px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 12px ui-monospace,monospace;fill:#a9b9cd;letter-spacing:.7px}.value{font:800 27px ui-sans-serif,system-ui;fill:#f8fafc}.score{font:800 43px ui-sans-serif,system-ui;fill:#f8fafc}.small{font:600 10px ui-monospace,monospace;fill:#71849e;letter-spacing:.5px}.status{font:800 10px ui-monospace,monospace;fill:#70e1c1;letter-spacing:1px}</style><rect x="4" y="4" width="712" height="692" rx="28" fill="#040711" stroke="#172033" stroke-width="8"/><rect x="10" y="10" width="700" height="680" rx="22" fill="url(#bg)" stroke="url(#edge)" stroke-opacity=".75"/><circle cx="44" cy="46" r="5" fill="#41d7b2"/><text x="58" y="50" class="status">SYNCED</text><text x="674" y="50" text-anchor="end" class="small">${escapeXml(snapshot(stats.generatedAt))}</text><text x="42" y="105" class="eyebrow">SKILLAURA // PORTFOLIO INTELLIGENCE</text><text x="42" y="145" class="title">GitHub Stats</text>${rowMarkup}<g transform="translate(360 606)"><circle r="70" fill="#0b1220" stroke="#24324a" stroke-width="13"/><circle r="70" fill="none" stroke="#8b5cf6" stroke-width="13" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circumference.toFixed(1)}" transform="rotate(-90)"/><text y="4" text-anchor="middle" class="score">${coverage}%</text><text y="28" text-anchor="middle" class="small">ACTIVE COVERAGE</text></g><text x="42" y="670" class="small">APPROVED SKILLAURA PROJECTS · FORK + EXTERNAL WORK EXCLUDED</text></svg>`;
+    const list = rows.map(([icon,label,value],i)=>{const y=185+i*67;return `<text x="48" y="${y}" class="i">${icon}</text><text x="82" y="${y-2}" class="k">${label}</text><text x="670" y="${y+4}" text-anchor="end" class="v">${fmt(value)}</text><line x1="42" y1="${y+27}" x2="678" y2="${y+27}" stroke="#1f2c40"/>`;}).join('');
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="690" viewBox="0 0 720 690" role="img" aria-labelledby="title desc"><title id="title">SkillAura Portfolio Activity</title><desc id="desc">Current statistics for ${stats.scope.statsProjects} tracked SkillAura projects.</desc>${defs}${style}<rect x="6" y="6" width="708" height="678" rx="26" fill="url(#bg)" stroke="url(#edge)"/><circle cx="40" cy="40" r="5" fill="#41d7b2"/><text x="54" y="44" class="ok">SYNCED</text><text x="680" y="44" text-anchor="end" class="s">${esc(stamp(stats.generatedAt))}</text><text x="40" y="93" class="s">SKILLAURA // PORTFOLIO ACTIVITY</text><text x="40" y="132" class="t">GitHub Stats</text>${list}<g transform="translate(360 594)">${ring(coverage,true)}<text y="5" text-anchor="middle" class="score">${coverage}%</text><text y="29" text-anchor="middle" class="s">ACTIVE COVERAGE</text></g><text x="360" y="674" text-anchor="middle" class="s">${m.activeRepositories12Months} OF ${stats.scope.statsProjects} PROJECTS · ROLLING 12 MONTHS</text></svg>`;
   }
-  const rowMarkup = rows.map(([kind, label, value], index) => {
-    const column = index < 3 ? 0 : 1;
-    const row = column === 0 ? index : index - 3;
-    const x = column === 0 ? 62 : 425;
-    const y = 174 + row * 82;
-    return `${icon(kind, x, y - 23)}<text x="${x + 40}" y="${y - 7}" class="label">${label}</text><text x="${x + 40}" y="${y + 24}" class="value">${compact(value)}</text>`;
-  }).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-labelledby="statsTitle statsDesc"><title id="statsTitle">SkillAura GitHub Stats</title><desc id="statsDesc">Portfolio repository statistics from the twelve approved SkillAura projects: ${metrics.totalStars} stars, ${metrics.totalCommits} default-branch commits, ${metrics.totalPullRequests} pull requests, ${metrics.totalIssues} issues, and ${metrics.contributedRepositoriesLastYear} repositories active in the last twelve months.</desc><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070b14"/><stop offset=".55" stop-color="#10172a"/><stop offset="1" stop-color="#0a1020"/></linearGradient><linearGradient id="edge"><stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f59e0b"/></linearGradient><radialGradient id="glow"><stop stop-color="#7c3aed" stop-opacity=".2"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient></defs><style>.eyebrow{font:700 12px ui-monospace,monospace;fill:#879bb6;letter-spacing:1.5px}.title{font:800 31px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 11px ui-monospace,monospace;fill:#92a6c0;letter-spacing:.8px}.value{font:800 28px ui-sans-serif,system-ui;fill:#f8fafc}.score{font:800 47px ui-sans-serif,system-ui;fill:#f8fafc}.small{font:600 10px ui-monospace,monospace;fill:#71849e;letter-spacing:.55px}.status{font:800 10px ui-monospace,monospace;fill:#70e1c1;letter-spacing:1px}</style><rect x="4" y="4" width="1192" height="452" rx="28" fill="#040711" stroke="#172033" stroke-width="8"/><rect x="10" y="10" width="1180" height="440" rx="22" fill="url(#bg)" stroke="url(#edge)" stroke-opacity=".75"/><ellipse cx="1010" cy="210" rx="240" ry="220" fill="url(#glow)"/><circle cx="44" cy="44" r="5" fill="#41d7b2"/><text x="58" y="48" class="status">SYNCED</text><text x="1154" y="48" text-anchor="end" class="small">UPDATED AUTOMATICALLY · ${escapeXml(snapshot(stats.generatedAt))}</text><line x1="38" y1="67" x2="1162" y2="67" stroke="#26344a"/><text x="48" y="105" class="eyebrow">SKILLAURA // PORTFOLIO INTELLIGENCE</text><text x="48" y="145" class="title">GitHub Stats</text>${rowMarkup}<line x1="786" y1="110" x2="786" y2="398" stroke="#26344a"/><g transform="translate(991 242)"><circle r="78" fill="#0b1220" stroke="#24324a" stroke-width="14"/><circle r="78" fill="none" stroke="#8b5cf6" stroke-width="14" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${circumference.toFixed(1)}" transform="rotate(-90)"/><text y="5" text-anchor="middle" class="score">${coverage}%</text><text y="31" text-anchor="middle" class="small">ACTIVE COVERAGE</text></g><text x="991" y="354" text-anchor="middle" class="label">${metrics.contributedRepositoriesLastYear} OF ${stats.scope.skillAuraProjects} PROJECTS</text><text x="991" y="377" text-anchor="middle" class="small">ACTIVE IN ROLLING 12 MONTHS</text><text x="48" y="425" class="small">APPROVED SKILLAURA PROJECTS · FORK + EXTERNAL WORK EXCLUDED</text></svg>`;
+  const list = rows.map(([icon,label,value],i)=>{const col=i<3?0:1;const row=col?i-3:i;const x=54+col*365;const y=177+row*79;return `<text x="${x}" y="${y}" class="i">${icon}</text><text x="${x+35}" y="${y-13}" class="k">${label}</text><text x="${x+35}" y="${y+20}" class="v">${fmt(value)}</text>`;}).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="450" viewBox="0 0 1200 450" role="img" aria-labelledby="title desc"><title id="title">SkillAura Portfolio Activity</title><desc id="desc">Current statistics for ${stats.scope.statsProjects} tracked SkillAura projects.</desc>${defs}${style}<rect x="6" y="6" width="1188" height="438" rx="26" fill="url(#bg)" stroke="url(#edge)"/><circle cx="40" cy="40" r="5" fill="#41d7b2"/><text x="54" y="44" class="ok">SYNCED</text><text x="1160" y="44" text-anchor="end" class="s">UPDATED AUTOMATICALLY · ${esc(stamp(stats.generatedAt))}</text><line x1="36" y1="66" x2="1164" y2="66" stroke="#26344a"/><text x="44" y="103" class="s">SKILLAURA // PORTFOLIO ACTIVITY</text><text x="44" y="140" class="t">GitHub Stats</text>${list}<line x1="785" y1="106" x2="785" y2="398" stroke="#26344a"/><g transform="translate(988 237)">${ring(coverage,false)}<text y="5" text-anchor="middle" class="score">${coverage}%</text><text y="29" text-anchor="middle" class="s">ACTIVE COVERAGE</text></g><text x="988" y="349" text-anchor="middle" class="k">${m.activeRepositories12Months} OF ${stats.scope.statsProjects} PROJECTS</text><text x="988" y="372" text-anchor="middle" class="s">ACTIVE IN ROLLING 12 MONTHS</text><text x="44" y="424" class="s">SKILLAURA PROJECTS · EXTERNAL WORK AND FORK EXCLUDED</text></svg>`;
+}
+
+function trend(months, mobile) {
+  const max = Math.max(1, ...months.map((m)=>m.commits));
+  const width = mobile ? 46 : 73; const gap = mobile ? 6 : 14; const baseX = mobile ? 42 : 48; const baseY = mobile ? 576 : 310; const maxH = mobile ? 94 : 82;
+  return months.map((m,i)=>{const h=Math.max(m.commits?5:2,Math.round(m.commits/max*maxH));const x=baseX+i*(width+gap);return `<g><rect x="${x}" y="${baseY-h}" width="${width}" height="${h}" rx="${Math.min(6,width/4)}" fill="${m.commits?'#7c3aed':'#26344a'}"><title>${esc(m.key)}: ${m.commits} commits on ${m.days} contribution days</title></rect><text x="${x+width/2}" y="${baseY+18}" text-anchor="middle" class="month">${esc(m.label)}</text></g>`;}).join('');
 }
 
 export function renderContributionActivity(stats, mobile = false) {
-  const contribution = stats.contributionActivity;
-  const items = [
-    [compact(contribution.totalTrackedContributions), 'TRACKED CONTRIBUTIONS', `${stats.activity.window.start} → ${stats.activity.window.end}`],
-    [compact(contribution.currentStreak), 'CURRENT STREAK', dateRange(contribution.currentStart, contribution.currentEnd)],
-    [compact(contribution.longestStreak), 'LONGEST STREAK', dateRange(contribution.longestStart, contribution.longestEnd)]
-  ];
-  if (mobile) {
-    const cards = items.map(([value, label, detail], index) => `<g transform="translate(42 ${125 + index * 128})"><rect width="636" height="106" rx="16" fill="#0f1829" stroke="#26344a"/><text x="24" y="49" class="number">${escapeXml(value)}</text><text x="612" y="41" text-anchor="end" class="label">${escapeXml(label)}</text><text x="612" y="66" text-anchor="end" class="detail">${escapeXml(detail)}</text></g>`).join('');
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560" role="img" aria-labelledby="activityTitle activityDesc"><title id="activityTitle">SkillAura Contribution Activity</title><desc id="activityDesc">Rolling twelve-month tracked repository contribution total, current active-day streak, and longest active-day streak for the approved SkillAura project scope.</desc><style>.title{font:800 28px ui-sans-serif,system-ui;fill:#f8fafc}.number{font:800 39px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:800 12px ui-monospace,monospace;fill:#b6c5d8;letter-spacing:.8px}.detail{font:600 10px ui-monospace,monospace;fill:#71849e}.small{font:600 10px ui-monospace,monospace;fill:#71849e}</style><rect width="720" height="560" rx="24" fill="#080e1b"/><text x="42" y="62" class="title">Contribution Activity</text><text x="678" y="61" text-anchor="end" class="small">REPOSITORY ACTIVITY · UTC DAYS</text>${cards}<text x="42" y="532" class="small">DEFAULT-BRANCH COMMITS · ALL AUTHORS + AUTOMATION</text></svg>`;
-  }
-  const cards = items.map(([value, label, detail], index) => `<g transform="translate(${42 + index * 376} 105)"><rect width="354" height="135" rx="18" fill="#0f1829" stroke="#26344a"/><text x="177" y="61" text-anchor="middle" class="number">${escapeXml(value)}</text><text x="177" y="88" text-anchor="middle" class="label">${escapeXml(label)}</text><text x="177" y="113" text-anchor="middle" class="detail">${escapeXml(detail)}</text></g>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="290" viewBox="0 0 1200 290" role="img" aria-labelledby="activityTitle activityDesc"><title id="activityTitle">SkillAura Contribution Activity</title><desc id="activityDesc">Rolling twelve-month tracked repository contribution total, current active-day streak, and longest active-day streak for the approved SkillAura project scope.</desc><style>.title{font:800 27px ui-sans-serif,system-ui;fill:#f8fafc}.number{font:800 40px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:800 11px ui-monospace,monospace;fill:#b6c5d8;letter-spacing:.8px}.detail{font:600 10px ui-monospace,monospace;fill:#71849e}.small{font:600 10px ui-monospace,monospace;fill:#71849e}</style><rect width="1200" height="290" rx="24" fill="#080e1b"/><text x="42" y="58" class="title">Contribution Activity</text><text x="1158" y="57" text-anchor="end" class="small">REPOSITORY ACTIVITY · UTC DAYS</text>${cards}<text x="42" y="270" class="small">DEFAULT-BRANCH COMMITS · ALL AUTHORS + AUTOMATION</text></svg>`;
+  const c = stats.contributionActivity;
+  const items = [[fmt(c.rollingCommits),'ROLLING 12M COMMITS',`${stats.activity.window.start} → ${stats.activity.window.end}`],[fmt(c.contributionDays),'CONTRIBUTION DAYS','Days with ≥1 tracked commit'],[fmt(c.currentStreak),'CURRENT STREAK',range(c.currentStart,c.currentEnd)],[fmt(c.longestStreak),'LONGEST STREAK',range(c.longestStart,c.longestEnd)]];
+  const style=`<style>.t{font:800 28px ui-sans-serif,system-ui;fill:#f8fafc}.n{font:800 38px ui-sans-serif,system-ui;fill:#f8fafc}.k{font:800 11px ui-monospace,monospace;fill:#b6c5d8;letter-spacing:.7px}.d{font:600 9.5px ui-monospace,monospace;fill:#71849e}.s{font:600 10px ui-monospace,monospace;fill:#71849e}.month{font:600 9px ui-monospace,monospace;fill:#71849e}</style>`;
+  if(mobile){const cards=items.map(([v,k,d],i)=>`<g transform="translate(42 ${105+i*94})"><rect width="636" height="78" rx="14" fill="#0f1829" stroke="#26344a"/><text x="22" y="47" class="n">${esc(v)}</text><text x="612" y="31" text-anchor="end" class="k">${esc(k)}</text><text x="612" y="53" text-anchor="end" class="d">${esc(d)}</text></g>`).join('');return `<svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640" role="img" aria-labelledby="title desc"><title id="title">SkillAura Contribution Activity</title><desc id="desc">Rolling twelve-month commits, contribution days, streaks, and monthly commit trend.</desc>${style}<rect width="720" height="640" rx="24" fill="#080e1b"/><text x="42" y="57" class="t">Contribution Activity</text><text x="678" y="56" text-anchor="end" class="s">UTC ACTIVITY DAYS</text>${cards}<text x="42" y="500" class="k">MONTHLY COMMIT TREND</text>${trend(c.monthly,true)}<text x="42" y="626" class="s">CURRENT STREAK ENDS AT LATEST QUALIFYING DATE · ALL AUTHORS + AUTOMATION</text></svg>`;}
+  const cards=items.map(([v,k,d],i)=>`<g transform="translate(${42+i*282} 92)"><rect width="264" height="112" rx="16" fill="#0f1829" stroke="#26344a"/><text x="132" y="48" text-anchor="middle" class="n">${esc(v)}</text><text x="132" y="73" text-anchor="middle" class="k">${esc(k)}</text><text x="132" y="94" text-anchor="middle" class="d">${esc(d)}</text></g>`).join('');return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="370" viewBox="0 0 1200 370" role="img" aria-labelledby="title desc"><title id="title">SkillAura Contribution Activity</title><desc id="desc">Rolling twelve-month commits, contribution days, streaks, and monthly commit trend.</desc>${style}<rect width="1200" height="370" rx="24" fill="#080e1b"/><text x="42" y="55" class="t">Contribution Activity</text><text x="1158" y="54" text-anchor="end" class="s">DEFAULT-BRANCH ACTIVITY · UTC DAYS</text>${cards}<text x="48" y="235" class="k">MONTHLY COMMIT TREND</text>${trend(c.monthly,false)}<text x="48" y="354" class="s">CURRENT STREAK ENDS AT LATEST QUALIFYING DATE · ALL AUTHORS + AUTOMATION</text></svg>`;
 }

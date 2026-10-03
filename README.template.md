@@ -2,70 +2,81 @@
 
 ![SkillAura — software products, web platforms and automation](./assets/hero.svg)
 
-<br />
-
 {{HERO_BADGES}}
 
 {{PROFILE_SUMMARY}}
 
 </div>
 
-## GitHub Stats
+## SkillAura Portfolio Activity
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/github-stats-mobile.svg">
-  <img alt="SkillAura GitHub portfolio statistics" src="./assets/github-stats.svg" width="100%">
+  <img alt="SkillAura portfolio statistics" src="./assets/github-stats.svg" width="100%">
 </picture>
 
 ## Contribution Activity
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/contribution-activity-mobile.svg">
-  <img alt="SkillAura tracked repository contribution activity and streaks" src="./assets/contribution-activity.svg" width="100%">
+  <img alt="SkillAura rolling twelve-month commit activity and contribution-day streaks" src="./assets/contribution-activity.svg" width="100%">
 </picture>
 
-## Language Footprint
+## SkillAura Language Footprint
 
-![Language footprint across approved SkillAura projects](./assets/languages.svg)
+![Language footprint across twelve SkillAura portfolio projects](./assets/languages.svg)
 
 ## Technology Footprint
 
 <div align="center">
 
-{{TECHNOLOGY_BADGES}}
+{{TECHNOLOGY_CHIPS}}
 
 </div>
 
-<sub>Technologies appearing across the verified portfolio.</sub>
+<sub>Technologies appearing in portfolio repositories. This is a repository footprint, not an expertise ranking.</sub>
 
-## Featured Projects
+## Recently Updated Projects
 
-<sub>Four public SkillAura repositories with the most recent repository activity. Placement is not a quality ranking.</sub>
+<sub>A neutral view of the four public SkillAura repositories with the latest GitHub activity.</sub>
 
-{{FEATURED_PROJECTS}}
+<picture>
+  <source media="(max-width: 600px)" srcset="./assets/recent-projects-mobile.svg">
+  <img alt="Recently updated SkillAura projects" src="./assets/recent-projects.svg" width="100%">
+</picture>
+
+{{RECENT_PROJECT_LINKS}}
 
 ## SkillAura Project Directory
 
-{{PUBLIC_PROJECTS}}
+<picture>
+  <source media="(max-width: 600px)" srcset="./assets/public-projects-mobile.svg">
+  <img alt="Public SkillAura project directory" src="./assets/public-projects.svg" width="100%">
+</picture>
 
-## Private / Closed-Source
+{{PUBLIC_PROJECT_LINKS}}
 
-<sub>Approved for public naming. Source, private links, repository-level metrics, and implementation details remain private.</sub>
+## Private / Closed-Source Projects
 
-{{PRIVATE_PROJECTS}}
+<picture>
+  <source media="(max-width: 600px)" srcset="./assets/private-projects-mobile.svg">
+  <img alt="Private SkillAura projects with safe aggregate activity" src="./assets/private-projects.svg" width="100%">
+</picture>
+
+## E-VMS · External Professional Work
+
+<p align="center"><img src="./assets/e-vms-logo.png" alt="Official E-VMS project artwork" width="220"></p>
+
+[![E-VMS external professional work](./assets/e-vms.svg)](https://github.com/Evisionindia/EVMS-website)
+
+Primary repository: **Evisionindia/E-VMS** · Related work: **Evisionindia/VMS** · [Evisionindia/EVMS-website](https://github.com/Evisionindia/EVMS-website)
 
 ## Forked / Derived Work
 
-{{FORKED_PROJECTS}}
-
-## Selected External / Collaborative Work
-
-<sub>These projects retain their actual GitHub ownership and are not counted as SkillAura-owned repositories.</sub>
-
-{{EXTERNAL_PROJECTS}}
+[![Hoo-Bank forked and derived work](./assets/hoo-bank.svg)](https://github.com/Skill-Aura-Official/Hoo-Bank)
 
 ---
 
 <div align="center">
-  <sub>Activity is generated from approved tracked GitHub repository data across all authors and automation accounts and updated automatically.</sub>
+  <sub>Portfolio metrics are generated from tracked GitHub repository activity and updated automatically.</sub>
 </div>

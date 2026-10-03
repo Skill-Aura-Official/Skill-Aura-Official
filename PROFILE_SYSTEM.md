@@ -1,83 +1,48 @@
 # SkillAura profile system
 
-## Purpose
+## Architecture
 
-This repository is the GitHub user profile for `Skill-Aura-Official`. The visitor-facing `README.md` is generated from structured project definitions and live GitHub repository data.
+`README.md`, `data/stats.json`, and every SVG in `assets/` are generated from `README.template.md`, the single project manifest at `data/projects.json`, and current GitHub API data. `scripts/generate-profile.mjs` performs the refresh; `scripts/validate-profile.mjs` enforces scope, security, and presentation rules.
 
-## Source files
+Each manifest entry declares its repository, category, visibility, inclusion flags, display name, description, image, related repositories, attribution, and tags. The flags are the only source for deciding which projects enter statistics, language bytes, rolling activity, and the portfolio.
 
-- `README.template.md` contains the public presentation structure.
-- `data/projects.json` is the approved project and presentation manifest.
-- `scripts/generate-profile.mjs` fetches GitHub data and generates the README, statistics snapshot, and SVG assets.
-- `scripts/validate-profile.mjs` verifies scope, generated files, workflow configuration, and presentation invariants.
+## Canonical metric model
 
-## Generated files
+The main dashboard contains only the twelve configured SkillAura projects. External professional work and forked or derived work are presented separately.
 
-- `README.md`
-- `data/stats.json`
-- `assets/hero.svg`
-- `assets/github-stats.svg`
-- `assets/github-stats-mobile.svg`
-- `assets/contribution-activity.svg`
-- `assets/contribution-activity-mobile.svg`
-- `assets/languages.svg`
+- **Stars on tracked repositories:** current sum of GitHub `stargazers_count` across projects with `includeInStats: true`.
+- **Tracked commits · all time:** all commits reachable from each tracked repository's default branch, across all authors and automation accounts.
+- **Pull requests:** open and closed pull requests returned by each tracked repository's pull-request collection.
+- **Issues:** open and closed repository issues; pull-request records are excluded.
+- **Active projects · 12 months:** tracked projects containing at least one qualifying default-branch commit in the rolling 365-day window.
+- **Rolling 12-month commits:** qualifying default-branch commits dated inside that window.
+- **Contribution days:** UTC calendar days inside the window with at least one qualifying tracked commit.
+- **Current streak:** consecutive contribution days ending at the latest qualifying date. It is not tied to the refresh date.
+- **Longest streak:** maximum consecutive contribution-day run inside the rolling window.
+- **Active coverage:** active projects divided by all twelve tracked SkillAura projects, rounded to a whole percentage.
 
-Generated output is written only when content changes. The previous `generatedAt` value is retained when the underlying repository data is unchanged, which keeps scheduled runs idempotent.
+GitHub language-byte totals include only projects with `includeInLanguages: true`. They describe repository composition and are not an expertise score.
 
-## Metrics
+## Private-data boundary
 
-All dashboard statistics use only the twelve approved SkillAura projects. Forked and external repositories are displayed separately in the profile and are excluded from these totals.
+The four configured private SkillAura projects may publish their names and safe aggregates: primary language, all-time default-branch commit count, rolling commit count, and last repository activity date. The generator never publishes private URLs, source, paths, issue or pull-request details, credentials, customer data, or infrastructure.
 
-- **Total stars earned:** sum of current GitHub `stargazers_count` values.
-- **Tracked commits:** total commits reachable from each repository's default branch.
-- **Pull requests:** all open and closed pull requests returned by GitHub issue search with `type:pr`.
-- **Issues:** all open and closed issues returned by GitHub issue search with `type:issue`; pull requests are excluded.
-- **Active repositories, 12 months:** repositories with at least one default-branch commit during the rolling 365-day window.
-- **Tracked contributions:** default-branch repository commits across all authors and automation accounts during that rolling window. This is repository activity, not personal contribution activity.
-- **Current streak:** consecutive qualifying UTC activity days ending on the snapshot date. A gap on the snapshot date produces a zero current streak.
-- **Longest streak:** longest sequence of consecutive qualifying UTC activity days inside the rolling window.
-- **Active coverage ring:** active repositories divided by the twelve approved SkillAura projects, rounded to a whole percentage. It is an objective coverage ratio, not a grade or quality score.
+The generator requires `PROFILE_DATA_TOKEN`; Actions maps it from `SKILLAURA_PROFILE_TOKEN`. The value is used only in authenticated API requests and is never written or logged. Generation fails if configured private repositories cannot be read.
 
-The snapshot timestamp advances only when repository-derived output changes. This preserves the six-hour refresh workflow without creating empty timestamp-only commits. It therefore means "data snapshot represented by this generated asset," rather than a claim of real-time streaming.
+## Automation and idempotence
 
-Language percentages use GitHub's language-byte API and aggregate the twelve approved SkillAura projects. Repository language data describes code composition and is not an expertise score.
+`.github/workflows/refresh-profile.yml` runs every six hours and supports manual dispatch. It generates, tests, validates, and commits only changed generated files.
 
-Forked and external repositories remain separate from SkillAura project metrics.
+`generatedAt` is retained when repository-derived data is identical to the previous snapshot. Therefore identical GitHub input produces identical output and no timestamp-only commit.
 
-## Private repository access
+## Local verification
 
-The generator requires `PROFILE_DATA_TOKEN`. GitHub Actions maps this variable from the encrypted repository secret `SKILLAURA_PROFILE_TOKEN`.
-
-The credential must be able to read the four approved private SkillAura repositories. It is used only for authenticated GitHub API requests and is never written to generated output or logged by the generator. The workflow's built-in GitHub token remains responsible for committing generated changes to this profile repository.
-
-If the secret is unavailable or cannot read the approved scope, generation fails instead of publishing partial public-only metrics.
-
-## Automation
-
-`.github/workflows/refresh-profile.yml` runs every six hours and supports manual dispatch. It:
-
-1. checks out the profile repository;
-2. sets up Node.js;
-3. generates live profile data;
-4. validates the output;
-5. commits only when generated files changed.
-
-Workflow permissions are limited to repository contents write access, which is required for automated refresh commits.
-
-## Local refresh
-
-Set `PROFILE_DATA_TOKEN` in process memory and run:
+Set `PROFILE_DATA_TOKEN` in process memory, then run:
 
 ```bash
 npm run generate
+npm test
 npm run validate
 ```
 
-Do not place the credential in this repository or in an environment file within the checkout.
-
-## Troubleshooting
-
-- **Missing token:** configure `SKILLAURA_PROFILE_TOKEN` in repository Actions secrets.
-- **API authorization failure:** verify that the secret can read every approved private repository.
-- **No commit after a scheduled run:** this is expected when the underlying data has not changed.
-- **Scope validation failure:** reconcile `data/projects.json` with the approved portfolio scope before regenerating.
+Never store the token in this repository or an environment file inside the checkout.
