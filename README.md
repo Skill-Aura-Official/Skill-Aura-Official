@@ -41,8 +41,8 @@ A portfolio of software products, web platforms, automation projects, and engine
 <sub>A neutral view of the four public SkillAura repositories with the latest GitHub activity.</sub>
 
 <picture>
-  <source media="(max-width: 600px)" srcset="./assets/recent-projects-mobile.svg">
-  <img alt="Recently updated SkillAura projects" src="./assets/recent-projects.svg" width="100%">
+  <source media="(max-width: 600px)" srcset="./assets/recent-projects-mobile.svg?v=2">
+  <img alt="Recently updated SkillAura projects" src="./assets/recent-projects.svg?v=2" width="100%">
 </picture>
 
 [Attractive Beauty Parlour](https://github.com/Skill-Aura-Official/attractive-beauty-parlour) · [Empire RPG Bot](https://github.com/Skill-Aura-Official/EmpireRPG_Bot) · [TSB Council](https://github.com/Skill-Aura-Official/TSB-Council) · [Anisha](https://github.com/Skill-Aura-Official/Anisha)
@@ -50,8 +50,8 @@ A portfolio of software products, web platforms, automation projects, and engine
 ## SkillAura Project Directory
 
 <picture>
-  <source media="(max-width: 600px)" srcset="./assets/public-projects-mobile.svg">
-  <img alt="Public SkillAura project directory" src="./assets/public-projects.svg" width="100%">
+  <source media="(max-width: 600px)" srcset="./assets/public-projects-mobile.svg?v=2">
+  <img alt="Public SkillAura project directory" src="./assets/public-projects.svg?v=2" width="100%">
 </picture>
 
 [Anisha](https://github.com/Skill-Aura-Official/Anisha) · [Attractive Beauty Parlour](https://github.com/Skill-Aura-Official/attractive-beauty-parlour) · [Empire RPG Bot](https://github.com/Skill-Aura-Official/EmpireRPG_Bot) · [Innovathon-Public](https://github.com/Skill-Aura-Official/Innovathon-Public) · [Shivratri](https://github.com/Skill-Aura-Official/Shivratri) · [SkillAura Pathfinder](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) · [SkillPath Launch](https://github.com/Skill-Aura-Official/skillpath-launch) · [TSB Council](https://github.com/Skill-Aura-Official/TSB-Council)
