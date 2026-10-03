@@ -82,7 +82,7 @@ export function renderGitHubStats(stats, mobile = false) {
     ['●','TRACKED COMMITS · ALL TIME',m.allTimeDefaultBranchCommits],
     ['↗','PULL REQUESTS',m.pullRequests],
     ['!','ISSUES',m.issues],
-    ['▣','ACTIVE PROJECTS · 12M',m.activeRepositories12Months]
+    ['▣','ACTIVE REPOSITORIES · 12M',m.activeRepositories12Months]
   ];
   const defs = `<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050914"/><stop offset=".55" stop-color="#10172a"/><stop offset="1" stop-color="#071827"/></linearGradient><linearGradient id="edge"><stop stop-color="#38bdf8"/><stop offset=".55" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>`;
   const style = `<style>.t{font:800 31px ui-sans-serif,system-ui;fill:#f8fafc}.k{font:700 11px ui-monospace,monospace;fill:#91a5c0;letter-spacing:.65px}.v{font:800 29px ui-sans-serif,system-ui;fill:#f8fafc}.s{font:600 10px ui-monospace,monospace;fill:#71849e;letter-spacing:.45px}.ok{font:800 10px ui-monospace,monospace;fill:#5ee3bd;letter-spacing:1px}.i{font:800 17px ui-sans-serif,system-ui;fill:#7dd3fc}.score{font:800 45px ui-sans-serif,system-ui;fill:#f8fafc}</style>`;
