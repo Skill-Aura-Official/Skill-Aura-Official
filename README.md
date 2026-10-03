@@ -1,87 +1,65 @@
 <div align="center">
 
-# SkillAura
+![SkillAura — software products, web platforms and automation](./assets/hero.svg)
 
-### Verified projects, repository activity, and engineering work
+<br />
 
-[![Refresh profile metrics](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
+![Portfolio](https://img.shields.io/badge/Portfolio-12%20approved%20projects-7c3aed?style=for-the-badge) ![Activity](https://img.shields.io/badge/Activity-refreshes%20every%206%20hours-0284c7?style=for-the-badge) [![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
+
+A verified portfolio of software products, web platforms, automation projects, and engineering work.
 
 </div>
 
-This profile indexes the approved software repositories owned by **Skill-Aura-Official** and a small set of approved external references. Repository activity shown below describes activity across tracked repositories and must not be interpreted as an individual author's contribution count.
-
 ## Engineering Snapshot
 
-| Portfolio category | Included projects | Live metric coverage |
-|---|---:|---|
-| SkillAura projects | 12 | 8 public repositories |
-| Private / closed-source SkillAura projects | 4 | Named without repository-level metrics |
-| Forked / derived work | 1 | 1 public repository, reported separately |
-| Selected external / collaborative work | 3 | 1 public repository; 2 private repositories named without metrics |
-
-The charts are regenerated from GitHub data every day and can also be refreshed manually. Private repository credentials and implementation details are not used by the workflow.
+![Live SkillAura engineering statistics](./assets/engineering-stats.svg)
 
 ## Live Engineering Activity
 
-![Repository activity across approved public repositories](./assets/activity.svg)
+![Current-year repository activity heatmap across approved SkillAura projects](./assets/activity.svg)
 
 ## Language Footprint
 
-![Language footprint across tracked public SkillAura projects](./assets/languages.svg)
-
-GitHub language statistics describe repository contents. They do not by themselves establish individual expertise or authorship.
-
-## SkillAura Projects
-
-| Repository | Verified scope |
-|---|---|
-| [Anisha](https://github.com/Skill-Aura-Official/Anisha) | Telegram music-streaming bot implemented primarily in Python. |
-| [attractive-beauty-parlour](https://github.com/Skill-Aura-Official/attractive-beauty-parlour) | Beauty-parlour website with service, gallery, contact, offer, and administration interfaces. |
-| [EmpireRPG_Bot](https://github.com/Skill-Aura-Official/EmpireRPG_Bot) | Telegram role-playing game bot. |
-| [Innovathon-Public](https://github.com/Skill-Aura-Official/Innovathon-Public) | Public hackathon-platform repository. |
-| [Shivratri](https://github.com/Skill-Aura-Official/Shivratri) | Python sketch animation created for Maha Shivratri. |
-| [SkillAura-Pathfinder](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) | Gamified career-intelligence web application. |
-| [skillpath-launch](https://github.com/Skill-Aura-Official/skillpath-launch) | SkillMatchr job and career portal with job-seeker and recruiter interfaces. |
-| [TSB-Council](https://github.com/Skill-Aura-Official/TSB-Council) | Governance documentation repository. |
-
-## Private / Closed-Source Projects
-
-The following projects are approved for public naming. Their source, repository-level metrics, private URLs, and implementation details are intentionally omitted.
-
-| Project | Public description |
-|---|---|
-| **kiru** | Closed-source recruitment workflow platform. |
-| **SSB** | Closed-source Python project; implementation details are not published. |
-| **nyther-userbot** | Closed-source Telegram userbot project. |
-| **TenderIQ** | Closed-source tender workflow platform. |
-
-## Forked / Derived Work
-
-| Repository | Classification |
-|---|---|
-| [Hoo-Bank](https://github.com/Skill-Aura-Official/Hoo-Bank) | Public GitHub fork. It is reported separately and is not counted as original SkillAura work. No personal contribution claim is made. |
-
-## Selected External / Collaborative Work
-
-These repositories retain their actual GitHub ownership and are not represented as SkillAura-owned projects.
-
-| Repository | Ownership and disclosure |
-|---|---|
-| **Evisionindia/E-VMS** | Private repository owned by Evisionindia; implementation details and repository metrics are omitted. |
-| **Evisionindia/VMS** | Private repository owned by Evisionindia; implementation details and repository metrics are omitted. |
-| [Evisionindia/EVMS-website](https://github.com/Evisionindia/EVMS-website) | Public E-VMS website repository owned by Evisionindia. |
+![Language footprint across approved SkillAura projects](./assets/languages.svg)
 
 ## Technology Footprint
 
-The live language chart is derived from GitHub's language statistics for the eight approved public SkillAura repositories. It is a repository footprint, not a skills rating.
+<div align="center">
 
-## Data and Refresh Policy
+![TypeScript](https://img.shields.io/badge/TypeScript-verified-1e293b?style=for-the-badge) ![Python](https://img.shields.io/badge/Python-verified-1e293b?style=for-the-badge) ![JavaScript](https://img.shields.io/badge/JavaScript-verified-1e293b?style=for-the-badge) ![React](https://img.shields.io/badge/React-verified-1e293b?style=for-the-badge) ![Node\.js](https://img.shields.io/badge/Node.js-verified-1e293b?style=for-the-badge) ![Supabase](https://img.shields.io/badge/Supabase-verified-1e293b?style=for-the-badge) ![Docker](https://img.shields.io/badge/Docker-verified-1e293b?style=for-the-badge)
 
-- Source: GitHub REST API.
-- Refresh: daily schedule plus manual workflow dispatch.
-- Scope: approved public repositories defined in [data/projects.json](./data/projects.json).
-- Categories remain separate: SkillAura projects, forked work, and external work.
-- Generated files change only when the underlying metrics change.
-- The workflow uses GitHub Actions' built-in token and stores no personal token.
+</div>
 
-<sub>Last metrics refresh and exact counts are shown inside the generated activity asset and in <a href="./data/stats.json">data/stats.json</a>.</sub>
+<sub>Technologies appearing across the verified portfolio.</sub>
+
+## Featured Projects
+
+<sub>Four public SkillAura repositories with the most recent repository activity. Placement is not a quality ranking.</sub>
+
+<table><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/attractive-beauty-parlour">attractive-beauty-parlour</a></h3><sub>RECENT PUBLIC PROJECT</sub><p>Beauty-parlour website with service, gallery, contact, offer, and administration interfaces.</p><p><kbd>TypeScript</kbd> <kbd>React</kbd> <kbd>Supabase</kbd></p><br /><sub>Latest repository activity · 2026-07-06</sub></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/EmpireRPG_Bot">EmpireRPG_Bot</a></h3><sub>RECENT PUBLIC PROJECT</sub><p>Telegram role-playing game bot.</p><p><kbd>Python</kbd> <kbd>Telegram</kbd></p><br /><sub>Latest repository activity · 2026-06-08</sub></td></tr><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/TSB-Council">TSB-Council</a></h3><sub>RECENT PUBLIC PROJECT</sub><p>Governance documentation repository.</p><p><kbd>Documentation</kbd></p><br /><sub>Latest repository activity · 2026-05-30</sub></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/Anisha">Anisha</a></h3><sub>RECENT PUBLIC PROJECT</sub><p>Telegram music-streaming bot implemented primarily in Python.</p><p><kbd>Python</kbd> <kbd>Telegram</kbd> <kbd>Docker</kbd></p><br /><sub>Latest repository activity · 2026-05-30</sub></td></tr></table>
+
+## SkillAura Project Directory
+
+<table><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/Anisha">Anisha</a></h3><sub>PUBLIC REPOSITORY</sub><p>Telegram music-streaming bot implemented primarily in Python.</p><p><kbd>Python</kbd> <kbd>Telegram</kbd> <kbd>Docker</kbd></p></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/attractive-beauty-parlour">attractive-beauty-parlour</a></h3><sub>PUBLIC REPOSITORY</sub><p>Beauty-parlour website with service, gallery, contact, offer, and administration interfaces.</p><p><kbd>TypeScript</kbd> <kbd>React</kbd> <kbd>Supabase</kbd></p></td></tr><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/EmpireRPG_Bot">EmpireRPG_Bot</a></h3><sub>PUBLIC REPOSITORY</sub><p>Telegram role-playing game bot.</p><p><kbd>Python</kbd> <kbd>Telegram</kbd></p></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/Innovathon-Public">Innovathon-Public</a></h3><sub>PUBLIC REPOSITORY</sub><p>Public hackathon-platform repository.</p><p><kbd>JavaScript</kbd></p></td></tr><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/Shivratri">Shivratri</a></h3><sub>PUBLIC REPOSITORY</sub><p>Python sketch animation created for Maha Shivratri.</p><p><kbd>Python</kbd></p></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/SkillAura-Pathfinder">SkillAura-Pathfinder</a></h3><sub>PUBLIC REPOSITORY</sub><p>Gamified career-intelligence web application.</p><p><kbd>TypeScript</kbd> <kbd>React</kbd></p></td></tr><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/skillpath-launch">skillpath-launch</a></h3><sub>PUBLIC REPOSITORY</sub><p>SkillMatchr job and career portal with job-seeker and recruiter interfaces.</p><p><kbd>TypeScript</kbd> <kbd>React</kbd> <kbd>Supabase</kbd></p></td><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/TSB-Council">TSB-Council</a></h3><sub>PUBLIC REPOSITORY</sub><p>Governance documentation repository.</p><p><kbd>Documentation</kbd></p></td></tr></table>
+
+## Private / Closed-Source
+
+<sub>Approved for public naming. Source, private links, repository-level metrics, and implementation details remain private.</sub>
+
+<table><tr><td width="50%" valign="top"><h3>kiru</h3><sub>PRIVATE / CLOSED SOURCE</sub><p>Closed-source recruitment workflow platform.</p><p><kbd>Private / Closed Source</kbd></p></td><td width="50%" valign="top"><h3>SSB</h3><sub>PRIVATE / CLOSED SOURCE</sub><p>Closed-source Telegram role-playing game project.</p><p><kbd>Private / Closed Source</kbd></p></td></tr><tr><td width="50%" valign="top"><h3>nyther-userbot</h3><sub>PRIVATE / CLOSED SOURCE</sub><p>Closed-source Telegram userbot project.</p><p><kbd>Private / Closed Source</kbd></p></td><td width="50%" valign="top"><h3>TenderIQ</h3><sub>PRIVATE / CLOSED SOURCE</sub><p>Closed-source tender workflow platform.</p><p><kbd>Private / Closed Source</kbd></p></td></tr></table>
+
+## Forked / Derived Work
+
+<table><tr><td width="50%" valign="top"><h3><a href="https://github.com/Skill-Aura-Official/Hoo-Bank">Hoo-Bank</a></h3><sub>FORKED / DERIVED WORK</sub><p>GitHub fork / derived repository. It is not counted as original SkillAura work.</p><p><kbd>Forked / Derived</kbd></p></td><td width="50%" valign="top"></td></tr></table>
+
+## Selected External / Collaborative Work
+
+<sub>These projects retain their actual GitHub ownership and are not counted as SkillAura-owned repositories.</sub>
+
+<table><tr><td width="50%" valign="top"><h3>E-VMS</h3><sub>OWNER · Evisionindia</sub><br /><sub>EXTERNAL / COLLABORATIVE</sub><p>Private Evisionindia repository represented as approved external work.</p><p><kbd>External / Collaborative</kbd></p></td><td width="50%" valign="top"><h3>VMS</h3><sub>OWNER · Evisionindia</sub><br /><sub>EXTERNAL / COLLABORATIVE</sub><p>Private Evisionindia repository represented as approved external work.</p><p><kbd>External / Collaborative</kbd></p></td></tr><tr><td width="50%" valign="top"><h3><a href="https://github.com/Evisionindia/EVMS-website">EVMS-website</a></h3><sub>OWNER · Evisionindia</sub><br /><sub>EXTERNAL / COLLABORATIVE</sub><p>Public E-VMS website repository owned by Evisionindia.</p><p><kbd>External / Collaborative</kbd></p></td><td width="50%" valign="top"></td></tr></table>
+
+---
+
+<div align="center">
+  <sub>Metrics reflect approved tracked repository data across all authors and automation accounts; they are not a measure of individual expertise or personal contribution.</sub>
+</div>

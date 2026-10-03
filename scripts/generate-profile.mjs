@@ -4,20 +4,23 @@ import process from 'node:process';
 
 const root = process.cwd();
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'data', 'projects.json'), 'utf8'));
-const token = process.env.GITHUB_TOKEN || '';
-const currentYear = new Date().getUTCFullYear();
-const now = new Date();
+const template = await fs.readFile(path.join(root, 'README.template.md'), 'utf8');
+const token = process.env.PROFILE_DATA_TOKEN || '';
+if (!token) throw new Error('PROFILE_DATA_TOKEN is required to refresh approved public and private repository data.');
 
+const now = new Date();
+const currentYear = now.getUTCFullYear();
+const yearStart = new Date(Date.UTC(currentYear, 0, 1));
 const headers = {
   Accept: 'application/vnd.github+json',
+  Authorization: `Bearer ${token}`,
   'X-GitHub-Api-Version': '2022-11-28',
   'User-Agent': 'SkillAura-profile-refresh'
 };
-if (token) headers.Authorization = `Bearer ${token}`;
 
 async function request(url) {
   const response = await fetch(url, { headers });
-  if (!response.ok) throw new Error(`GitHub API ${response.status} for ${url}`);
+  if (!response.ok) throw new Error(`GitHub API ${response.status} while refreshing approved portfolio data.`);
   return response;
 }
 
@@ -25,167 +28,292 @@ async function json(url) {
   return (await request(url)).json();
 }
 
-function pageCount(response, body) {
-  const link = response.headers.get('link') || '';
-  const last = link.match(/[?&]page=(\d+)>; rel="last"/);
-  if (last) return Number(last[1]);
-  return Array.isArray(body) ? body.length : 0;
+async function commitsSince(fullName, since) {
+  const commits = [];
+  for (let page = 1; ; page += 1) {
+    const query = new URLSearchParams({ per_page: '100', page: String(page), since: since.toISOString() });
+    const batch = await json(`https://api.github.com/repos/${fullName}/commits?${query}`);
+    commits.push(...batch);
+    if (batch.length < 100) break;
+  }
+  return commits;
 }
 
-async function commitCount(repository, since) {
-  const query = new URLSearchParams({ per_page: '1' });
-  if (since) query.set('since', since.toISOString());
-  const response = await request(`https://api.github.com/repos/${repository}/commits?${query}`);
-  const body = await response.json();
-  return pageCount(response, body);
-}
-
-async function collect(entry) {
-  const repository = entry.repository;
-  const [metadata, languages, commits, yearCommits, days90, days30] = await Promise.all([
-    json(`https://api.github.com/repos/${repository}`),
-    json(`https://api.github.com/repos/${repository}/languages`),
-    commitCount(repository),
-    commitCount(repository, new Date(Date.UTC(currentYear, 0, 1))),
-    commitCount(repository, new Date(now.getTime() - 90 * 86400000)),
-    commitCount(repository, new Date(now.getTime() - 30 * 86400000))
+async function collectProject(project) {
+  const fullName = `${project.owner}/${project.repository}`;
+  const [metadata, languages, commits] = await Promise.all([
+    json(`https://api.github.com/repos/${fullName}`),
+    json(`https://api.github.com/repos/${fullName}/languages`),
+    commitsSince(fullName, yearStart)
   ]);
   return {
-    repository,
-    defaultBranch: metadata.default_branch,
-    fork: metadata.fork,
-    archived: metadata.archived,
-    pushedAt: metadata.pushed_at,
-    commits,
-    currentYearCommits: yearCommits,
-    commits90Days: days90,
-    commits30Days: days30,
-    languages
+    project,
+    metadata: {
+      fullName: metadata.full_name,
+      visibility: metadata.visibility,
+      fork: metadata.fork,
+      archived: metadata.archived,
+      defaultBranch: metadata.default_branch,
+      primaryLanguage: metadata.language,
+      pushedAt: metadata.pushed_at
+    },
+    languages,
+    commits: commits.map((commit) => ({
+      sha: commit.sha,
+      date: commit.commit?.author?.date || commit.commit?.committer?.date || null
+    })).filter((commit) => commit.date)
   };
 }
 
-const tracked = {};
-for (const [category, entries] of Object.entries(manifest.categories)) {
-  tracked[category] = [];
-  for (const entry of entries.filter((item) => item.trackMetrics)) {
-    tracked[category].push(await collect(entry));
+const collected = [];
+for (const project of manifest.skillAura) collected.push(await collectProject(project));
+
+const forkMetadata = await json(`https://api.github.com/repos/${manifest.forked[0].owner}/${manifest.forked[0].repository}`);
+if (!forkMetadata.fork) throw new Error('Configured derived-work repository is not reported as a GitHub fork.');
+
+const daily = {};
+const languages = {};
+for (const entry of collected) {
+  for (const commit of entry.commits) {
+    const day = commit.date.slice(0, 10);
+    daily[day] = (daily[day] || 0) + 1;
+  }
+  for (const [language, bytes] of Object.entries(entry.languages)) {
+    languages[language] = (languages[language] || 0) + bytes;
   }
 }
 
-function aggregate(repositories) {
-  const languages = {};
-  for (const repo of repositories) {
-    for (const [language, bytes] of Object.entries(repo.languages)) {
-      languages[language] = (languages[language] || 0) + bytes;
-    }
-  }
-  const latest = repositories.map((repo) => repo.pushedAt).filter(Boolean).sort().at(-1) || null;
-  return {
-    trackedRepositories: repositories.length,
-    commits: repositories.reduce((sum, repo) => sum + repo.commits, 0),
-    currentYearCommits: repositories.reduce((sum, repo) => sum + repo.currentYearCommits, 0),
-    commits90Days: repositories.reduce((sum, repo) => sum + repo.commits90Days, 0),
-    commits30Days: repositories.reduce((sum, repo) => sum + repo.commits30Days, 0),
-    latestActivity: latest,
-    languages
-  };
-}
+const publicProjects = collected
+  .filter((entry) => entry.project.visibility === 'public')
+  .map((entry) => ({
+    repository: entry.project.repository,
+    pushedAt: entry.metadata.pushedAt,
+    primaryLanguage: entry.metadata.primaryLanguage
+  }));
+
+const cutoff90 = new Date(now.getTime() - 90 * 86400000).toISOString().slice(0, 10);
+const cutoff30 = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
+const currentYearActivity = Object.values(daily).reduce((sum, value) => sum + value, 0);
+const recent90 = Object.entries(daily).filter(([day]) => day >= cutoff90).reduce((sum, [, value]) => sum + value, 0);
+const recent30 = Object.entries(daily).filter(([day]) => day >= cutoff30).reduce((sum, [, value]) => sum + value, 0);
 
 const stats = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   generatedAt: now.toISOString(),
-  metricDefinition: 'Default-branch repository activity across all authors and automation accounts. These values are not personal contribution counts.',
+  metricDefinition: 'Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.',
   scope: {
-    skillAuraProjects: manifest.categories.skillAura.length,
-    skillAuraPublicTracked: tracked.skillAura.length,
-    skillAuraPrivateNamed: manifest.categories.skillAura.filter((item) => item.visibility === 'private').length,
-    forkedProjects: manifest.categories.forked.length,
-    externalProjects: manifest.categories.external.length,
-    externalPublicTracked: tracked.external.length
+    skillAuraProjects: manifest.skillAura.length,
+    publicProjects: manifest.skillAura.filter((project) => project.visibility === 'public').length,
+    privateProjects: manifest.skillAura.filter((project) => project.visibility === 'private').length,
+    forkedProjects: manifest.forked.length,
+    externalProjects: manifest.external.length
   },
-  categories: {
-    skillAuraPublic: aggregate(tracked.skillAura),
-    forkedPublic: aggregate(tracked.forked),
-    externalPublic: aggregate(tracked.external)
+  activity: {
+    year: currentYear,
+    currentYear: currentYearActivity,
+    last90Days: recent90,
+    last30Days: recent30,
+    daily: Object.fromEntries(Object.entries(daily).sort(([a], [b]) => a.localeCompare(b)))
   },
-  repositories: tracked
+  languages: Object.fromEntries(Object.entries(languages).sort((a, b) => b[1] - a[1])),
+  publicProjects
 };
 
 try {
   const previous = JSON.parse(await fs.readFile(path.join(root, 'data', 'stats.json'), 'utf8'));
   const { generatedAt: previousGeneratedAt, ...previousComparable } = previous;
   const { generatedAt: currentGeneratedAt, ...currentComparable } = stats;
-  if (JSON.stringify(previousComparable) === JSON.stringify(currentComparable)) {
-    stats.generatedAt = previousGeneratedAt;
-  }
+  if (JSON.stringify(previousComparable) === JSON.stringify(currentComparable)) stats.generatedAt = previousGeneratedAt;
 } catch {
-  // The first generation has no prior snapshot to preserve.
+  // First generation has no prior snapshot.
 }
 
-function escape(value) {
-  return String(value).replace(/[&<>"']/g, (char) => ({
+function escapeXml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;'
-  })[char]);
+  })[character]);
 }
 
-function metricCard(x, title, data, accent) {
-  const latest = data.latestActivity ? data.latestActivity.slice(0, 10) : 'No activity returned';
-  return `<g transform="translate(${x} 92)">
-    <rect width="350" height="212" rx="18" fill="#111827" stroke="#29354b"/>
-    <rect width="6" height="212" rx="3" fill="${accent}"/>
-    <text x="28" y="38" class="label">${escape(title)}</text>
-    <text x="28" y="83" class="value">${data.commits.toLocaleString('en-US')}</text>
-    <text x="28" y="108" class="muted">default-branch commits</text>
-    <text x="28" y="145" class="small">${currentYear}: ${data.currentYearCommits.toLocaleString('en-US')} · 90d: ${data.commits90Days.toLocaleString('en-US')} · 30d: ${data.commits30Days.toLocaleString('en-US')}</text>
-    <text x="28" y="176" class="small">Tracked repositories: ${data.trackedRepositories}</text>
-    <text x="28" y="198" class="tiny">Latest repository activity: ${escape(latest)}</text>
-  </g>`;
+function escapeMarkdown(value) {
+  return String(value).replace(/([\\`*_{}\[\]()#+.!|<>])/g, '\\$1');
 }
 
-const activitySvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title description">
-  <title id="title">Repository activity across approved public projects</title>
-  <desc id="description">Default branch activity grouped into SkillAura, forked, and external categories.</desc>
-  <style>
-    .heading{font:700 24px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 13px ui-sans-serif,system-ui;fill:#94a3b8}.label{font:700 14px ui-sans-serif,system-ui;fill:#cbd5e1;text-transform:uppercase;letter-spacing:.7px}.value{font:800 34px ui-sans-serif,system-ui;fill:#f8fafc}.muted{font:400 12px ui-sans-serif,system-ui;fill:#94a3b8}.small{font:600 12px ui-sans-serif,system-ui;fill:#cbd5e1}.tiny{font:400 11px ui-sans-serif,system-ui;fill:#64748b}
-  </style>
-  <rect width="1120" height="360" rx="24" fill="#0b1120"/>
-  <text x="24" y="38" class="heading">Live Engineering Activity</text>
-  <text x="24" y="62" class="sub">Repository activity across all authors and automation accounts · refreshed ${escape(stats.generatedAt.slice(0, 10))} UTC</text>
-  ${metricCard(24, 'Public SkillAura projects', stats.categories.skillAuraPublic, '#7c3aed')}
-  ${metricCard(385, 'Forked / derived work', stats.categories.forkedPublic, '#0891b2')}
-  ${metricCard(746, 'External public reference', stats.categories.externalPublic, '#059669')}
-  <text x="24" y="338" class="tiny">Private repositories are named in the README but excluded from automated metrics because the workflow uses only its built-in GitHub token.</text>
-</svg>`;
+function badge(label, message, color) {
+  const encode = (value) => encodeURIComponent(value).replace(/-/g, '--');
+  return `![${escapeMarkdown(label)}](https://img.shields.io/badge/${encode(label)}-${encode(message)}-${color}?style=for-the-badge)`;
+}
 
-const palette = ['#7c3aed', '#2563eb', '#0891b2', '#059669', '#ca8a04', '#ea580c', '#db2777', '#64748b'];
-const languageRows = Object.entries(stats.categories.skillAuraPublic.languages).sort((a, b) => b[1] - a[1]);
-const totalBytes = languageRows.reduce((sum, [, bytes]) => sum + bytes, 0);
-const top = languageRows.slice(0, 7);
-const other = languageRows.slice(7).reduce((sum, [, bytes]) => sum + bytes, 0);
-if (other) top.push(['Other', other]);
-const bars = top.map(([language, bytes], index) => {
-  const percent = totalBytes ? (bytes / totalBytes) * 100 : 0;
-  const y = 94 + index * 38;
-  return `<g transform="translate(28 ${y})">
-    <text x="0" y="14" class="lang">${escape(language)}</text>
-    <rect x="145" y="0" width="760" height="17" rx="8" fill="#1e293b"/>
-    <rect x="145" y="0" width="${Math.max(3, 760 * percent / 100).toFixed(1)}" height="17" rx="8" fill="${palette[index]}"/>
-    <text x="925" y="14" class="pct">${percent.toFixed(1)}%</text>
-  </g>`;
-}).join('');
+function projectLink(project) {
+  return project.visibility === 'public' ? `https://github.com/${project.owner}/${project.repository}` : null;
+}
 
-const languageSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="430" viewBox="0 0 1120 430" role="img" aria-labelledby="title description">
-  <title id="title">Language footprint across tracked public SkillAura projects</title>
-  <desc id="description">GitHub language bytes aggregated across eight approved public SkillAura repositories.</desc>
-  <style>
-    .heading{font:700 24px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 13px ui-sans-serif,system-ui;fill:#94a3b8}.lang{font:600 13px ui-sans-serif,system-ui;fill:#cbd5e1}.pct{font:700 12px ui-sans-serif,system-ui;fill:#e2e8f0}.foot{font:400 11px ui-sans-serif,system-ui;fill:#64748b}
-  </style>
-  <rect width="1120" height="430" rx="24" fill="#0b1120"/>
-  <text x="28" y="40" class="heading">Language Footprint Across Tracked Projects</text>
-  <text x="28" y="64" class="sub">GitHub language statistics for ${tracked.skillAura.length} approved public SkillAura repositories</text>
-  ${bars}
-  <text x="28" y="405" class="foot">Repository language bytes describe code composition; they are not a rating of individual expertise.</text>
+function tags(project) {
+  return project.tags.map((tag) => `<kbd>${escapeXml(tag)}</kbd>`).join(' ');
+}
+
+function projectCard(project, options = {}) {
+  const url = projectLink(project);
+  const title = url ? `<a href="${url}">${escapeXml(project.repository)}</a>` : escapeXml(project.repository);
+  const owner = options.showOwner ? `<sub>OWNER · ${escapeXml(project.owner)}</sub><br />` : '';
+  const label = options.label || (project.visibility === 'private' ? 'PRIVATE / CLOSED SOURCE' : 'PUBLIC REPOSITORY');
+  const detail = options.detail ? `<br /><sub>${escapeXml(options.detail)}</sub>` : '';
+  return `<h3>${title}</h3>${owner}<sub>${escapeXml(label)}</sub><p>${escapeXml(project.description)}</p><p>${tags(project)}</p>${detail}`;
+}
+
+function cardGrid(cards) {
+  const rows = [];
+  for (let index = 0; index < cards.length; index += 2) {
+    const left = cards[index];
+    const right = cards[index + 1] || '';
+    rows.push(`<tr><td width="50%" valign="top">${left}</td><td width="50%" valign="top">${right}</td></tr>`);
+  }
+  return `<table>${rows.join('')}</table>`;
+}
+
+function renderHero() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="250" viewBox="0 0 1000 250" role="img" aria-labelledby="heroTitle heroDescription">
+  <title id="heroTitle">SkillAura</title>
+  <desc id="heroDescription">Software products, web platforms, and automation.</desc>
+  <defs>
+    <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070b18"/><stop offset="0.52" stop-color="#13112c"/><stop offset="1" stop-color="#071925"/></linearGradient>
+    <linearGradient id="heroLine" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#38bdf8"/><stop offset="0.52" stop-color="#8b5cf6"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#8b5cf6" stop-opacity=".28"/><stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1000" height="250" rx="24" fill="url(#heroBg)"/>
+  <circle cx="158" cy="34" r="190" fill="url(#glow)"/><circle cx="860" cy="240" r="220" fill="url(#glow)"/>
+  <g opacity=".35" fill="none" stroke="#334155"><path d="M0 188C190 110 280 242 480 156S810 72 1000 142"/><path d="M0 210C190 132 290 260 490 178S810 94 1000 164"/></g>
+  <rect x="344" y="55" width="312" height="4" rx="2" fill="url(#heroLine)"/>
+  <text x="500" y="122" text-anchor="middle" fill="#f8fafc" font-family="ui-sans-serif,system-ui" font-size="54" font-weight="800" letter-spacing="8">SKILLAURA</text>
+  <text x="500" y="163" text-anchor="middle" fill="#cbd5e1" font-family="ui-sans-serif,system-ui" font-size="17" font-weight="500" letter-spacing="2">SOFTWARE PRODUCTS · WEB PLATFORMS · AUTOMATION</text>
+  <text x="500" y="202" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif,system-ui" font-size="12" letter-spacing="1.4">VERIFIED ENGINEERING PORTFOLIO</text>
 </svg>`;
+}
+
+function renderEngineeringStats() {
+  const languageCount = Object.keys(stats.languages).length;
+  const cards = [
+    ['12', 'APPROVED PROJECTS', 'Original SkillAura scope', '#38bdf8'],
+    ['4', 'CLOSED-SOURCE', 'Approved for public naming', '#8b5cf6'],
+    [String(languageCount), 'LANGUAGES DETECTED', 'GitHub language data', '#f59e0b'],
+    [stats.activity.currentYear.toLocaleString('en-US'), `${currentYear} ACTIVITY`, 'Default-branch commits', '#34d399']
+  ];
+  const groups = cards.map(([value, label, note, color], index) => {
+    const x = 18 + index * 246;
+    return `<g transform="translate(${x} 60)"><rect width="228" height="116" rx="16" fill="#101827" stroke="#263247"/><rect x="0" width="5" height="116" rx="3" fill="${color}"/><text x="22" y="43" class="value">${escapeXml(value)}</text><text x="22" y="70" class="label">${escapeXml(label)}</text><text x="22" y="94" class="note">${escapeXml(note)}</text></g>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="205" viewBox="0 0 1000 205" role="img" aria-labelledby="statsTitle statsDescription"><title id="statsTitle">SkillAura engineering snapshot</title><desc id="statsDescription">Twelve approved projects, four closed-source projects, ${Object.keys(stats.languages).length} detected languages, and ${stats.activity.currentYear} current-year repository commits.</desc><style>.heading{font:700 19px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 12px ui-sans-serif,system-ui;fill:#64748b}.value{font:800 30px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 11px ui-sans-serif,system-ui;fill:#cbd5e1;letter-spacing:.6px}.note{font:400 10px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="205" rx="22" fill="#080e1b"/><text x="20" y="32" class="heading">Engineering Snapshot</text><text x="980" y="31" text-anchor="end" class="sub">Refreshed ${escapeXml(stats.generatedAt.slice(0, 10))} UTC</text>${groups}</svg>`;
+}
+
+function utcDate(day) {
+  return new Date(`${day}T00:00:00Z`);
+}
+
+function renderActivity() {
+  const start = new Date(yearStart);
+  start.setUTCDate(start.getUTCDate() - start.getUTCDay());
+  const gridX = 70;
+  const gridY = 104;
+  const step = 16;
+  const cell = 12;
+  const values = Object.values(stats.activity.daily);
+  const max = Math.max(1, ...values);
+  const levels = ['#172033', '#1d4ed8', '#2563eb', '#7c3aed', '#c084fc'];
+  const colorFor = (count) => {
+    if (!count) return levels[0];
+    const ratio = count / max;
+    if (ratio <= 0.25) return levels[1];
+    if (ratio <= 0.5) return levels[2];
+    if (ratio <= 0.75) return levels[3];
+    return levels[4];
+  };
+  const cells = [];
+  const monthLabels = [];
+  let previousMonth = -1;
+  for (let week = 0; week < 53; week += 1) {
+    for (let weekday = 0; weekday < 7; weekday += 1) {
+      const date = new Date(start);
+      date.setUTCDate(start.getUTCDate() + week * 7 + weekday);
+      const day = date.toISOString().slice(0, 10);
+      const inYear = date.getUTCFullYear() === currentYear;
+      const isFuture = date > now;
+      const count = inYear && !isFuture ? (stats.activity.daily[day] || 0) : 0;
+      const fill = inYear && !isFuture ? colorFor(count) : '#0d1422';
+      cells.push(`<rect x="${gridX + week * step}" y="${gridY + weekday * step}" width="${cell}" height="${cell}" rx="3" fill="${fill}"><title>${day}: ${count} repository commit${count === 1 ? '' : 's'}</title></rect>`);
+      if (weekday === 0 && inYear && date.getUTCMonth() !== previousMonth) {
+        previousMonth = date.getUTCMonth();
+        monthLabels.push(`<text x="${gridX + week * step}" y="88" class="month">${date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase()}</text>`);
+      }
+    }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="300" viewBox="0 0 1000 300" role="img" aria-labelledby="activityTitle activityDescription"><title id="activityTitle">${currentYear} SkillAura repository activity</title><desc id="activityDescription">A daily heatmap of ${stats.activity.currentYear} default-branch commits across twelve approved SkillAura repositories.</desc><style>.heading{font:700 20px ui-sans-serif,system-ui;fill:#f8fafc}.metric{font:700 13px ui-sans-serif,system-ui;fill:#cbd5e1}.muted{font:400 11px ui-sans-serif,system-ui;fill:#64748b}.month{font:700 9px ui-sans-serif,system-ui;fill:#64748b}.day{font:600 9px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="300" rx="22" fill="#080e1b"/><text x="24" y="36" class="heading">${currentYear} Repository Activity</text><text x="976" y="34" text-anchor="end" class="metric">${stats.activity.currentYear.toLocaleString('en-US')} this year · ${stats.activity.last90Days.toLocaleString('en-US')} last 90d · ${stats.activity.last30Days.toLocaleString('en-US')} last 30d</text>${monthLabels.join('')}<text x="24" y="118" class="day">SUN</text><text x="24" y="150" class="day">TUE</text><text x="24" y="182" class="day">THU</text><text x="24" y="214" class="day">SAT</text>${cells.join('')}<g transform="translate(744 252)"><text x="0" y="11" class="muted">LESS</text>${levels.map((color, index) => `<rect x="${38 + index * 18}" y="0" width="12" height="12" rx="3" fill="${color}"/>`).join('')}<text x="136" y="11" class="muted">MORE</text></g><text x="24" y="274" class="muted">Daily density across approved SkillAura repositories · all authors and automation accounts</text></svg>`;
+}
+
+function polar(cx, cy, radius, angle) {
+  const radians = (angle - 90) * Math.PI / 180;
+  return { x: cx + radius * Math.cos(radians), y: cy + radius * Math.sin(radians) };
+}
+
+function arc(cx, cy, radius, startAngle, endAngle) {
+  const start = polar(cx, cy, radius, endAngle);
+  const end = polar(cx, cy, radius, startAngle);
+  const largeArc = endAngle - startAngle <= 180 ? 0 : 1;
+  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArc} 0 ${end.x} ${end.y}`;
+}
+
+function renderLanguages() {
+  const entries = Object.entries(stats.languages);
+  const total = entries.reduce((sum, [, bytes]) => sum + bytes, 0);
+  const top = entries.slice(0, 6);
+  const other = entries.slice(6).reduce((sum, [, bytes]) => sum + bytes, 0);
+  if (other) top.push(['Other', other]);
+  const colors = ['#38bdf8', '#8b5cf6', '#f59e0b', '#34d399', '#fb7185', '#60a5fa', '#64748b'];
+  let angle = 0;
+  const arcs = top.map(([language, bytes], index) => {
+    const span = total ? bytes / total * 359.6 : 0;
+    const shape = `<path d="${arc(205, 205, 112, angle, angle + span)}" fill="none" stroke="${colors[index]}" stroke-width="34" stroke-linecap="butt"><title>${escapeXml(language)}: ${(bytes / total * 100).toFixed(1)}%</title></path>`;
+    angle += span;
+    return shape;
+  }).join('');
+  const legend = top.map(([language, bytes], index) => {
+    const x = 430 + (index % 2) * 265;
+    const y = 104 + Math.floor(index / 2) * 64;
+    const percent = total ? bytes / total * 100 : 0;
+    return `<g transform="translate(${x} ${y})"><circle cx="7" cy="7" r="7" fill="${colors[index]}"/><text x="24" y="6" class="lang">${escapeXml(language)}</text><text x="24" y="27" class="pct">${percent.toFixed(1)}% of detected language bytes</text></g>`;
+  }).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="420" viewBox="0 0 1000 420" role="img" aria-labelledby="languageTitle languageDescription"><title id="languageTitle">Language footprint across approved SkillAura projects</title><desc id="languageDescription">A donut chart derived from GitHub language bytes across all twelve approved public and private SkillAura projects.</desc><style>.heading{font:700 20px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 12px ui-sans-serif,system-ui;fill:#64748b}.center{font:800 42px ui-sans-serif,system-ui;fill:#f8fafc}.centerLabel{font:700 11px ui-sans-serif,system-ui;fill:#94a3b8;letter-spacing:1px}.lang{font:700 14px ui-sans-serif,system-ui;fill:#e2e8f0}.pct{font:400 11px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="420" rx="22" fill="#080e1b"/><text x="24" y="36" class="heading">Language Footprint</text><text x="24" y="58" class="sub">GitHub language data across the approved SkillAura project scope</text><circle cx="205" cy="205" r="112" fill="none" stroke="#172033" stroke-width="34"/>${arcs}<text x="205" y="199" text-anchor="middle" class="center">${entries.length}</text><text x="205" y="221" text-anchor="middle" class="centerLabel">LANGUAGES</text>${legend}<text x="430" y="368" class="sub">Aggregated portfolio composition · not an expertise rating</text></svg>`;
+}
+
+const publicByName = new Map(stats.publicProjects.map((project) => [project.repository, project]));
+const publicDefinitions = manifest.skillAura.filter((project) => project.visibility === 'public');
+const privateDefinitions = manifest.skillAura.filter((project) => project.visibility === 'private');
+const featured = [...publicDefinitions].sort((a, b) => String(publicByName.get(b.repository)?.pushedAt || '').localeCompare(String(publicByName.get(a.repository)?.pushedAt || ''))).slice(0, 4);
+
+const featuredCards = featured.map((project) => projectCard(project, {
+  label: 'RECENT PUBLIC PROJECT',
+  detail: `Latest repository activity · ${publicByName.get(project.repository)?.pushedAt?.slice(0, 10) || 'Unavailable'}`
+}));
+const publicCards = publicDefinitions.map((project) => projectCard(project));
+const privateCards = privateDefinitions.map((project) => projectCard(project));
+const forkCards = manifest.forked.map((project) => projectCard(project, { label: 'FORKED / DERIVED WORK' }));
+const externalCards = manifest.external.map((project) => projectCard(project, { label: 'EXTERNAL / COLLABORATIVE', showOwner: true }));
+
+const replacements = {
+  '{{HERO_BADGES}}': [
+    badge('Portfolio', `${manifest.skillAura.length} approved projects`, '7c3aed'),
+    badge('Activity', 'refreshes every 6 hours', '0284c7'),
+    `[![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)`
+  ].join(' '),
+  '{{PROFILE_SUMMARY}}': manifest.profile.summary,
+  '{{TECHNOLOGY_BADGES}}': manifest.technologyFootprint.map((technology) => badge(technology, 'verified', '1e293b')).join(' '),
+  '{{FEATURED_PROJECTS}}': cardGrid(featuredCards),
+  '{{PUBLIC_PROJECTS}}': cardGrid(publicCards),
+  '{{PRIVATE_PROJECTS}}': cardGrid(privateCards),
+  '{{FORKED_PROJECTS}}': cardGrid(forkCards),
+  '{{EXTERNAL_PROJECTS}}': cardGrid(externalCards)
+};
+
+let readme = template;
+for (const [placeholder, content] of Object.entries(replacements)) readme = readme.replaceAll(placeholder, content);
 
 async function writeIfChanged(relativePath, content) {
   const destination = path.join(root, relativePath);
@@ -197,7 +325,11 @@ async function writeIfChanged(relativePath, content) {
   }
 }
 
+await writeIfChanged('README.md', readme.trimEnd() + '\n');
+await writeIfChanged('assets/hero.svg', renderHero() + '\n');
+await writeIfChanged('assets/engineering-stats.svg', renderEngineeringStats() + '\n');
+await writeIfChanged('assets/activity.svg', renderActivity() + '\n');
+await writeIfChanged('assets/languages.svg', renderLanguages() + '\n');
 await writeIfChanged('data/stats.json', JSON.stringify(stats, null, 2) + '\n');
-await writeIfChanged('assets/activity.svg', activitySvg + '\n');
-await writeIfChanged('assets/languages.svg', languageSvg + '\n');
-console.log('Generated profile metrics for', tracked.skillAura.length + tracked.forked.length + tracked.external.length, 'public repositories.');
+
+console.log(`Generated SkillAura profile from ${manifest.skillAura.length} approved projects.`);

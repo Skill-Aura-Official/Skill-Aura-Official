@@ -2,7 +2,7 @@ name: Refresh profile metrics
 
 on:
   schedule:
-    - cron: "23 3 * * *"
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Check out profile repository
         uses: actions/checkout@v4
@@ -25,10 +25,10 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Generate metrics from GitHub
+      - name: Generate profile from approved repository data
         run: npm run generate
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          PROFILE_DATA_TOKEN: ${{ secrets.SKILLAURA_PROFILE_TOKEN }}
 
       - name: Validate generated profile
         run: npm run validate
@@ -36,12 +36,12 @@ jobs:
       - name: Commit changed generated files
         shell: bash
         run: |
-          if git diff --quiet -- assets data/stats.json; then
-            echo "Profile metrics are already current."
+          if git diff --quiet -- README.md assets data/stats.json; then
+            echo "Profile data is already current."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/activity.svg assets/languages.svg data/stats.json
-          git commit -m "chore: refresh profile metrics"
+          git add README.md assets/hero.svg assets/engineering-stats.svg assets/activity.svg assets/languages.svg data/stats.json
+          git commit -m "chore: refresh profile data"
           git push
