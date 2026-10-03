@@ -6,7 +6,7 @@
   "scripts": {
     "generate": "node scripts/generate-profile.mjs",
     "validate": "node scripts/validate-profile.mjs",
-    "test": "node tests/activity-monitor.test.mjs"
+    "test": "node tests/github-stats.test.mjs"
   },
   "engines": {
     "node": ">=20"

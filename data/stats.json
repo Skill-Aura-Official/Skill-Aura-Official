@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 3,
-  "generatedAt": "2026-10-03T09:08:33.458Z",
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-03T09:33:13.871Z",
   "metricDefinition": "Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.",
   "scope": {
     "skillAuraProjects": 12,
@@ -12,10 +12,7 @@
   "activity": {
     "window": {
       "start": "2025-10-04",
-      "end": "2026-10-03",
-      "gridStart": "2025-09-28",
-      "gridEnd": "2026-10-03",
-      "weeks": 54
+      "end": "2026-10-03"
     },
     "last12Months": 413,
     "last90Days": 8,
@@ -62,6 +59,22 @@
       "2026-07-01": 1,
       "2026-07-06": 8
     }
+  },
+  "githubStats": {
+    "totalStars": 0,
+    "totalCommits": 424,
+    "totalPullRequests": 13,
+    "totalIssues": 0,
+    "contributedRepositoriesLastYear": 11
+  },
+  "contributionActivity": {
+    "totalTrackedContributions": 413,
+    "currentStreak": 0,
+    "currentStart": null,
+    "currentEnd": null,
+    "longestStreak": 5,
+    "longestStart": "2026-05-15",
+    "longestEnd": "2026-05-19"
   },
   "languages": {
     "TypeScript": 1809173,

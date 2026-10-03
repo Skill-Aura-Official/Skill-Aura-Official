@@ -16,18 +16,27 @@ This repository is the GitHub user profile for `Skill-Aura-Official`. The visito
 - `README.md`
 - `data/stats.json`
 - `assets/hero.svg`
-- `assets/engineering-stats.svg`
-- `assets/activity.svg`
-- `assets/activity-mobile.svg`
+- `assets/github-stats.svg`
+- `assets/github-stats-mobile.svg`
+- `assets/contribution-activity.svg`
+- `assets/contribution-activity-mobile.svg`
 - `assets/languages.svg`
 
 Generated output is written only when content changes. The previous `generatedAt` value is retained when the underlying repository data is unchanged, which keeps scheduled runs idempotent.
 
 ## Metrics
 
-Activity counts default-branch commits across all authors and automation accounts for the twelve approved SkillAura projects. It is repository activity and is not described as personal contribution.
+All dashboard statistics use only the twelve approved SkillAura projects. Forked and external repositories are displayed separately in the profile and are excluded from these totals.
 
-The engineering activity monitor aggregates commit-author dates by UTC day over a rolling 365-day window ending on the UTC generation date. The visual calendar includes month labels, weekday labels, daily intensity cells, an accessible tooltip per cell, a legend, and the data-snapshot timestamp. The 30-day and 90-day figures use rolling UTC cutoffs at generation time.
+- **Total stars earned:** sum of current GitHub `stargazers_count` values.
+- **Tracked commits:** total commits reachable from each repository's default branch.
+- **Pull requests:** all open and closed pull requests returned by GitHub issue search with `type:pr`.
+- **Issues:** all open and closed issues returned by GitHub issue search with `type:issue`; pull requests are excluded.
+- **Active repositories, 12 months:** repositories with at least one default-branch commit during the rolling 365-day window.
+- **Tracked contributions:** default-branch repository commits across all authors and automation accounts during that rolling window. This is repository activity, not personal contribution activity.
+- **Current streak:** consecutive qualifying UTC activity days ending on the snapshot date. A gap on the snapshot date produces a zero current streak.
+- **Longest streak:** longest sequence of consecutive qualifying UTC activity days inside the rolling window.
+- **Active coverage ring:** active repositories divided by the twelve approved SkillAura projects, rounded to a whole percentage. It is an objective coverage ratio, not a grade or quality score.
 
 The snapshot timestamp advances only when repository-derived output changes. This preserves the six-hour refresh workflow without creating empty timestamp-only commits. It therefore means "data snapshot represented by this generated asset," rather than a claim of real-time streaming.
 

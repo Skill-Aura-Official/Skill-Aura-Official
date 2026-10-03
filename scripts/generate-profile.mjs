@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { buildRollingWindow, renderActivityMonitor, renderActivityMonitorMobile, stabilizeGeneratedAt, sumDaily } from './activity-monitor.mjs';
+import { buildRollingWindow, calculateStreaks, renderContributionActivity, renderGitHubStats, stabilizeGeneratedAt, sumDaily } from './github-stats.mjs';
 
 const root = process.cwd();
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'data', 'projects.json'), 'utf8'));
@@ -29,6 +29,20 @@ async function json(url) {
   return (await request(url)).json();
 }
 
+async function countDefaultBranchCommits(fullName) {
+  const response = await request(`https://api.github.com/repos/${fullName}/commits?per_page=1`);
+  const batch = await response.json();
+  if (!batch.length) return 0;
+  const link = response.headers.get('link') || '';
+  const last = link.match(/[?&]page=(\d+)>; rel="last"/);
+  return last ? Number(last[1]) : batch.length;
+}
+
+async function searchCount(fullName, type) {
+  const query = new URLSearchParams({ q: `repo:${fullName} type:${type}`, per_page: '1' });
+  return (await json(`https://api.github.com/search/issues?${query}`)).total_count;
+}
+
 async function commitsSince(fullName, since) {
   const commits = [];
   for (let page = 1; ; page += 1) {
@@ -42,10 +56,13 @@ async function commitsSince(fullName, since) {
 
 async function collectProject(project) {
   const fullName = `${project.owner}/${project.repository}`;
-  const [metadata, languages, commits] = await Promise.all([
+  const [metadata, languages, commits, totalCommits, pullRequests, issues] = await Promise.all([
     json(`https://api.github.com/repos/${fullName}`),
     json(`https://api.github.com/repos/${fullName}/languages`),
-    commitsSince(fullName, activityStart)
+    commitsSince(fullName, activityStart),
+    countDefaultBranchCommits(fullName),
+    searchCount(fullName, 'pr'),
+    searchCount(fullName, 'issue')
   ]);
   return {
     project,
@@ -56,9 +73,11 @@ async function collectProject(project) {
       archived: metadata.archived,
       defaultBranch: metadata.default_branch,
       primaryLanguage: metadata.language,
-      pushedAt: metadata.pushed_at
+      pushedAt: metadata.pushed_at,
+      stars: metadata.stargazers_count
     },
     languages,
+    totals: { commits: totalCommits, pullRequests, issues },
     commits: commits.map((commit) => ({
       sha: commit.sha,
       date: commit.commit?.author?.date || commit.commit?.committer?.date || null
@@ -97,9 +116,17 @@ const cutoff30 = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 
 const last12MonthsActivity = sumDaily(daily, activityWindow.start, activityWindow.end);
 const recent90 = sumDaily(daily, cutoff90, activityWindow.end);
 const recent30 = sumDaily(daily, cutoff30, activityWindow.end);
+const streaks = calculateStreaks(daily, activityWindow);
+const githubStats = {
+  totalStars: collected.reduce((sum, entry) => sum + entry.metadata.stars, 0),
+  totalCommits: collected.reduce((sum, entry) => sum + entry.totals.commits, 0),
+  totalPullRequests: collected.reduce((sum, entry) => sum + entry.totals.pullRequests, 0),
+  totalIssues: collected.reduce((sum, entry) => sum + entry.totals.issues, 0),
+  contributedRepositoriesLastYear: collected.filter((entry) => entry.commits.length > 0).length
+};
 
 const stats = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   generatedAt: now.toISOString(),
   metricDefinition: 'Default-branch repository activity across all authors and automation accounts for the approved SkillAura project scope.',
   scope: {
@@ -115,6 +142,16 @@ const stats = {
     last90Days: recent90,
     last30Days: recent30,
     daily: Object.fromEntries(Object.entries(daily).sort(([a], [b]) => a.localeCompare(b)))
+  },
+  githubStats,
+  contributionActivity: {
+    totalTrackedContributions: last12MonthsActivity,
+    currentStreak: streaks.current,
+    currentStart: streaks.currentStart,
+    currentEnd: streaks.currentEnd,
+    longestStreak: streaks.longest,
+    longestStart: streaks.longestStart,
+    longestEnd: streaks.longestEnd
   },
   languages: Object.fromEntries(Object.entries(languages).sort((a, b) => b[1] - a[1])),
   publicProjects
@@ -186,21 +223,6 @@ function renderHero() {
   <text x="500" y="163" text-anchor="middle" fill="#cbd5e1" font-family="ui-sans-serif,system-ui" font-size="17" font-weight="500" letter-spacing="2">SOFTWARE PRODUCTS · WEB PLATFORMS · AUTOMATION</text>
   <text x="500" y="202" text-anchor="middle" fill="#64748b" font-family="ui-sans-serif,system-ui" font-size="12" letter-spacing="1.4">VERIFIED ENGINEERING PORTFOLIO</text>
 </svg>`;
-}
-
-function renderEngineeringStats() {
-  const languageCount = Object.keys(stats.languages).length;
-  const cards = [
-    ['12', 'APPROVED PROJECTS', 'Original SkillAura scope', '#38bdf8'],
-    ['4', 'CLOSED-SOURCE', 'Approved for public naming', '#8b5cf6'],
-    [String(languageCount), 'LANGUAGES DETECTED', 'GitHub language data', '#f59e0b'],
-    [stats.activity.last12Months.toLocaleString('en-US'), '12M ACTIVITY', 'Default-branch commits', '#34d399']
-  ];
-  const groups = cards.map(([value, label, note, color], index) => {
-    const x = 18 + index * 246;
-    return `<g transform="translate(${x} 60)"><rect width="228" height="116" rx="16" fill="#101827" stroke="#263247"/><rect x="0" width="5" height="116" rx="3" fill="${color}"/><text x="22" y="43" class="value">${escapeXml(value)}</text><text x="22" y="70" class="label">${escapeXml(label)}</text><text x="22" y="94" class="note">${escapeXml(note)}</text></g>`;
-  }).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="205" viewBox="0 0 1000 205" role="img" aria-labelledby="statsTitle statsDescription"><title id="statsTitle">SkillAura engineering snapshot</title><desc id="statsDescription">Twelve approved projects, four closed-source projects, ${Object.keys(stats.languages).length} detected languages, and ${stats.activity.last12Months} rolling twelve-month repository commits.</desc><style>.heading{font:700 19px ui-sans-serif,system-ui;fill:#f8fafc}.sub{font:400 12px ui-sans-serif,system-ui;fill:#64748b}.value{font:800 30px ui-sans-serif,system-ui;fill:#f8fafc}.label{font:700 11px ui-sans-serif,system-ui;fill:#cbd5e1;letter-spacing:.6px}.note{font:400 10px ui-sans-serif,system-ui;fill:#64748b}</style><rect width="1000" height="205" rx="22" fill="#080e1b"/><text x="20" y="32" class="heading">Engineering Snapshot</text><text x="980" y="31" text-anchor="end" class="sub">Data snapshot ${escapeXml(stats.generatedAt.slice(0, 10))} UTC</text>${groups}</svg>`;
 }
 
 function polar(cx, cy, radius, angle) {
@@ -284,9 +306,10 @@ async function writeIfChanged(relativePath, content) {
 
 await writeIfChanged('README.md', readme.trimEnd() + '\n');
 await writeIfChanged('assets/hero.svg', renderHero() + '\n');
-await writeIfChanged('assets/engineering-stats.svg', renderEngineeringStats() + '\n');
-await writeIfChanged('assets/activity.svg', renderActivityMonitor(stats) + '\n');
-await writeIfChanged('assets/activity-mobile.svg', renderActivityMonitorMobile(stats) + '\n');
+await writeIfChanged('assets/github-stats.svg', renderGitHubStats(stats) + '\n');
+await writeIfChanged('assets/github-stats-mobile.svg', renderGitHubStats(stats, true) + '\n');
+await writeIfChanged('assets/contribution-activity.svg', renderContributionActivity(stats) + '\n');
+await writeIfChanged('assets/contribution-activity-mobile.svg', renderContributionActivity(stats, true) + '\n');
 await writeIfChanged('assets/languages.svg', renderLanguages() + '\n');
 await writeIfChanged('data/stats.json', JSON.stringify(stats, null, 2) + '\n');
 

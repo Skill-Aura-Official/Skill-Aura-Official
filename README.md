@@ -10,15 +10,18 @@ A verified portfolio of software products, web platforms, automation projects, a
 
 </div>
 
-## Engineering Snapshot
-
-![Live SkillAura engineering statistics](./assets/engineering-stats.svg)
-
-## Engineering Activity Monitor
+## GitHub Stats
 
 <picture>
-  <source media="(max-width: 600px)" srcset="./assets/activity-mobile.svg">
-  <img alt="Rolling twelve-month SkillAura engineering activity monitor" src="./assets/activity.svg" width="100%">
+  <source media="(max-width: 600px)" srcset="./assets/github-stats-mobile.svg">
+  <img alt="SkillAura GitHub portfolio statistics" src="./assets/github-stats.svg" width="100%">
+</picture>
+
+## Contribution Activity
+
+<picture>
+  <source media="(max-width: 600px)" srcset="./assets/contribution-activity-mobile.svg">
+  <img alt="SkillAura tracked repository contribution activity and streaks" src="./assets/contribution-activity.svg" width="100%">
 </picture>
 
 ## Language Footprint
