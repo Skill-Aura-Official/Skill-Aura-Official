@@ -8,23 +8,29 @@
 
 </div>
 
-## SkillAura Portfolio Activity
+## Total Tracked Portfolio Activity
+
+<sub>Repository activity across 12 SkillAura repositories and 3 approved external professional repositories owned by Evisionindia. Forked work is reported separately. These are repository-wide metrics across all authors and automation, not personal contribution counts.</sub>
+
+{{ACTIVITY_SCOPE_TABLE}}
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/github-stats-mobile.svg">
-  <img alt="SkillAura portfolio statistics" src="./assets/github-stats.svg" width="100%">
+  <img alt="Tracked SkillAura and approved external professional repository statistics" src="./assets/github-stats.svg" width="100%">
 </picture>
 
 ## Contribution Activity
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/contribution-activity-mobile.svg">
-  <img alt="SkillAura rolling twelve-month commit activity and contribution-day streaks" src="./assets/contribution-activity.svg" width="100%">
+  <img alt="Tracked portfolio rolling activity, category breakdown, and activity-day streaks" src="./assets/contribution-activity.svg" width="100%">
 </picture>
 
 ## SkillAura Language Footprint
 
 ![Language footprint across twelve SkillAura portfolio projects](./assets/languages.svg)
+
+<sub>Language bytes remain SkillAura-only so external Evisionindia repositories are not silently mixed into the organization footprint.</sub>
 
 ## Technology Footprint
 
@@ -64,6 +70,8 @@
 </picture>
 
 ## E-VMS · External Professional Work
+
+<sub>One professional portfolio project aggregated once from three repositories. Repository owner: **Evisionindia**.</sub>
 
 <p align="center"><img src="./assets/e-vms-logo.png" alt="Official E-VMS project artwork" width="220"></p>
 

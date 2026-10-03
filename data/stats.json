@@ -1,22 +1,64 @@
 {
-  "schemaVersion": 5,
-  "generatedAt": "2026-10-03T10:07:43.226Z",
+  "schemaVersion": 6,
+  "generatedAt": "2026-10-03T11:20:43.831Z",
   "metricModel": {
     "trackedCommits": "All commits reachable from each tracked repository default branch, across all authors and automation accounts.",
     "rollingCommits": "Qualifying default-branch commits dated inside the rolling 365-day window.",
     "contributionDays": "UTC calendar days in the rolling window containing at least one qualifying tracked commit.",
-    "currentStreak": "Consecutive contribution days ending at the latest qualifying date.",
-    "longestStreak": "Maximum consecutive contribution-day run inside the rolling window.",
-    "activeCoverage": "Tracked projects with at least one qualifying commit in the rolling window divided by all tracked SkillAura projects."
+    "currentStreak": "Consecutive tracked activity days ending at the latest qualifying date.",
+    "longestStreak": "Maximum consecutive tracked activity-day run inside the rolling window.",
+    "activeCoverage": "Tracked repositories with at least one qualifying commit in the rolling window divided by all tracked repositories.",
+    "personalAttribution": "No personal contribution metric is published; repository activity is not attributed to an individual."
   },
   "scope": {
-    "statsProjects": 12,
-    "activityProjects": 12,
+    "statsProjects": 15,
+    "activityProjects": 15,
     "languageProjects": 12,
+    "skillAuraRepositories": 12,
     "publicProjects": 8,
     "privateProjects": 4,
-    "externalProjects": 1,
+    "externalPortfolioProjects": 1,
+    "externalRepositories": 3,
     "forkProjects": 1
+  },
+  "categorySummary": {
+    "skillAura": {
+      "repositories": 12,
+      "allTimeDefaultBranchCommits": 424,
+      "currentYearCommits": 411,
+      "rollingCommits": 413,
+      "last90DaysCommits": 8,
+      "last30DaysCommits": 0,
+      "pullRequests": 13,
+      "issues": 0,
+      "activeRepositories12Months": 11
+    },
+    "externalProfessional": {
+      "repositories": 3,
+      "allTimeDefaultBranchCommits": 136,
+      "currentYearCommits": 136,
+      "rollingCommits": 136,
+      "last90DaysCommits": 136,
+      "last30DaysCommits": 76,
+      "pullRequests": 0,
+      "issues": 0,
+      "activeRepositories12Months": 3
+    },
+    "totalTracked": {
+      "repositories": 15,
+      "allTimeDefaultBranchCommits": 560,
+      "currentYearCommits": 547,
+      "rollingCommits": 549,
+      "last90DaysCommits": 144,
+      "last30DaysCommits": 76,
+      "pullRequests": 13,
+      "issues": 0,
+      "activeRepositories12Months": 14
+    },
+    "forkDerived": {
+      "includedInAggregate": false,
+      "repositories": 1
+    }
   },
   "activity": {
     "window": {
@@ -63,27 +105,240 @@
       "2026-06-28": 12,
       "2026-06-29": 3,
       "2026-07-01": 1,
-      "2026-07-06": 8
-    }
+      "2026-07-06": 8,
+      "2026-07-27": 17,
+      "2026-07-29": 1,
+      "2026-07-31": 1,
+      "2026-08-01": 2,
+      "2026-08-03": 12,
+      "2026-08-04": 4,
+      "2026-08-05": 1,
+      "2026-08-06": 1,
+      "2026-08-12": 2,
+      "2026-08-14": 2,
+      "2026-08-20": 4,
+      "2026-08-26": 3,
+      "2026-08-27": 2,
+      "2026-08-29": 1,
+      "2026-08-31": 2,
+      "2026-09-01": 1,
+      "2026-09-02": 3,
+      "2026-09-03": 1,
+      "2026-09-05": 1,
+      "2026-09-07": 9,
+      "2026-09-08": 8,
+      "2026-09-09": 12,
+      "2026-09-10": 3,
+      "2026-09-12": 2,
+      "2026-09-14": 1,
+      "2026-09-15": 3,
+      "2026-09-16": 6,
+      "2026-09-17": 1,
+      "2026-09-18": 1,
+      "2026-09-19": 5,
+      "2026-09-21": 4,
+      "2026-09-25": 3,
+      "2026-09-28": 6,
+      "2026-09-29": 1,
+      "2026-10-02": 10
+    },
+    "byCategory": {
+      "skillAura": {
+        "2025-10-06": 2,
+        "2026-01-25": 6,
+        "2026-01-26": 6,
+        "2026-03-04": 13,
+        "2026-03-05": 6,
+        "2026-03-06": 4,
+        "2026-03-07": 12,
+        "2026-03-15": 11,
+        "2026-03-16": 30,
+        "2026-03-17": 10,
+        "2026-03-18": 5,
+        "2026-03-20": 14,
+        "2026-03-21": 5,
+        "2026-03-23": 5,
+        "2026-03-29": 4,
+        "2026-03-30": 5,
+        "2026-04-25": 35,
+        "2026-04-26": 9,
+        "2026-05-09": 13,
+        "2026-05-15": 4,
+        "2026-05-16": 12,
+        "2026-05-17": 25,
+        "2026-05-18": 12,
+        "2026-05-19": 4,
+        "2026-05-28": 8,
+        "2026-05-29": 3,
+        "2026-05-30": 23,
+        "2026-06-08": 26,
+        "2026-06-10": 11,
+        "2026-06-11": 2,
+        "2026-06-13": 1,
+        "2026-06-17": 3,
+        "2026-06-18": 2,
+        "2026-06-25": 4,
+        "2026-06-26": 37,
+        "2026-06-27": 17,
+        "2026-06-28": 12,
+        "2026-06-29": 3,
+        "2026-07-01": 1,
+        "2026-07-06": 8
+      },
+      "externalProfessional": {
+        "2026-07-27": 17,
+        "2026-07-29": 1,
+        "2026-07-31": 1,
+        "2026-08-01": 2,
+        "2026-08-03": 12,
+        "2026-08-04": 4,
+        "2026-08-05": 1,
+        "2026-08-06": 1,
+        "2026-08-12": 2,
+        "2026-08-14": 2,
+        "2026-08-20": 4,
+        "2026-08-26": 3,
+        "2026-08-27": 2,
+        "2026-08-29": 1,
+        "2026-08-31": 2,
+        "2026-09-01": 1,
+        "2026-09-02": 3,
+        "2026-09-03": 1,
+        "2026-09-05": 1,
+        "2026-09-07": 9,
+        "2026-09-08": 8,
+        "2026-09-09": 12,
+        "2026-09-10": 3,
+        "2026-09-12": 2,
+        "2026-09-14": 1,
+        "2026-09-15": 3,
+        "2026-09-16": 6,
+        "2026-09-17": 1,
+        "2026-09-18": 1,
+        "2026-09-19": 5,
+        "2026-09-21": 4,
+        "2026-09-25": 3,
+        "2026-09-28": 6,
+        "2026-09-29": 1,
+        "2026-10-02": 10
+      }
+    },
+    "monthlyFocus": [
+      {
+        "month": "2026-08",
+        "skillAura": 0,
+        "externalProfessional": 36,
+        "total": 36
+      },
+      {
+        "month": "2026-09",
+        "skillAura": 0,
+        "externalProfessional": 71,
+        "total": 71
+      },
+      {
+        "month": "2026-10",
+        "skillAura": 0,
+        "externalProfessional": 10,
+        "total": 10
+      }
+    ]
   },
   "githubStats": {
     "stars": 0,
-    "allTimeDefaultBranchCommits": 424,
+    "allTimeDefaultBranchCommits": 560,
+    "currentYearCommits": 547,
+    "last90DaysCommits": 144,
+    "last30DaysCommits": 76,
     "pullRequests": 13,
     "issues": 0,
-    "activeRepositories12Months": 11
+    "activeRepositories12Months": 14
   },
   "contributionActivity": {
-    "rollingCommits": 413,
-    "contributionDays": 40,
+    "rollingCommits": 549,
+    "contributionDays": 75,
     "currentStreak": 1,
-    "currentStart": "2026-07-06",
-    "currentEnd": "2026-07-06",
-    "latestActivityDate": "2026-07-06",
-    "longestStreak": 5,
-    "longestStart": "2026-05-15",
-    "longestEnd": "2026-05-19",
+    "currentStart": "2026-10-02",
+    "currentEnd": "2026-10-02",
+    "latestActivityDate": "2026-10-02",
+    "longestStreak": 6,
+    "longestStart": "2026-09-14",
+    "longestEnd": "2026-09-19",
     "monthly": [
+      {
+        "key": "2025-11",
+        "label": "Nov",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2025-12",
+        "label": "Dec",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-01",
+        "label": "Jan",
+        "commits": 12,
+        "days": 2
+      },
+      {
+        "key": "2026-02",
+        "label": "Feb",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-03",
+        "label": "Mar",
+        "commits": 124,
+        "days": 13
+      },
+      {
+        "key": "2026-04",
+        "label": "Apr",
+        "commits": 44,
+        "days": 2
+      },
+      {
+        "key": "2026-05",
+        "label": "May",
+        "commits": 104,
+        "days": 9
+      },
+      {
+        "key": "2026-06",
+        "label": "Jun",
+        "commits": 118,
+        "days": 11
+      },
+      {
+        "key": "2026-07",
+        "label": "Jul",
+        "commits": 28,
+        "days": 5
+      },
+      {
+        "key": "2026-08",
+        "label": "Aug",
+        "commits": 36,
+        "days": 12
+      },
+      {
+        "key": "2026-09",
+        "label": "Sep",
+        "commits": 71,
+        "days": 19
+      },
+      {
+        "key": "2026-10",
+        "label": "Oct",
+        "commits": 10,
+        "days": 1
+      }
+    ],
+    "monthlySkillAura": [
       {
         "key": "2025-11",
         "label": "Nov",
@@ -156,6 +411,80 @@
         "commits": 0,
         "days": 0
       }
+    ],
+    "monthlyExternal": [
+      {
+        "key": "2025-11",
+        "label": "Nov",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2025-12",
+        "label": "Dec",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-01",
+        "label": "Jan",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-02",
+        "label": "Feb",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-03",
+        "label": "Mar",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-04",
+        "label": "Apr",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-05",
+        "label": "May",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-06",
+        "label": "Jun",
+        "commits": 0,
+        "days": 0
+      },
+      {
+        "key": "2026-07",
+        "label": "Jul",
+        "commits": 19,
+        "days": 3
+      },
+      {
+        "key": "2026-08",
+        "label": "Aug",
+        "commits": 36,
+        "days": 12
+      },
+      {
+        "key": "2026-09",
+        "label": "Sep",
+        "commits": 71,
+        "days": 19
+      },
+      {
+        "key": "2026-10",
+        "label": "Oct",
+        "commits": 10,
+        "days": 1
+      }
     ]
   },
   "languages": {
@@ -170,9 +499,41 @@
     "PowerShell": 1428,
     "Procfile": 107
   },
+  "externalPortfolio": {
+    "projectId": "e-vms",
+    "owner": "Evisionindia",
+    "repositories": [
+      "Evisionindia/E-VMS",
+      "Evisionindia/VMS",
+      "Evisionindia/EVMS-website"
+    ],
+    "allTimeDefaultBranchCommits": 136,
+    "rollingCommits": 136,
+    "pullRequests": 0,
+    "issues": 0,
+    "activeRepositories12Months": 3,
+    "lastActivityAt": "2026-10-02T11:04:36Z",
+    "monthlyFocus": [
+      {
+        "month": "2026-08",
+        "commits": 36
+      },
+      {
+        "month": "2026-09",
+        "commits": 71
+      },
+      {
+        "month": "2026-10",
+        "commits": 10
+      }
+    ]
+  },
   "projects": [
     {
+      "owner": "Skill-Aura-Official",
       "repository": "Anisha",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Anisha",
       "visibility": "public",
       "primaryLanguage": "Python",
@@ -181,7 +542,10 @@
       "rollingCommits": 22
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "attractive-beauty-parlour",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Attractive Beauty Parlour",
       "visibility": "public",
       "primaryLanguage": "TypeScript",
@@ -190,7 +554,10 @@
       "rollingCommits": 144
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "EmpireRPG_Bot",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Empire RPG Bot",
       "visibility": "public",
       "primaryLanguage": "Python",
@@ -199,7 +566,10 @@
       "rollingCommits": 31
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "Innovathon-Public",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Innovathon-Public",
       "visibility": "public",
       "primaryLanguage": "JavaScript",
@@ -208,7 +578,10 @@
       "rollingCommits": 9
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "Shivratri",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Shivratri",
       "visibility": "public",
       "primaryLanguage": "Python",
@@ -217,7 +590,10 @@
       "rollingCommits": 0
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "SkillAura-Pathfinder",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "SkillAura Pathfinder",
       "visibility": "public",
       "primaryLanguage": "TypeScript",
@@ -226,7 +602,10 @@
       "rollingCommits": 69
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "skillpath-launch",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "SkillPath Launch",
       "visibility": "public",
       "primaryLanguage": "TypeScript",
@@ -235,7 +614,10 @@
       "rollingCommits": 2
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "TSB-Council",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "TSB Council",
       "visibility": "public",
       "primaryLanguage": null,
@@ -244,7 +626,10 @@
       "rollingCommits": 12
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "kiru",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "kiru",
       "visibility": "private",
       "primaryLanguage": "Python",
@@ -253,7 +638,10 @@
       "rollingCommits": 73
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "SSB",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "SSB",
       "visibility": "private",
       "primaryLanguage": "Python",
@@ -262,7 +650,10 @@
       "rollingCommits": 20
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "nyther-userbot",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "Nyther Userbot",
       "visibility": "private",
       "primaryLanguage": "Python",
@@ -271,13 +662,52 @@
       "rollingCommits": 23
     },
     {
+      "owner": "Skill-Aura-Official",
       "repository": "TenderIQ",
+      "category": "skillAura",
+      "portfolioProjectId": null,
       "displayName": "TenderIQ",
       "visibility": "private",
       "primaryLanguage": "TypeScript",
       "pushedAt": "2026-06-18T17:14:42Z",
       "allTimeDefaultBranchCommits": 8,
       "rollingCommits": 8
+    },
+    {
+      "owner": "Evisionindia",
+      "repository": "E-VMS",
+      "category": "external",
+      "portfolioProjectId": "e-vms",
+      "displayName": "E-VMS",
+      "visibility": "private",
+      "primaryLanguage": "JavaScript",
+      "pushedAt": "2026-10-02T11:04:36Z",
+      "allTimeDefaultBranchCommits": 83,
+      "rollingCommits": 83
+    },
+    {
+      "owner": "Evisionindia",
+      "repository": "VMS",
+      "category": "external-related",
+      "portfolioProjectId": "e-vms",
+      "displayName": "VMS",
+      "visibility": "private",
+      "primaryLanguage": "Python",
+      "pushedAt": "2026-08-20T12:58:17Z",
+      "allTimeDefaultBranchCommits": 47,
+      "rollingCommits": 47
+    },
+    {
+      "owner": "Evisionindia",
+      "repository": "EVMS-website",
+      "category": "external-related",
+      "portfolioProjectId": "e-vms",
+      "displayName": "E-VMS Website",
+      "visibility": "public",
+      "primaryLanguage": "HTML",
+      "pushedAt": "2026-10-02T09:47:48Z",
+      "allTimeDefaultBranchCommits": 6,
+      "rollingCommits": 6
     }
   ]
 }

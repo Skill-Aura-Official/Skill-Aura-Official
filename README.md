@@ -2,29 +2,39 @@
 
 ![SkillAura — software products, web platforms and automation](./assets/hero.svg)
 
-![Portfolio](https://img.shields.io/badge/Portfolio-12%20SkillAura%20projects-7c3aed?style=flat-square) ![Refresh](https://img.shields.io/badge/Refresh-Every%206%20hours-0284c7?style=flat-square) [![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
+![Portfolio](https://img.shields.io/badge/Portfolio-15%20tracked%20repositories-7c3aed?style=flat-square) ![Refresh](https://img.shields.io/badge/Refresh-Every%206%20hours-0284c7?style=flat-square) [![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
 
 A portfolio of software products, web platforms, automation projects, and engineering work.
 
 </div>
 
-## SkillAura Portfolio Activity
+## Total Tracked Portfolio Activity
+
+<sub>Repository activity across 12 SkillAura repositories and 3 approved external professional repositories owned by Evisionindia. Forked work is reported separately. These are repository-wide metrics across all authors and automation, not personal contribution counts.</sub>
+
+| Activity category | Repositories | All-time commits | Current year | Rolling 12m | Active 12m |
+|---|---:|---:|---:|---:|---:|
+| SkillAura | 12 | 424 | 411 | 413 | 11 |
+| External / professional · Evisionindia | 3 | 136 | 136 | 136 | 3 |
+| **Total tracked portfolio** | **15** | **560** | **547** | **549** | **14** |
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/github-stats-mobile.svg">
-  <img alt="SkillAura portfolio statistics" src="./assets/github-stats.svg" width="100%">
+  <img alt="Tracked SkillAura and approved external professional repository statistics" src="./assets/github-stats.svg" width="100%">
 </picture>
 
 ## Contribution Activity
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/contribution-activity-mobile.svg">
-  <img alt="SkillAura rolling twelve-month commit activity and contribution-day streaks" src="./assets/contribution-activity.svg" width="100%">
+  <img alt="Tracked portfolio rolling activity, category breakdown, and activity-day streaks" src="./assets/contribution-activity.svg" width="100%">
 </picture>
 
 ## SkillAura Language Footprint
 
 ![Language footprint across twelve SkillAura portfolio projects](./assets/languages.svg)
+
+<sub>Language bytes remain SkillAura-only so external Evisionindia repositories are not silently mixed into the organization footprint.</sub>
 
 ## Technology Footprint
 
@@ -64,6 +74,8 @@ A portfolio of software products, web platforms, automation projects, and engine
 </picture>
 
 ## E-VMS · External Professional Work
+
+<sub>One professional portfolio project aggregated once from three repositories. Repository owner: **Evisionindia**.</sub>
 
 <p align="center"><img src="./assets/e-vms-logo.png" alt="Official E-VMS project artwork" width="220"></p>
 
