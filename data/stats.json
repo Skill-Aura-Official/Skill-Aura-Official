@@ -1,6 +1,6 @@
 {
   "schemaVersion": 6,
-  "generatedAt": "2026-10-03T11:20:43.831Z",
+  "generatedAt": "2026-10-04T05:59:50.885Z",
   "metricModel": {
     "trackedCommits": "All commits reachable from each tracked repository default branch, across all authors and automation accounts.",
     "rollingCommits": "Qualifying default-branch commits dated inside the rolling 365-day window.",
@@ -27,7 +27,7 @@
       "allTimeDefaultBranchCommits": 424,
       "currentYearCommits": 411,
       "rollingCommits": 413,
-      "last90DaysCommits": 8,
+      "last90DaysCommits": 0,
       "last30DaysCommits": 0,
       "pullRequests": 13,
       "issues": 0,
@@ -49,7 +49,7 @@
       "allTimeDefaultBranchCommits": 560,
       "currentYearCommits": 547,
       "rollingCommits": 549,
-      "last90DaysCommits": 144,
+      "last90DaysCommits": 136,
       "last30DaysCommits": 76,
       "pullRequests": 13,
       "issues": 0,
@@ -62,8 +62,8 @@
   },
   "activity": {
     "window": {
-      "start": "2025-10-04",
-      "end": "2026-10-03"
+      "start": "2025-10-05",
+      "end": "2026-10-04"
     },
     "daily": {
       "2025-10-06": 2,
@@ -248,7 +248,7 @@
     "stars": 0,
     "allTimeDefaultBranchCommits": 560,
     "currentYearCommits": 547,
-    "last90DaysCommits": 144,
+    "last90DaysCommits": 136,
     "last30DaysCommits": 76,
     "pullRequests": 13,
     "issues": 0,
