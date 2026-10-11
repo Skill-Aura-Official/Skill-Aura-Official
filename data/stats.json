@@ -1,6 +1,6 @@
 {
   "schemaVersion": 6,
-  "generatedAt": "2026-10-10T05:58:56.437Z",
+  "generatedAt": "2026-10-11T05:54:39.493Z",
   "metricModel": {
     "trackedCommits": "All commits reachable from each tracked repository default branch, across all authors and automation accounts.",
     "rollingCommits": "Qualifying default-branch commits dated inside the rolling 365-day window.",
@@ -62,8 +62,8 @@
   },
   "activity": {
     "window": {
-      "start": "2025-10-11",
-      "end": "2026-10-10"
+      "start": "2025-10-12",
+      "end": "2026-10-11"
     },
     "daily": {
       "2026-01-25": 6,
