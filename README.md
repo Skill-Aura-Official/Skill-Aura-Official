@@ -14,9 +14,9 @@ A portfolio of software products, web platforms, automation projects, and engine
 
 | Activity category | Repositories | All-time commits | Current year | Rolling 12m | Active 12m |
 |---|---:|---:|---:|---:|---:|
-| SkillAura | 12 | 436 | 423 | 423 | 10 |
+| SkillAura | 12 | 442 | 429 | 429 | 10 |
 | External / professional · Evisionindia | 3 | 152 | 152 | 152 | 3 |
-| **Total tracked portfolio** | **15** | **588** | **575** | **575** | **13** |
+| **Total tracked portfolio** | **15** | **594** | **581** | **581** | **13** |
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/github-stats-mobile.svg">
