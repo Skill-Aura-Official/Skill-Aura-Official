@@ -1,50 +1,33 @@
-name: Refresh profile metrics
-
+name: Refresh public profile
 on:
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
-
+  push:
+    paths:
+      - scripts/public_profile.py
+      - .github/workflows/refresh-profile.yml
 permissions:
   contents: write
-
 concurrency:
-  group: profile-metrics-refresh
+  group: profile-refresh
   cancel-in-progress: false
-
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - name: Check out profile repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Generate profile from configured repository data
-        run: npm run generate
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s scripts
+      - name: Refresh from public repository APIs
+        run: python3 scripts/public_profile.py
         env:
-          PROFILE_DATA_TOKEN: ${{ secrets.SKILLAURA_PROFILE_TOKEN }}
-
-      - name: Test GitHub stats behavior
-        run: npm test
-
-      - name: Validate generated profile
-        run: npm run validate
-
-      - name: Commit changed generated files
-        shell: bash
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Publish validated snapshot
         run: |
-          if git diff --quiet -- README.md assets data/stats.json; then
-            echo "Profile data is already current."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md assets data/stats.json
-          git commit -m "chore: refresh profile data"
+          git add README.md
+          git diff --cached --quiet && exit 0
+          git commit -m "Refresh public repository snapshot"
           git push
