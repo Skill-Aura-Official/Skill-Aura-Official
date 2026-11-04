@@ -56,24 +56,26 @@ def collect():
 
 def render():
     repos,languages,activity=collect()
-    names={r["name"] for r in repos}
-    lines=["# SkillAura","", "I build operator tools and web applications. My current ANPR work focuses on what happens after a plate is read: reviewing the vehicle record, checking a watchlist match, and retrieving the original image.","","## Selected work",""]
-    for name,description in [("ANPR","Vehicle recognition evaluation. A local operator workflow has demonstrated image-based plate reading, watchlist alerts and evidence retrieval."),("EmpireRPG_Bot","Age of Telegram, an empire RPG bot.")]:
-        if name in names:
-            lines.append(f"- **[{name}](https://github.com/{OWNER}/{name})** — {description}")
-    lines+=["","## Public development snapshot","",f"{len(repos)} public repositories owned by this account, including forks ({sum(r['fork'] for r in repos)}). Source and activity measurements below exclude forks and the profile repository.","","### Languages by source bytes",""]
-    total=sum(languages.values())
-    for name,count in languages.most_common(6):
-        lines.append(f"- {name}: {count:,} bytes ({count/total:.1%})")
-    lines+=["","### Recent repository commits","","Latest default-branch commit in each of the five most recently committed public projects. These include work by all authors.",""]
-    for date,name,sha in activity[:5]:
-        lines.append(f"- {date[:10]} · [{name} · `{sha[:7]}`](https://github.com/{OWNER}/{name}/commit/{sha})")
-    stamp=dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
-    lines+=["","## Connect","",f"[GitHub profile and contribution graph](https://github.com/{OWNER}) · [Public repositories](https://github.com/{OWNER}?tab=repositories)","","Snapshot from the GitHub REST API. Scheduled every six hours. Last successful data refresh: "+stamp+"."]
-    return "\n".join(lines)+"\n"
+    import subprocess
+    import tempfile
+    projects=[]
+    for repo in repos:
+        if repo["name"]==OWNER:
+            continue
+        original=not repo["fork"]
+        projects.append(dict(owner=OWNER,repository=repo["name"],displayName=repo["name"],
+            category="skillAura" if original else "fork",visibility="public",tags=[],
+            description=("Image recognition, vehicle review and watchlist alerts." if repo["name"]=="ANPR" else repo["description"] or "Public project by SkillAura."),
+            includeInPortfolio=original,includeInStats=original,includeInActivity=original,includeInLanguages=original))
+    projects.append(dict(owner="Evisionindia",repository="EVMS-website",displayName="E-VMS",category="external",
+        visibility="public",tags=[],includeInStats=True,includeInActivity=True,includeInLanguages=False))
+    manifest=dict(projects=projects,publicCount=len(repos),technologyFootprint=list(dict(languages.most_common(6))),
+        profile={"summary":"A portfolio of software products, web platforms, automation projects, and engineering work."},
+        commits=" · ".join(f"[{name} `{sha[:7]}`](https://github.com/{OWNER}/{name}/commit/{sha})" for _,name,sha in activity[:5]))
+    with tempfile.TemporaryDirectory() as temp:
+        data=Path(temp)/"public.json"
+        data.write_text(json.dumps(manifest),encoding="utf8")
+        subprocess.run(["node","scripts/generate-profile.mjs",str(data)],cwd=ROOT,check=True)
 
 if __name__=="__main__":
-    content=render()
-    output=ROOT/"README.next"
-    output.write_text(content,encoding="utf8")
-    output.replace(ROOT/"README.md")
+    render()
