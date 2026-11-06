@@ -70,6 +70,15 @@ class ActivityTests(unittest.TestCase):
         with self.assertRaises(a.Incomplete):
             a.inventory([api],True,(a.OWNER,"Evisionindia"))
 
+    def test_failed_api_does_not_overwrite_prior_counters(self):
+        api=API()
+        state=a.refresh([api],True,None,self.now)
+        before=json.dumps(state,sort_keys=True)
+        with patch.object(a,"collect_events",side_effect=a.Incomplete("API HTTP 403")):
+            with self.assertRaises(a.Incomplete):
+                a.refresh([api],True,state,self.now)
+        self.assertEqual(json.dumps(state,sort_keys=True),before)
+
     def test_issue_pr_and_multiple_reviews(self):
         api=API()
         row={"repository_url":"https://api.github.com/repos/example/demo","id":123,"number":2,

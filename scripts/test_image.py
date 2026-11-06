@@ -13,7 +13,7 @@ class ImageTests(unittest.TestCase):
 
     def test_pixels_encode_counts_and_source_timestamp(self):
         first=render(self.state)
-        self.assertEqual(first.size,(1038,480))
+        self.assertEqual(first.size,(1038,435))
         self.assertEqual(first.tobytes(),render(self.state).tobytes())
         self.state["days"]["2026-11-06"]["private"]["commits"]+=1
         second=render(self.state)
