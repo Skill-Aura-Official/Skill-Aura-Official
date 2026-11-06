@@ -39,6 +39,30 @@ def parse(value):
     return dt.datetime.fromisoformat(value.replace("Z","+00:00"))
 
 
+def operation(path):
+    # Use only constant category names in public logs, including for malformed routes.
+    routes = [
+        (r"user","account identity"),(r"user/repos","affiliated inventory"),(r"user/orgs","membership inventory"),
+        (r"users/[^/]+/repos","owned public inventory"),(r"orgs/[^/]+/repos","organization inventory"),
+        (r"users/[^/]+/events/public","recent public-event discovery"),(r"search/issues","typed issue/PR discovery"),
+        (r"search/commits","global commit discovery"),(r"graphql","GraphQL history query"),
+        (r"repositories/\d+|repos/[^/]+/[^/]+","repository identity"),
+        (r"repos/[^/]+/[^/]+/branches","branch inventory"),(r"repos/[^/]+/[^/]+/commits/[^/]+","commit attribution"),
+        (r"repos/[^/]+/[^/]+/issues","issue inventory"),(r"repos/[^/]+/[^/]+/pulls","pull request inventory"),
+        (r"repos/[^/]+/[^/]+/pulls/\d+/reviews","review inventory"),(r"repos/[^/]+/[^/]+/issues/comments","issue comments"),
+        (r"repos/[^/]+/[^/]+/pulls/comments","review comments"),(r"repos/[^/]+/[^/]+/releases","release inventory"),
+    ]
+    return next((label for regex,label in routes if re.fullmatch(regex,path)),"unclassified API operation")
+
+
+def typed_searches():
+    # A scoped GitHub user credential can receive HTTP 422 for mixed issues and PRs.
+    for actor,qualifier in (("author","created"),("commenter","updated")):
+        for kind in ("issue","pr"):
+            yield f"{actor}:{OWNER} is:{kind}",qualifier
+    yield f"reviewed-by:{OWNER} is:pr","updated"
+
+
 class GitHub:
     def __init__(self, token):
         self.token = token
@@ -60,11 +84,11 @@ class GitHub:
                     delay=max(delay,int(exc.headers.get("X-RateLimit-Reset") or 0)-int(time.time())+1)
                 retry=exc.code in (429,500,502,503,504) or (exc.code==403 and delay>0)
                 if not retry or attempt==3 or delay>150:
-                    raise Failure(exc.code, "GitHub API") from None
+                    raise Failure(exc.code, operation(path)) from None
                 time.sleep(max(delay,2**attempt))
             except (URLError,TimeoutError,ConnectionError):
                 if attempt==3:
-                    raise Failure("network", "GitHub API") from None
+                    raise Failure("network", operation(path)) from None
                 time.sleep(2**attempt)
 
     def pages(self,path,params=None):
@@ -247,8 +271,7 @@ def discovery(clients,created,start,end,gaps,required_owners):
             if exc.status!="FORBIDDEN":raise
             gaps.append({"source":"contributed repositories","status":"PARTIAL","reason":str(exc)})
         # Indexes complement the visible affiliated inventory and reveal outside collaborations.
-        for expr in ("author:"+OWNER,"commenter:"+OWNER,"reviewed-by:"+OWNER+" is:pr"):
-            qualifier="created" if expr.startswith("author:") else "updated"
+        for expr,qualifier in typed_searches():
             for item in search(api,"issues",expr,qualifier,start,end):
                 name=item["repository_url"].removeprefix("https://api.github.com/repos/")
                 lookup(name,api,"global issue/PR discovery")

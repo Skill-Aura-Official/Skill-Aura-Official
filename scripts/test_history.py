@@ -7,6 +7,17 @@ import history as h
 
 
 class HistoryTests(unittest.TestCase):
+    def test_scoped_search_exhausts_both_types_without_mixed_query(self):
+        searches=list(h.typed_searches())
+        self.assertEqual(len(searches),5)
+        for actor in ("author","commenter"):
+            self.assertEqual({q.split()[-1] for q,_ in searches if q.startswith(actor+":")},{"is:issue","is:pr"})
+        self.assertTrue(all(" is:" in q for q,_ in searches))
+
+    def test_private_route_cannot_be_exposed_by_public_error(self):
+        self.assertEqual(h.operation("repos/sensitive-owner/customer-project/pulls/47/reviews"),"review inventory")
+        self.assertNotIn("private",h.operation("unexpected/private/customer"))
+
     def test_remote_disconnect_retries_without_exposing_request(self):
         response=MagicMock()
         response.__enter__.return_value=io.BytesIO(b'{"ok":true}')
