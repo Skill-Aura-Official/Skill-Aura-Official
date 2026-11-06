@@ -1,20 +1,58 @@
-# Jatin Dalal · SkillAura
+# <img src="https://github.com/Skill-Aura-Official.png?size=96" width="36" height="36" alt="SkillAura"> Jatin Dalal · SkillAura
 
 I develop E-VMS camera and recording workflows and work on CAAMOO’s conversational interface for investigating CCTV footage.
 
-## Recent activity
+## All-time activity
 
-<img src="https://github.com/Skill-Aura-Official/Skill-Aura-Official/releases/latest/download/activity.png" width="346" alt="Personal activity over 30 UTC days. Public and private counts for commits, pull requests, issues and reviews, with collection time and coverage.">
+Snapshot 06 Nov 2026, 12:28 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
-[How activity is counted](./METHODOLOGY.md)
+| My activity | Public | Private |
+|---|---:|---:|
+| Repositories with activity | 8 | 10 |
+| Commits | 94 | 375 |
+| PRs opened | 0 | 4 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
 
-## Selected work
+![Attributable commits by year](assets/activity.svg)
 
-**E-VMS** · I work on camera onboarding, recordings and playback. [Public product website repository](https://github.com/Evisionindia/EVMS-website)
+[Complete public project directory](PUBLIC_PROJECTS.md) · [How activity is counted](METHODOLOGY.md)
 
-**CAAMOO** · A team project for investigating CCTV footage. My contribution is the web interface for asking questions, following up and inspecting evidence.
+## By year
 
-**[ANPR](https://github.com/Skill-Aura-Official/ANPR)** · An evaluation prototype for reviewing number plates in uploaded images, checking repeat watchlist alerts and exporting the observation history.
+<details><summary>2026</summary>
+
+| My activity | Public | Private |
+|---|---:|---:|
+| Commits | 91 | 370 |
+| PRs opened | 0 | 4 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
+
+</details>
+
+<details><summary>2025</summary>
+
+| My activity | Public | Private |
+|---|---:|---:|
+| Commits | 3 | 5 |
+| PRs opened | 0 | 0 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 0 | 0 |
+| Discussions | 0 | 0 |
+
+</details>
 
 ## Technologies
 

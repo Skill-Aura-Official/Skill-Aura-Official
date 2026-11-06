@@ -1,0 +1,81 @@
+# Complete public project directory
+
+Reconciled 06 Nov 2026, 12:28 UTC. Every discovered public repository appears below, including repositories with no attributable activity found.
+
+## Owned projects
+
+### [Skill-Aura-Official/Anisha](https://github.com/Skill-Aura-Official/Anisha)
+
+owned. 2026-05-28 to 2026-05-28.
+
+Commits **6** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/ANPR](https://github.com/Skill-Aura-Official/ANPR)
+
+owned. No attributable activity found.
+
+Commits **0** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/EmpireRPG_Bot](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)
+
+owned. 2026-05-15 to 2026-05-17.
+
+Commits **18** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/Innovathon-Public](https://github.com/Skill-Aura-Official/Innovathon-Public)
+
+owned. 2026-04-26 to 2026-04-26.
+
+Commits **9** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/Shivratri](https://github.com/Skill-Aura-Official/Shivratri)
+
+owned. 2025-07-23 to 2025-07-23.
+
+Commits **3** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/Skill-Aura-Official](https://github.com/Skill-Aura-Official/Skill-Aura-Official)
+
+owned. 2026-10-03 to 2026-11-06.
+
+Commits **15** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/SkillAura-Pathfinder](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder)
+
+owned. 2026-03-18 to 2026-03-30.
+
+Commits **23** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/skillpath-launch](https://github.com/Skill-Aura-Official/skillpath-launch)
+
+owned. No attributable activity found.
+
+Commits **0** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/TSB-Council](https://github.com/Skill-Aura-Official/TSB-Council)
+
+owned. 2026-05-30 to 2026-05-30.
+
+Commits **12** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+## Organization and professional work
+
+### [Evisionindia/EVMS-website](https://github.com/Evisionindia/EVMS-website)
+
+organization contributor. 2026-09-28 to 2026-11-06.
+
+Commits **8** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **2** · Discussions **0**
+
+## Forks and collaborations
+
+### [SIYA1104/Hoo-Bank](https://github.com/SIYA1104/Hoo-Bank)
+
+accessible. No attributable activity found.
+
+Commits **0** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**
+
+### [Skill-Aura-Official/Hoo-Bank](https://github.com/Skill-Aura-Official/Hoo-Bank)
+
+owned. No attributable activity found.
+
+Commits **0** · PRs opened **0** · Issues opened **0** · Reviews submitted **0** · Issue / PR comments **0** · Review comments **0** · Releases **0** · Discussions **0**

@@ -1,90 +1,44 @@
-name: Personal activity
+name: Personal work history
 on:
   schedule:
     - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
     inputs:
       reconcile:
-        description: Recheck all 30 UTC dates
+        description: Reconcile all retrievable history
         type: boolean
-        default: true
+        default: false
 permissions:
   contents: read
-  actions: read
 concurrency:
-  group: personal-activity
+  group: personal-work-history
   cancel-in-progress: false
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check image rendering dependency
-        run: /usr/bin/python3 -c "import PIL" || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends python3-pil fonts-dejavu-core)
-      - run: /usr/bin/python3 -m unittest discover -s scripts
-      - name: Locate the previous valid public snapshot
-        id: previous
+      - name: Validate collector and public privacy boundaries
+        run: python3 -m unittest discover -s scripts -p 'test_history*.py'
+      - name: Read private history checkpoint
         env:
-          GH_TOKEN: ${{ github.token }}
+          PROFILE_PUBLISH_TOKEN: ${{ secrets.PROFILE_PUBLISH_TOKEN }}
+        run: python3 scripts/history_publish.py pull "$RUNNER_TEMP/history-previous.json"
+      - name: Collect available history without logging private records
+        env:
+          PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
+          PROFILE_ACTIVITY_ORG_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_ORG_READ_TOKEN }}
+          FULL_RECONCILE: ${{ inputs.reconcile }}
         shell: bash
         run: |
           set -euo pipefail
-          runs=$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/refresh-profile.yml/runs?branch=main&status=success&per_page=1")
-          run=$(jq -r '.workflow_runs[0].id // empty' <<< "$runs")
-          artifact=""
-          if [[ -n "$run" ]]; then
-            results=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/artifacts?name=personal-aggregates")
-            artifact=$(jq -r '.artifacts[] | select(.name == "personal-aggregates" and .expired == false) | .id' <<< "$results")
-          fi
-          echo "artifact=$artifact" >> "$GITHUB_OUTPUT"
-      - name: Read previous aggregate counters
-        if: steps.previous.outputs.artifact != ''
+          args=()
+          if [[ "$FULL_RECONCILE" == true ]]; then args+=(--full); fi
+          python3 scripts/history.py --previous "$RUNNER_TEMP/history-previous.json" --output "$RUNNER_TEMP/history-inventory.json" "${args[@]}"
+      - name: Publish private checkpoint and sanitized public data
         env:
-          GH_TOKEN: ${{ github.token }}
-          ARTIFACT_ID: ${{ steps.previous.outputs.artifact }}
-        run: |
-          set -eu
-          mkdir previous
-          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/prior.zip"
-          unzip -p "$RUNNER_TEMP/prior.zip" aggregate.json > previous/aggregate.json
-      - name: Collect and validate sanitized totals
-        id: collect
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
-          PROFILE_ACTIVITY_ORG_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_ORG_READ_TOKEN }}
-          REQUIRE_BOTH_PRIVATE_SCOPES: 'true'
-          FULL_RECONCILE: ${{ inputs.reconcile }}
-        run: python3 scripts/activity.py
-      - name: Save only the validated aggregate counters
-        uses: actions/upload-artifact@v4
-        with:
-          name: personal-aggregates
-          path: output/aggregate.json
-          if-no-files-found: error
-          retention-days: 14
-  publish-image:
-    needs: refresh
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-      actions: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/download-artifact@v4
-        with:
-          name: personal-aggregates
-          path: output
-      - name: Check image rendering dependency
-        run: /usr/bin/python3 -c "import PIL" || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends python3-pil fonts-dejavu-core)
-      - name: Publish and compare the guest profile image with the collected data
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: /usr/bin/python3 scripts/publish_activity.py
+          PROFILE_PUBLISH_TOKEN: ${{ secrets.PROFILE_PUBLISH_TOKEN }}
+        run: python3 scripts/history_publish.py publish "$RUNNER_TEMP/history-inventory.json"
