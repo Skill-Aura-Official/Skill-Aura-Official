@@ -65,9 +65,12 @@ class API:
             page += 1
 
 
-def inventory(clients, personal):
+def inventory(clients, personal, required_owners=None):
     repos = {}
-    for api in clients:
+    if required_owners is not None and len(required_owners) != len(clients):
+        raise Incomplete("Required private inventory credential missing")
+    for index, api in enumerate(clients):
+        owner_visible = False
         if personal:
             if api.get("user")["login"].casefold() != OWNER.casefold():
                 raise Incomplete("Unexpected collector account")
@@ -79,6 +82,10 @@ def inventory(clients, personal):
                 if not personal and repo["private"]:
                     raise Incomplete("Unexpected fallback visibility")
                 repos[repo["id"]] = (repo, api)
+                if required_owners and repo["private"] and repo["owner"]["login"].casefold() == required_owners[index].casefold():
+                    owner_visible = True
+        if required_owners and not owner_visible:
+            raise Incomplete("Required private inventory unavailable; previous snapshot retained")
     return repos
 
 
@@ -201,10 +208,10 @@ def validate(state):
     return state
 
 
-def refresh(clients, personal, previous, now, examples=None, force=False):
+def refresh(clients, personal, previous, now, examples=None, force=False, required_owners=None):
     if previous:
         validate(previous)
-    repos = inventory(clients, personal)
+    repos = inventory(clients, personal, required_owners)
     coverage = "VISIBLE_PRIVATE_SUBSET" if any(r["private"] for r, _ in repos.values()) else "PRIVATE_UNKNOWN"
     if previous and previous["coverage"] == "VISIBLE_PRIVATE_SUBSET" and coverage == "PRIVATE_UNKNOWN":
         raise Incomplete("Private coverage lost; previous snapshot retained")
@@ -248,22 +255,6 @@ def summary(state):
     return "\n".join(lines) + "\n"
 
 
-def public_job_labels(state):
-    validate(state)
-    labels = []
-    for scope in SCOPES:
-        if scope == "private" and state["coverage"] == "PRIVATE_UNKNOWN":
-            labels.append("Private activity | UNKNOWN coverage")
-            continue
-        counts = [sum(row[scope][key] for row in state["days"].values()) for key in FIELDS]
-        labels.append(f"{scope.title()} activity | {counts[0]} commits | {counts[1]} PRs | "
-                      f"{counts[2]} reviews | {counts[3]} issues")
-    as_of = dt.datetime.fromisoformat(state["as_of"].replace("Z","+00:00"))
-    stale = as_of + dt.timedelta(minutes=45)
-    labels.append(f"PARTIAL coverage | Updated {as_of:%d %b %H:%M} UTC | Stale after {stale:%d %b %H:%M} UTC")
-    return labels
-
-
 def main():
     tokens = [os.environ.get(k) for k in ("PROFILE_ACTIVITY_READ_TOKEN","PROFILE_ACTIVITY_ORG_READ_TOKEN")]
     clients = [API(t) for t in tokens if t]
@@ -272,14 +263,14 @@ def main():
         clients = [API(os.environ.get("GITHUB_TOKEN"))]
     previous_file = Path("previous/aggregate.json")
     previous = json.loads(previous_file.read_text()) if previous_file.exists() else None
+    owners = (OWNER, "Evisionindia") if os.getenv("REQUIRE_BOTH_PRIVATE_SCOPES") == "true" else None
+    if owners and not all(tokens):
+        raise Incomplete("Required collector credential unavailable; previous snapshot retained")
     state = refresh(clients, personal, previous, dt.datetime.now(UTC),
-                    force=os.getenv("FULL_RECONCILE") == "true")
+                    force=os.getenv("FULL_RECONCILE") == "true", required_owners=owners)
     output = Path("output")
     output.mkdir(exist_ok=True)
     (output/"aggregate.json").write_text(json.dumps(state,sort_keys=True),encoding="utf8")
-    if os.getenv("GITHUB_OUTPUT"):
-        with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf8") as f:
-            f.write("labels=" + json.dumps(public_job_labels(state)) + "\n")
     report = summary(state)
     if os.getenv("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf8") as f:

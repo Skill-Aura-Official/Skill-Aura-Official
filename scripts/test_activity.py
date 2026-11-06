@@ -55,21 +55,20 @@ class ActivityTests(unittest.TestCase):
                 a.refresh([api],True,state,self.now)
             unknown=a.refresh([api],False,None,self.now)
             self.assertIsNone(unknown["days"]["2026-11-06"]["private"]["commits"])
-            self.assertIn("Private activity | UNKNOWN coverage", a.public_job_labels(unknown))
-
-    def test_public_job_names_contain_sanitized_counts_and_explicit_expiry(self):
-        state=a.refresh([API()],True,None,self.now)
-        self.assertEqual(a.public_job_labels(state), [
-            "Public activity | 1 commits | 0 PRs | 0 reviews | 0 issues",
-            "Private activity | 1 commits | 0 PRs | 0 reviews | 0 issues",
-            "PARTIAL coverage | Updated 06 Nov 10:00 UTC | Stale after 06 Nov 10:45 UTC"
-        ])
 
     def test_incomplete_search_rejected(self):
         api=API()
         with patch.object(api,"get",return_value={"incomplete_results":True}):
             with self.assertRaises(a.Incomplete):
                 list(a.search(api,"is:issue",self.now.date(),self.now.date(),"created"))
+
+    def test_private_owner_loss_preserves_previous_snapshot(self):
+        api=API()
+        api.hidden["owner"]={"login":a.OWNER}
+        with self.assertRaises(a.Incomplete):
+            a.inventory([api,api],True,(a.OWNER,"Evisionindia"))
+        with self.assertRaises(a.Incomplete):
+            a.inventory([api],True,(a.OWNER,"Evisionindia"))
 
     def test_issue_pr_and_multiple_reviews(self):
         api=API()

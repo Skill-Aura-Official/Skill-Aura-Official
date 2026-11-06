@@ -18,13 +18,14 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    outputs:
-      labels: ${{ steps.collect.outputs.labels }}
+
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - run: python3 -m unittest discover -s scripts
+      - name: Check image rendering dependency
+        run: /usr/bin/python3 -c "import PIL" || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends python3-pil fonts-dejavu-core)
+      - run: /usr/bin/python3 -m unittest discover -s scripts
       - name: Locate the previous valid public snapshot
         id: previous
         env:
@@ -56,6 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
           PROFILE_ACTIVITY_ORG_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_ORG_READ_TOKEN }}
+          REQUIRE_BOTH_PRIVATE_SCOPES: 'true'
           FULL_RECONCILE: ${{ inputs.reconcile }}
         run: python3 scripts/activity.py
       - name: Save only the validated aggregate counters
@@ -65,13 +67,24 @@ jobs:
           path: output/aggregate.json
           if-no-files-found: error
           retention-days: 14
-  public-display:
+  publish-image:
     needs: refresh
-    name: ${{ matrix.label }}
-    permissions: {}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        label: ${{ fromJSON(needs.refresh.outputs.labels) }}
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
     steps:
-      - run: echo 'Validated aggregate shown in this public job title.'
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: personal-aggregates
+          path: output
+      - name: Check image rendering dependency
+        run: /usr/bin/python3 -c "import PIL" || (sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends python3-pil fonts-dejavu-core)
+      - name: Publish and compare the guest profile image with the collected data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: /usr/bin/python3 scripts/publish_activity.py
