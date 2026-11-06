@@ -2,13 +2,29 @@
 
 ![SkillAura — software products, web platforms and automation](./assets/hero.svg)
 
-![Portfolio](https://img.shields.io/badge/Portfolio-9%20tracked%20repositories-7c3aed?style=flat-square) ![Refresh](https://img.shields.io/badge/Refresh-Every%206%20hours-0284c7?style=flat-square) [![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
+![Portfolio](https://img.shields.io/badge/Portfolio-9%20tracked%20repositories-7c3aed?style=flat-square) [![Profile refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
 
 A portfolio of software products, web platforms, automation projects, and engineering work.
 
 </div>
 
-## Total Tracked Portfolio Activity
+## Personal GitHub activity
+
+[![Personal activity collector](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg?branch=main)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml) [Open the latest successful run and its activity table](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml?query=branch%3Amain+is%3Asuccess).
+
+Each run summary shows public and aggregate private counts for the last 30 UTC dates, its collection time, coverage and the time it becomes stale (45 minutes later). The workflow is scheduled at minutes 07, 22, 37 and 52 UTC each hour. GitHub can delay scheduled runs.
+
+| Metric | What the collector counts |
+|---|---|
+| Commits | Non-merge commits whose primary GitHub author links to my account. Counted by committer date across visible branch heads, including forks, once per SHA. A squash has a new SHA and counts separately if its source commits are still reachable. Bot-committed changes and automated profile refreshes are excluded. |
+| Pull requests and issues | Distinct PRs and issues I opened, by creation date. |
+| Reviews | Distinct reviews I submitted, by submission date, including multiple reviews on a PR. |
+
+Repository access alone adds no activity. A commit visible publicly and privately is counted once in the public column. Private coverage is limited to repositories visible to the authorized collector. UNKNOWN means the collector cannot establish a private count. A failed refresh leaves the last valid snapshot available. No refresh creates a Git commit.
+
+GitHub administers the native contribution graph separately, using its own event rules, visibility settings and update timing. [GitHub contribution rules](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference)
+
+## Repository-wide public portfolio snapshot
 
 <sub>Repository-wide activity for public projects. All authors and automation are included. 10 public repositories owned by SkillAura, including forks and the profile repository.</sub>
 
@@ -23,7 +39,7 @@ A portfolio of software products, web platforms, automation projects, and engine
   <img alt="Tracked SkillAura and approved external professional repository statistics" src="./assets/github-stats.svg" width="100%">
 </picture>
 
-## Contribution Activity
+## Repository-wide activity in the portfolio snapshot
 
 <picture>
   <source media="(max-width: 600px)" srcset="./assets/contribution-activity-mobile.svg">
@@ -70,7 +86,7 @@ A portfolio of software products, web platforms, automation projects, and engine
 
 ## Private / Closed-Source Projects
 
-Private project details and activity counts are unavailable in the public snapshot.
+Private engineering activity is reported only as personal aggregate counts in the linked workflow summary, subject to collector access.
 
 
 ## E-VMS · External Professional Work
@@ -90,5 +106,5 @@ Private project details and activity counts are unavailable in the public snapsh
 ---
 
 <div align="center">
-  <sub>Portfolio metrics are generated from tracked GitHub repository activity and refreshed every six hours. Last successful synchronization: 2026-11-06T06:55:59.812Z.</sub>
+  <sub>Public portfolio graphics reflect a historical repository-wide snapshot. Snapshot generated 2026-11-06T06:55:59.812Z.</sub>
 </div>
