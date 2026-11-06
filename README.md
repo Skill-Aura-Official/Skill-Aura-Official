@@ -10,9 +10,9 @@ A portfolio of software products, web platforms, automation projects, and engine
 
 ## Personal GitHub activity
 
-[![Personal activity collector](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg?branch=main)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml) [Open the latest successful run and its activity table](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml?query=branch%3Amain+is%3Asuccess).
+[![Personal activity collector](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg?branch=main)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml) [Open the latest successful run to see its public activity counts](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml?query=branch%3Amain+is%3Asuccess).
 
-Each run summary shows public and aggregate private counts for the last 30 UTC dates, its collection time, coverage and the time it becomes stale (45 minutes later). The workflow is scheduled at minutes 07, 22, 37 and 52 UTC each hour. GitHub can delay scheduled runs.
+The public job list on each successful run shows public and aggregate private counts for the last 30 UTC dates, its collection time, coverage and the time it becomes stale (45 minutes later). The workflow is scheduled at minutes 07, 22, 37 and 52 UTC each hour. GitHub can delay scheduled runs.
 
 | Metric | What the collector counts |
 |---|---|
@@ -86,7 +86,7 @@ GitHub administers the native contribution graph separately, using its own event
 
 ## Private / Closed-Source Projects
 
-Private engineering activity is reported only as personal aggregate counts in the linked workflow summary, subject to collector access.
+Private engineering activity is reported only as personal aggregate counts in the linked workflow run, subject to collector access.
 
 
 ## E-VMS · External Professional Work

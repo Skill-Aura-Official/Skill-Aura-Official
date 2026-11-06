@@ -248,6 +248,22 @@ def summary(state):
     return "\n".join(lines) + "\n"
 
 
+def public_job_labels(state):
+    validate(state)
+    labels = []
+    for scope in SCOPES:
+        if scope == "private" and state["coverage"] == "PRIVATE_UNKNOWN":
+            labels.append("Private activity | UNKNOWN coverage")
+            continue
+        counts = [sum(row[scope][key] for row in state["days"].values()) for key in FIELDS]
+        labels.append(f"{scope.title()} activity | {counts[0]} commits | {counts[1]} PRs | "
+                      f"{counts[2]} reviews | {counts[3]} issues")
+    as_of = dt.datetime.fromisoformat(state["as_of"].replace("Z","+00:00"))
+    stale = as_of + dt.timedelta(minutes=45)
+    labels.append(f"PARTIAL coverage | Updated {as_of:%d %b %H:%M} UTC | Stale after {stale:%d %b %H:%M} UTC")
+    return labels
+
+
 def main():
     tokens = [os.environ.get(k) for k in ("PROFILE_ACTIVITY_READ_TOKEN","PROFILE_ACTIVITY_ORG_READ_TOKEN")]
     clients = [API(t) for t in tokens if t]
@@ -261,6 +277,9 @@ def main():
     output = Path("output")
     output.mkdir(exist_ok=True)
     (output/"aggregate.json").write_text(json.dumps(state,sort_keys=True),encoding="utf8")
+    if os.getenv("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf8") as f:
+            f.write("labels=" + json.dumps(public_job_labels(state)) + "\n")
     report = summary(state)
     if os.getenv("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf8") as f:

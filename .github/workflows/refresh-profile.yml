@@ -18,6 +18,8 @@ jobs:
   refresh:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    outputs:
+      labels: ${{ steps.collect.outputs.labels }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,6 +51,7 @@ jobs:
           gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/prior.zip"
           unzip -p "$RUNNER_TEMP/prior.zip" aggregate.json > previous/aggregate.json
       - name: Collect and validate sanitized totals
+        id: collect
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
@@ -62,3 +65,13 @@ jobs:
           path: output/aggregate.json
           if-no-files-found: error
           retention-days: 14
+  public-display:
+    needs: refresh
+    name: ${{ matrix.label }}
+    permissions: {}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        label: ${{ fromJSON(needs.refresh.outputs.labels) }}
+    steps:
+      - run: echo 'Validated aggregate shown in this public job title.'
