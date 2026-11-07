@@ -32,12 +32,17 @@ jobs:
           PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
           PROFILE_ACTIVITY_ORG_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_ORG_READ_TOKEN }}
           SKILLAURA_PROFILE_TOKEN: ${{ secrets.SKILLAURA_PROFILE_TOKEN }}
-          FULL_RECONCILE: ${{ inputs.reconcile }}
+          FULL_RECONCILE: ${{ github.event_name == 'workflow_dispatch' && inputs.reconcile }}
         shell: bash
         run: |
           set -euo pipefail
           args=()
-          if [[ "$FULL_RECONCILE" == true ]]; then args+=(--full); fi
+          mode=incremental
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch && "$FULL_RECONCILE" == true ]]; then
+            args+=(--full)
+            mode=full
+          fi
+          printf 'Profile collection event=%s mode=%s\n' "$GITHUB_EVENT_NAME" "$mode"
           python3 scripts/history.py --previous "$RUNNER_TEMP/history-previous.json" --output "$RUNNER_TEMP/history-inventory.json" "${args[@]}"
       - name: Publish private checkpoint and sanitized public data
         env:

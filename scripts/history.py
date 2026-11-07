@@ -36,6 +36,21 @@ class Failure(Exception):
         super().__init__(f"{source} incomplete ({status})")
 
 
+def unexpected_failure_category(error):
+    """Emit only allowlisted labels. Exception messages can contain private payloads."""
+    for kind, label in (
+        (json.JSONDecodeError, "invalid-json"),
+        (TimeoutError, "timeout"),
+        (OSError, "file-or-network-io"),
+        (KeyError, "missing-data-field"),
+        (TypeError, "unexpected-data-type"),
+        (ValueError, "invalid-data-value"),
+    ):
+        if isinstance(error, kind):
+            return label
+    return "unexpected"
+
+
 def timestamp(value):
     return value.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -692,5 +707,5 @@ if __name__=="__main__":
         main()
     except Failure as exc:
         sys.exit(str(exc))
-    except Exception:
-        sys.exit("Owner inventory incomplete; prior snapshot preserved.")
+    except Exception as exc:
+        sys.exit(f"Owner inventory incomplete ({unexpected_failure_category(exc)}); prior snapshot preserved.")
