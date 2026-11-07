@@ -4,19 +4,19 @@ I develop E-VMS camera and recording workflows and work on CAAMOO’s conversati
 
 ## All-time activity
 
-Snapshot 06 Nov 2026, 12:28 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 07 Nov 2026, 04:24 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 8 | 10 |
-| Commits | 94 | 375 |
-| PRs opened | 0 | 4 |
-| Issues opened | 0 | 0 |
-| Reviews submitted | 0 | 0 |
-| Issue / PR comments | 0 | 0 |
-| Review comments | 0 | 0 |
-| Releases | 2 | 7 |
-| Discussions | 0 | 0 |
+| Commits | 97 | ≥375 |
+| PRs opened | 0 | ≥4 |
+| Issues opened | 0 | Unknown |
+| Reviews submitted | 0 | Unknown |
+| Issue / PR comments | 0 | Unknown |
+| Review comments | 0 | Unknown |
+| Releases | 2 | ≥7 |
+| Discussions | 0 | Unknown |
 
 ![Attributable commits by year](assets/activity.svg)
 
@@ -28,14 +28,14 @@ Snapshot 06 Nov 2026, 12:28 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 91 | 370 |
-| PRs opened | 0 | 4 |
-| Issues opened | 0 | 0 |
-| Reviews submitted | 0 | 0 |
-| Issue / PR comments | 0 | 0 |
-| Review comments | 0 | 0 |
-| Releases | 2 | 7 |
-| Discussions | 0 | 0 |
+| Commits | 94 | ≥370 |
+| PRs opened | 0 | ≥4 |
+| Issues opened | 0 | Unknown |
+| Reviews submitted | 0 | Unknown |
+| Issue / PR comments | 0 | Unknown |
+| Review comments | 0 | Unknown |
+| Releases | 2 | ≥7 |
+| Discussions | 0 | Unknown |
 
 </details>
 
@@ -43,14 +43,14 @@ Snapshot 06 Nov 2026, 12:28 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 3 | 5 |
-| PRs opened | 0 | 0 |
-| Issues opened | 0 | 0 |
-| Reviews submitted | 0 | 0 |
-| Issue / PR comments | 0 | 0 |
-| Review comments | 0 | 0 |
-| Releases | 0 | 0 |
-| Discussions | 0 | 0 |
+| Commits | 3 | ≥5 |
+| PRs opened | 0 | Unknown |
+| Issues opened | 0 | Unknown |
+| Reviews submitted | 0 | Unknown |
+| Issue / PR comments | 0 | Unknown |
+| Review comments | 0 | Unknown |
+| Releases | 0 | Unknown |
+| Discussions | 0 | Unknown |
 
 </details>
 
