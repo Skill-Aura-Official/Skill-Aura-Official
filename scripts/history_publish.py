@@ -1,6 +1,7 @@
 """Publish detailed history privately and sanitized, semantic profile changes publicly."""
 import argparse
 import base64
+import copy
 import csv
 import hashlib
 import io
@@ -152,6 +153,24 @@ def semantic_public(data):
             "coverage": data["coverage"]["status"]}
 
 
+def semantic_private(data):
+    """Compare records, repository tips and access state, omitting run timestamps."""
+    state = copy.deepcopy(data)
+    for key in ("snapshot_at", "last_attempt_at", "last_success_at", "last_full_at"):
+        state.pop(key, None)
+    state["coverage"].pop("mode", None)
+    for source in state["coverage"].get("sources", []):
+        source.pop("from", None)
+        source.pop("to", None)
+    for repo in state["repositories"]:
+        repo.pop("last_attempt_at", None)
+        repo.pop("last_success_at", None)
+        for source in repo.get("source_coverage", {}).values():
+            for key in ("from", "to", "last_attempt_at", "last_success_at"):
+                source.pop(key, None)
+    return state
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=("pull", "publish"))
@@ -169,15 +188,12 @@ def main():
         raise ValueError("Unexpected inventory account")
     payload = json.dumps(data, ensure_ascii=False, sort_keys=True).encode()
     previous_private = publisher.read(publisher.state_repo, "inventory.json")
-    def stable_inventory(raw):
-        rows = json.loads(raw)
-        for key in ("snapshot_at", "last_attempt_at", "last_success_at"):
-            rows.pop(key, None)
-        return rows
-    if previous_private is None or stable_inventory(previous_private) != stable_inventory(payload):
+    if previous_private is None or semantic_private(json.loads(previous_private)) != semantic_private(data):
         publisher.commit_files(publisher.state_repo,
             {"inventory.json": payload, "exports/inventory.json": payload, "exports/records.csv": csv_bytes(data)},
             "Update private history checkpoint\n\nAutomation: profile-history")
+    else:
+        print("Private records and access unchanged; no checkpoint commit created.")
     semantic = json.dumps(semantic_public(data), sort_keys=True).encode()
     signature = hashlib.sha256(semantic).hexdigest().encode()
     previous = publisher.read(PROFILE, "assets/history-signature.txt")

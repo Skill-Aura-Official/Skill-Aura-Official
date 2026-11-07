@@ -1,7 +1,7 @@
 import copy
 import unittest
 from render_history import render, summarize
-from history_publish import csv_bytes, semantic_public
+from history_publish import csv_bytes, semantic_public, semantic_private
 
 
 class PublicHistoryTests(unittest.TestCase):
@@ -62,6 +62,20 @@ class PublicHistoryTests(unittest.TestCase):
         changed = copy.deepcopy(self.data)
         changed["repositories"][1]["scanned"] = False
         self.assertNotEqual(semantic_public(self.data), semantic_public(changed))
+
+    def test_private_timestamp_refresh_does_not_create_checkpoint(self):
+        original = copy.deepcopy(self.data)
+        original["coverage"]["mode"] = "full"
+        original["coverage"]["sources"] = [{"source": "affiliation", "to": original["snapshot_at"]}]
+        original["repositories"][0]["source_coverage"] = {"issues": {"status": "SCANNED", "to": original["snapshot_at"]}}
+        refreshed = copy.deepcopy(original)
+        refreshed["snapshot_at"] = "2026-11-06T12:15:00Z"
+        refreshed["coverage"]["mode"] = "incremental"
+        refreshed["coverage"]["sources"][0]["to"] = refreshed["snapshot_at"]
+        refreshed["repositories"][0]["source_coverage"]["issues"]["to"] = refreshed["snapshot_at"]
+        self.assertEqual(semantic_private(original), semantic_private(refreshed))
+        refreshed["repositories"][0]["source_coverage"]["issues"]["status"] = "UNKNOWN"
+        self.assertNotEqual(semantic_private(original), semantic_private(refreshed))
 
 
 if __name__ == "__main__":
