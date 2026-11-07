@@ -378,9 +378,7 @@ def repo_events(api,repo,start,cutoff,previous_coverage):
         except Failure as exc:
             if exc.status not in (403,404,409,410,"FORBIDDEN","NOT_FOUND"):
                 raise
-            if previous_coverage.get(source,{}).get("status")=="SCANNED":
-                raise Failure("previous access lost",source) from None
-            coverage[source]={"status":"PARTIAL","reason":str(exc)}
+            coverage[source]=retained_source(previous_coverage.get(source,{}),cutoff,str(exc))
         else:
             rows.extend(result)
             coverage[source]={"status":"SCANNED"}
@@ -426,9 +424,29 @@ def repo_events(api,repo,start,cutoff,previous_coverage):
     return [r for r in rows if r["date"]<=cutoff],coverage
 
 
+def retained_source(previous,attempt,reason):
+    entry=deepcopy(previous)
+    entry.update(status="UNKNOWN",reason=reason,last_attempt_at=attempt,
+                 last_success_at=previous.get("last_success_at",previous.get("to")))
+    return entry
+
+
+def retain_inaccessible(repo,attempt,last_snapshot):
+    retained=deepcopy(repo)
+    retained.update(scanned=False,access_status="UNKNOWN",last_attempt_at=attempt,
+                    last_success_at=repo.get("last_success_at",last_snapshot))
+    # A previously public repository may now be private. Keep its old facts only in the owner inventory.
+    retained.setdefault("last_known_visibility",repo["visibility"])
+    retained.setdefault("last_known_private",repo["private"])
+    retained.update(visibility="unknown",private=True)
+    retained["source_coverage"]={name:retained_source(value,attempt,"Repository inaccessible to configured read credentials")
+                                for name,value in repo.get("source_coverage",{}).items()}
+    return retained
+
+
 def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None):
     now=dt.datetime.now(UTC).replace(microsecond=0)
-    key={"source":2,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
+    key={"source":3,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
     progress={}
     if progress_path and progress_path.is_file():
         stored=json.loads(progress_path.read_text(encoding="utf8"))
@@ -464,7 +482,11 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
                 restored=True
                 break
             if not restored:
-                raise Failure("previously visible repository inaccessible; retaining previous inventory","repository coverage")
+                repos[rid]=(retain_inaccessible(old_repos[rid],cutoff,previous["snapshot_at"]),None)
+                gaps.append({"repo_id":rid,"source":"repository visibility","status":"UNKNOWN",
+                    "reason":"Previously verified records retained; configured credentials cannot read current repository metadata.",
+                    "last_success_at":repos[rid][0]["last_success_at"],"last_attempt_at":cutoff,
+                    "required_action":"Select this repository in its owner's collector token and approve organization access. Contents, Issues and Pull requests require read access."})
     old_rows=defaultdict(list)
     for row in (previous or {}).get("records",[]):
         old_rows[row["repo_id"]].append(row)
@@ -479,13 +501,17 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
         if storage_marker and repo.get("inventory_storage") and repo["owned"] and repo["private"]:
             stored+=1
             continue
+        if api is None:
+            metadata.append(repo)
+            results.extend(deepcopy(old_rows[rid]))
+            continue
         cached=progress["entries"].get(str(rid))
         if cached and cached["repo"]["visibility"]==repo["visibility"] and cached["repo"]["full_name"]==repo["full_name"]:
             try:
                 tips={b["name"]:b["commit"]["sha"] for b in api.pages("repos/"+repo["full_name"]+"/branches")}
             except Failure as exc:
-                if exc.status!=409: raise
-                tips={}
+                if exc.status not in (403,404,409,410): raise
+                tips={} if exc.status==409 else None
             if tips==cached["repo"]["branch_heads"]:
                 metadata.append(cached["repo"])
                 results.extend(cached["records"])
@@ -494,21 +520,23 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
                 continue
         gap_offset=len(gaps)
         older=old_repos.get(rid,{})
-        since=timestamp(start) if older else timestamp(created)
+        last_verified=older.get("last_success_at",(previous or {}).get("snapshot_at"))
+        since=timestamp(min(start,parse(last_verified)-2*DAY)) if last_verified else timestamp(created)
         originals=old_rows[rid]
         # Preserve previously observed historical facts. Recompute branch membership for currently reachable commits.
         by_id={(r["type"],r["id"]):deepcopy(r) for r in originals}
         prior_commits=[r for r in originals if r["type"]=="commit"]
         try:
-            current_commits,tips=commits(api,repo,prior_commits,older.get("branch_heads",{}),full)
+            current_commits,tips=commits(api,repo,prior_commits,older.get("branch_heads",{}),
+                full or older.get("source_coverage",{}).get("reachable branch commits",{}).get("status")=="UNKNOWN")
             commit_status={"status":"SCANNED"}
         except Failure as exc:
             if exc.status==409 and not older.get("branch_heads"):
                 current_commits,tips=[],{}
                 commit_status={"status":"SCANNED","reason":"Empty repository"}
-            elif exc.status in (403,404,"FORBIDDEN","NOT_FOUND") and older.get("source_coverage",{}).get("reachable branch commits",{}).get("status")!="SCANNED":
-                current_commits,tips=[],{}
-                commit_status={"status":"PARTIAL","reason":str(exc)}
+            elif exc.status in (403,404,410,"FORBIDDEN","NOT_FOUND"):
+                current_commits,tips=[],deepcopy(older.get("branch_heads",{}))
+                commit_status=retained_source(older.get("source_coverage",{}).get("reachable branch commits",{}),cutoff,str(exc))
             else:raise
         live_ids=set()
         for row in current_commits:
@@ -531,13 +559,20 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
             by_id[(row["type"],row["id"])]=row
         source_coverage["reachable branch commits"]=commit_status
         for source,entry in source_coverage.items():
+            if entry["status"]=="UNKNOWN":
+                gaps.append({"repo_id":rid,"source":source,"status":"UNKNOWN","reason":entry["reason"],
+                             "last_success_at":entry.get("last_success_at"),"last_attempt_at":cutoff})
+                continue
             entry.update({"from":since if source!="reachable branch commits" else "earliest reachable commit",
-                          "to":cutoff,"permission":("Contents read" if source in ("releases","reachable branch commits")
+                          "to":cutoff,"last_success_at":cutoff,"last_attempt_at":cutoff,
+                          "permission":("Contents read" if source in ("releases","reachable branch commits")
                           else "Discussions read" if source=="discussion topics" else
                           "Pull requests read" if "review" in source else "Issues and Pull requests read")})
             if entry["status"]=="PARTIAL":
                 gaps.append({"repo_id":rid,"source":source,"status":"PARTIAL","reason":entry["reason"]})
-        repo["scanned"]=all(s["status"]!="PARTIAL" for s in source_coverage.values())
+        repo["scanned"]=all(s["status"] in ("SCANNED","DISABLED") for s in source_coverage.values())
+        repo["last_attempt_at"]=cutoff
+        repo["last_success_at"]=cutoff if repo["scanned"] else last_verified
         repo["relationship"]=("owned" if repo["owned"] else "organization contributor" if by_id and repo["owner_type"]=="Organization"
                               else "collaborator" if by_id else "accessible")
         repo["source_coverage"]=source_coverage

@@ -66,14 +66,51 @@ class HistoryTests(unittest.TestCase):
         row["authors"]["nodes"]=[{"user":None,"name":"Jatin dalal","email":"unverified"}]
         self.assertIsNone(h.commit_role(api,repo,row))
 
-    def test_unknown_cursor_and_partial_source_fail_closed(self):
+    def test_unknown_cursor_fails_and_inaccessible_source_retains_date(self):
         with self.assertRaises(h.Failure):
             list(h.connection(lambda p:{"nodes":[],"pageInfo":{"endCursor":"repeat","hasNextPage":True}}))
         api=Mock()
         api.pages.side_effect=h.Failure(403,"API")
+        rows,coverage=h.repo_events(api,{"full_name":"scope/name","has_discussions":False},"2025-01-01","2027-01-01",
+                          {"issues":{"status":"SCANNED","to":"2026-01-01"}})
+        self.assertEqual(rows,[])
+        self.assertEqual(coverage["issues"]["status"],"UNKNOWN")
+        self.assertEqual(coverage["issues"]["last_success_at"],"2026-01-01")
+        self.assertEqual(coverage["issues"]["to"],"2026-01-01")
+
+    def test_missing_repository_preserves_old_rows_and_refreshes_visible_repository(self):
+        stamp="2026-11-06T00:00:00Z"
+        repo={"id":1,"node_id":"one","full_name":"old/project","private":False,"visibility":"public",
+              "owned":True,"owner_type":"User","default_branch":"main","has_discussions":False,
+              "source_coverage":{"issues":{"status":"SCANNED","to":stamp}},"scanned":True}
+        live=dict(repo,id=2,full_name="visible/project")
+        row={"repo_id":1,"type":"issue","id":"old","date":stamp,"branches":[]}
+        newrow=dict(row,repo_id=2,id="new")
+        previous={"schema":1,"account":h.OWNER,"snapshot_at":stamp,"last_full_at":stamp,"repositories":[repo],"records":[row]}
+        api=Mock()
+        api.request.side_effect=lambda path: ({"login":h.OWNER,"type":"User","created_at":stamp} if path=="user" else
+                                              (_ for _ in ()).throw(h.Failure(404,"repository identity")))
+        with patch.object(h,"discovery",return_value=({2:(live,api)},{})),patch.object(h,"commits",return_value=([],{})),patch.object(h,"repo_events",return_value=([newrow],{"issues":{"status":"SCANNED"}})):
+            result=h.build([api],previous)
+        self.assertEqual({r["id"] for r in result["records"]},{"old","new"})
+        retained=next(r for r in result["repositories"] if r["id"]==1)
+        self.assertFalse(retained["scanned"])
+        self.assertTrue(retained["private"])
+        self.assertEqual(retained["last_known_visibility"],"public")
+        self.assertEqual(retained["source_coverage"]["issues"]["to"],stamp)
+        self.assertEqual(result["coverage"]["scanned"],1)
+        self.assertEqual(previous["repositories"][0],repo)
+
+    def test_wrong_identity_and_required_owner_loss_still_stop_refresh(self):
+        api=Mock()
+        api.request.return_value={"login":"different-account","type":"User"}
         with self.assertRaises(h.Failure):
-            h.repo_events(api,{"full_name":"scope/name","has_discussions":False},"2025-01-01","2027-01-01",
-                          {"issues":{"status":"SCANNED"}})
+            h.build([api],None)
+        api.request.return_value={"login":h.OWNER,"type":"User","created_at":"2025-01-01T00:00:00Z"}
+        api.pages.return_value=[]
+        with self.assertRaises(h.Failure):
+            h.discovery([api],h.parse("2025-01-01T00:00:00Z"),h.parse("2025-01-01T00:00:00Z"),
+                        h.parse("2026-01-01T00:00:00Z"),[],(h.OWNER,))
 
     def test_profile_automation_requires_identity_trailer_and_safe_paths(self):
         repo={"full_name":h.PROFILE}
