@@ -13,7 +13,7 @@ I build software and web applications, from SkillAura’s career tools and hacka
 
 ## Personal engineering history
 
-Snapshot 07 Nov 2026, 07:56 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 07 Nov 2026, 08:42 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 <picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>
 
@@ -22,7 +22,7 @@ Snapshot 07 Nov 2026, 07:56 UTC. Coverage **PARTIAL**. Private coverage **Partia
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 8 | 11 |
-| Commits | 171 | 502 |
+| Commits | 174 | 504 |
 | PRs opened | 0 | 4 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -43,7 +43,7 @@ Snapshot 07 Nov 2026, 07:56 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 168 | 497 |
+| Commits | 171 | 499 |
 | PRs opened | 0 | 4 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
