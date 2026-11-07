@@ -13,7 +13,7 @@ I build software and web applications, from SkillAura’s career tools and hacka
 
 ## Personal engineering history
 
-Snapshot 07 Nov 2026, 08:42 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 07 Nov 2026, 10:26 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 <picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>
 
@@ -21,9 +21,9 @@ Snapshot 07 Nov 2026, 08:42 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Repositories with activity | 8 | 11 |
-| Commits | 174 | 504 |
-| PRs opened | 0 | 4 |
+| Repositories with activity | 11 | 14 |
+| Commits | 198 | 525 |
+| PRs opened | 11 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
 | Issue / PR comments | 0 | 0 |
@@ -43,8 +43,8 @@ Snapshot 07 Nov 2026, 08:42 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 171 | 499 |
-| PRs opened | 0 | 4 |
+| Commits | 195 | 520 |
+| PRs opened | 11 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
 | Issue / PR comments | 0 | 0 |
@@ -106,8 +106,9 @@ Every discovered public repository is included below. Activity reflects my accou
 - [Skill-Aura-Official/skillpath-launch](https://github.com/Skill-Aura-Official/skillpath-launch) · owned
 - [Skill-Aura-Official/TSB-Council](https://github.com/Skill-Aura-Official/TSB-Council) · owned
 
-**Organization and professional work · 1**
+**Organization and professional work · 2**
 
+- [Evisionindia/.github](https://github.com/Evisionindia/.github) · organization contributor
 - [Evisionindia/EVMS-website](https://github.com/Evisionindia/EVMS-website) · organization contributor
 
 **Forks and collaborations · 2**
