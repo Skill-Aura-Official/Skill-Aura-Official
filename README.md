@@ -6,7 +6,7 @@ I develop E-VMS camera and recording workflows and work on CAAMOO’s conversati
 
 ## Personal engineering history
 
-Snapshot 07 Nov 2026, 07:42 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 07 Nov 2026, 07:56 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 <picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>
 
@@ -14,8 +14,8 @@ Snapshot 07 Nov 2026, 07:42 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Repositories with activity | 8 | 10 |
-| Commits | 170 | 500 |
+| Repositories with activity | 8 | 11 |
+| Commits | 171 | 502 |
 | PRs opened | 0 | 4 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -36,7 +36,7 @@ Snapshot 07 Nov 2026, 07:42 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 167 | 495 |
+| Commits | 168 | 497 |
 | PRs opened | 0 | 4 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -126,7 +126,7 @@ Technologies verified in project source and configuration across my portfolio.
 `FFmpeg` `HLS` `MediaMTX` `ONVIF` `OpenCV` `RTSP` `WebRTC`
 
 **📦 Infrastructure & Delivery**<br>
-`Docker` `Docker Compose` `GitHub Actions` `Nginx` `systemd`
+`Docker` `Docker Compose` `GitHub Actions` `Nginx` `SSH` `systemd`
 
 **🧪 Development & Testing**<br>
 `ESLint` `Git` `Node.js test runner` `npm` `pip` `Playwright` `pytest` `Python unittest` `Testing Library` `Vitest`
