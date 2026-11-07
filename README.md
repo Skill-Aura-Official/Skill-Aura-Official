@@ -71,11 +71,20 @@ Snapshot 07 Nov 2026, 07:56 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 </details>
 
-## Product work
+## Private / Closed-source Projects
 
-**E-VMS** · Camera onboarding, recording and playback workflows for E-Vision India's video-management product.
+These entries cover work I can describe publicly. Linked titles open public project pages or case studies.
 
-**CAAMOO** · Conversational CCTV investigation, follow-up and inspectable evidence. Ishika leads CAAMOO and its training work; I contribute to the web and investigation interface.
+- **[E-VMS](https://github.com/Evisionindia/EVMS-website)** · *E-Vision India* · E-Vision India’s video-management product. I contribute to camera, recording, playback and operator workflows.
+- **CAAMOO** · *E-Vision India* · A conversational CCTV investigation application. Ishika leads CAAMOO and its training work. I contribute to the web and investigation interface.
+- **[ANPR](https://github.com/Skill-Aura-Official/ANPR)** · *Personal repository and E-Vision integration* · A plate-recognition application for reviewing vehicle observations. I contribute to plate review, evidence and integration workflows.
+- **[Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)** · *SkillAura* · SkillAura’s hackathon platform. I worked on the event web experience.
+- **[Age of Telegram · Empire RPG](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)** · *Personal repository for a community game* · A text-based RPG bot for Telegram groups. I contributed to its bot code.
+- **Aurora Ink Genie** · *Personal repository* · I contributed to the React web prototype and iterated on its interface.
+- **Beauty and wellness website** · *Customer project contribution* · I contributed to a service catalogue, campaign pages and administration workflows for a beauty and wellness website.
+- **Nyther** · *The Sovereign Brotherhood community* · I contributed to a Telegram automation project with userbot deployment and management workflows.
+- **Kiru** · *Personal repository* · I contributed to the web application for an AI-assisted recruitment project, including application and hiring workflows.
+- **Nexus VMS** · *E-Vision India* · I contributed to an earlier E-Vision India video-management codebase and its engineering workflow.
 
 ## Complete public projects
 

@@ -20,6 +20,20 @@ INTRODUCTION = (
     "plate recognition, and AI-assisted investigations. I like taking a workflow from an early prototype "
     "through the details that make it usable and easier to verify."
 )
+# Copy explicitly approved for the public profile. Keep private inventory
+# records out of this rendering path.
+CLOSED_SOURCE = (
+    ("E-VMS", "E-Vision India’s video-management product. I contribute to camera, recording, playback and operator workflows.", "E-Vision India", "https://github.com/Evisionindia/EVMS-website"),
+    ("CAAMOO", "A conversational CCTV investigation application. Ishika leads CAAMOO and its training work. I contribute to the web and investigation interface.", "E-Vision India", None),
+    ("ANPR", "A plate-recognition application for reviewing vehicle observations. I contribute to plate review, evidence and integration workflows.", "Personal repository and E-Vision integration", "https://github.com/Skill-Aura-Official/ANPR"),
+    ("Innovathon", "SkillAura’s hackathon platform. I worked on the event web experience.", "SkillAura", "https://github.com/Skill-Aura-Official/Innovathon-Public"),
+    ("Age of Telegram · Empire RPG", "A text-based RPG bot for Telegram groups. I contributed to its bot code.", "Personal repository for a community game", "https://github.com/Skill-Aura-Official/EmpireRPG_Bot"),
+    ("Aurora Ink Genie", "I contributed to the React web prototype and iterated on its interface.", "Personal repository", None),
+    ("Beauty and wellness website", "I contributed to a service catalogue, campaign pages and administration workflows for a beauty and wellness website.", "Customer project contribution", None),
+    ("Nyther", "I contributed to a Telegram automation project with userbot deployment and management workflows.", "The Sovereign Brotherhood community", None),
+    ("Kiru", "I contributed to the web application for an AI-assisted recruitment project, including application and hiring workflows.", "Personal repository", None),
+    ("Nexus VMS", "I contributed to an earlier E-Vision India video-management codebase and its engineering workflow.", "E-Vision India", None),
+)
 METRICS = (
     ("commit", "Commits"), ("pr", "PRs opened"), ("issue", "Issues opened"),
     ("review", "Reviews submitted"), ("issue_comment", "Issue / PR comments"),
@@ -110,11 +124,12 @@ def render(data):
         for kind, label in METRICS:
             lines.append(f"| {label} | {figure(repos,'public',kind,years[year]['public',kind])} | {figure(repos,'private',kind,years[year]['private',kind]) if private_available else 'Unknown'} |")
         lines.extend(["", "</details>", ""])
-    lines.extend(["</details>", "", "## Product work", "",
-        "**E-VMS** · Camera onboarding, recording and playback workflows for E-Vision India's video-management product.",
-        "",
-        "**CAAMOO** · Conversational CCTV investigation, follow-up and inspectable evidence. Ishika leads CAAMOO and its training work; I contribute to the web and investigation interface.",
-        "", "## Complete public projects", "",
+    lines.extend(["</details>", "", "## Private / Closed-source Projects", "",
+                  "These entries cover work I can describe publicly. Linked titles open public project pages or case studies.", ""])
+    for name, summary, attribution, url in CLOSED_SOURCE:
+        label = f"[{name}]({url})" if url else name
+        lines.append(f"- **{label}** · *{attribution}* · {summary}")
+    lines.extend(["", "## Complete public projects", "",
         "Every discovered public repository is included below. Activity reflects my account-linked work.", "",
         '<picture><source media="(max-width: 600px)" srcset="assets/projects-mobile.svg"><img src="assets/projects.svg" alt="Complete public repository inventory" width="100%"></picture>', "",
         '<details><summary>Open every repository link</summary>', ""])

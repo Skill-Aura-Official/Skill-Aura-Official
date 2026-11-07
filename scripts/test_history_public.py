@@ -1,7 +1,7 @@
 import copy
 import unittest
 from unittest.mock import patch
-from render_history import render, summarize, artwork, INTRODUCTION
+from render_history import render, summarize, artwork, INTRODUCTION, CLOSED_SOURCE
 from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
 
 
@@ -53,6 +53,22 @@ class PublicHistoryTests(unittest.TestCase):
         self.assertIn("### Work at a glance", readme)
         self.assertTrue(60 <= len(INTRODUCTION.split()) <= 100)
         self.assertIn(INTRODUCTION, readme)
+
+    def test_closed_source_cards_are_explicit_approved_copy(self):
+        self.data["repositories"][1]["description"] = "PRIVATE CUSTOMER DESCRIPTION"
+        self.data["repositories"][1]["html_url"] = "https://github.com/secret-client/private-project"
+        readme, directory = render(self.data)
+        section = readme.split("## Private / Closed-source Projects", 1)[1].split("## Complete public projects", 1)[0]
+        self.assertEqual(len(CLOSED_SOURCE), 10)
+        self.assertEqual(len([line for line in section.splitlines() if line.startswith("- **")]), 10)
+        for name, summary, attribution, url in CLOSED_SOURCE:
+            self.assertIn(name, section)
+            self.assertIn(summary, section)
+            self.assertIn(attribution, section)
+            if url:
+                self.assertIn(url, section)
+        for private in ("PRIVATE CUSTOMER DESCRIPTION", "secret-client/private-project"):
+            self.assertNotIn(private, readme + directory)
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)
