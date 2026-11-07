@@ -1,7 +1,7 @@
 import copy
 import unittest
 from unittest.mock import patch
-from render_history import render, summarize, artwork
+from render_history import render, summarize, artwork, INTRODUCTION
 from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
 
 
@@ -47,6 +47,12 @@ class PublicHistoryTests(unittest.TestCase):
         with patch.object(Publisher,"api",return_value={"login":"wrong-account"}):
             with self.assertRaises(ValueError):
                 Publisher("test")
+
+    def test_introduction_reflects_multiple_work_areas(self):
+        readme, _ = render(self.data)
+        self.assertIn("### Work at a glance", readme)
+        self.assertTrue(60 <= len(INTRODUCTION.split()) <= 100)
+        self.assertIn(INTRODUCTION, readme)
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)

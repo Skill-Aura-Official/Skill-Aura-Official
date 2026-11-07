@@ -1,8 +1,15 @@
 <picture><source media="(max-width: 600px)" srcset="assets/hero-mobile.svg"><img src="assets/hero.svg" alt="SkillAura — software products, web platforms and automation" width="100%"></picture>
 
-# Jatin Dalal · SkillAura
+# Jatin Dalal · Software, AI & Automation
 
-I develop E-VMS camera and recording workflows and work on CAAMOO’s conversational interface for investigating CCTV footage.
+I build software and web applications, from SkillAura’s career tools and hackathon platform to community bots and workflow automation. I work across web interfaces, backend integrations, and developer tooling. My public projects include personal builds and community work, and I contribute to team-owned products at E-Vision India. My current work there covers video management, plate recognition, and AI-assisted investigations. I like taking a workflow from an early prototype through the details that make it usable and easier to verify.
+
+### Work at a glance
+
+- **💻 Web products** · [SkillAura PathFinder AI](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) and [Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)
+- **🤖 Bots and communities** · [Anisha](https://github.com/Skill-Aura-Official/Anisha) and [Empire RPG](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)
+- **🧰 Developer tools and automation** · [Portfolio collection and attribution](METHODOLOGY.md)
+- **🎥 Video systems and AI** · Camera, recording, plate review and investigation workflows
 
 ## Personal engineering history
 
