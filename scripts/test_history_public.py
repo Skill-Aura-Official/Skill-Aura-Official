@@ -56,6 +56,9 @@ class PublicHistoryTests(unittest.TestCase):
     def test_timestamp_only_refresh_is_not_public_data_change(self):
         changed = copy.deepcopy(self.data)
         changed["snapshot_at"] = "2026-11-06T12:15:00Z"
+        changed["repositories"][0]["last_success_at"] = changed["snapshot_at"]
+        changed["repositories"][0]["branch_heads"] = {"main": "new-tip"}
+        changed["repositories"][0]["source_coverage"] = {"issues": {"status": "SCANNED", "to": changed["snapshot_at"]}}
         self.assertEqual(semantic_public(self.data), semantic_public(changed))
 
     def test_lost_coverage_requires_public_display_update(self):

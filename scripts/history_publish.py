@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from render_history import render, summarize, graphic, figure, METRICS
+from render_history import render, graphic
 
 ACCOUNT = "Skill-Aura-Official"
 PROFILE = ACCOUNT + "/" + ACCOUNT
@@ -139,18 +139,11 @@ def csv_bytes(data):
 
 
 def semantic_public(data):
-    repos, counts, years, worked = summarize(data)
-    public_repos = sorted((repo for repo in repos.values() if not repo["private"]), key=lambda r: r["id"])
-    public_events = sorted((record for record in data["records"] if not repos[str(record["repo_id"])]["private"]),
-                           key=lambda r: (str(r["repo_id"]), r["type"], str(r["id"])))
-    def counters(counter):
-        return {"|".join(key): value for key, value in sorted(counter.items())}
-    return {"public_repositories": public_repos, "public_records": public_events,
-            "counts": counters(counts), "years": {year: counters(rows) for year, rows in sorted(years.items())},
-            "display_figures": {scope: {kind: figure(repos, scope, kind, counts[scope, kind])
-                                        for kind, _ in METRICS} for scope in ("public", "private")},
-            "repositories_worked": {scope: len(ids) for scope, ids in worked.items()},
-            "coverage": data["coverage"]["status"]}
+    # Hash only what a visitor actually sees. Raw metadata such as branch heads
+    # and individual source scan times must never create another profile commit.
+    stable = dict(data, snapshot_at="2000-01-01T00:00:00Z")
+    readme, directory = render(stable)
+    return {"readme": readme, "directory": directory, "graphic": graphic(stable).decode()}
 
 
 def semantic_private(data):
@@ -165,6 +158,10 @@ def semantic_private(data):
     for repo in state["repositories"]:
         repo.pop("last_attempt_at", None)
         repo.pop("last_success_at", None)
+        if repo["full_name"].casefold() == PROFILE.casefold():
+            # The generated public snapshot itself advances this tip. Changes
+            # to attributable profile records still trigger a checkpoint.
+            repo.pop("branch_heads", None)
         for source in repo.get("source_coverage", {}).values():
             for key in ("from", "to", "last_attempt_at", "last_success_at"):
                 source.pop(key, None)
