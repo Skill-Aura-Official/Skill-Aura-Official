@@ -58,6 +58,11 @@ class PublicHistoryTests(unittest.TestCase):
         changed["snapshot_at"] = "2026-11-06T12:15:00Z"
         self.assertEqual(semantic_public(self.data), semantic_public(changed))
 
+    def test_lost_coverage_requires_public_display_update(self):
+        changed = copy.deepcopy(self.data)
+        changed["repositories"][1]["scanned"] = False
+        self.assertNotEqual(semantic_public(self.data), semantic_public(changed))
+
 
 if __name__ == "__main__":
     unittest.main()

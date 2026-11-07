@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from render_history import render, summarize, graphic
+from render_history import render, summarize, graphic, figure, METRICS
 
 ACCOUNT = "Skill-Aura-Official"
 PROFILE = ACCOUNT + "/" + ACCOUNT
@@ -146,6 +146,8 @@ def semantic_public(data):
         return {"|".join(key): value for key, value in sorted(counter.items())}
     return {"public_repositories": public_repos, "public_records": public_events,
             "counts": counters(counts), "years": {year: counters(rows) for year, rows in sorted(years.items())},
+            "display_figures": {scope: {kind: figure(repos, scope, kind, counts[scope, kind])
+                                        for kind, _ in METRICS} for scope in ("public", "private")},
             "repositories_worked": {scope: len(ids) for scope, ids in worked.items()},
             "coverage": data["coverage"]["status"]}
 
