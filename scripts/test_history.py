@@ -88,7 +88,12 @@ class HistoryTests(unittest.TestCase):
         again,_=h.commits(api,repo,rows,tips,False)
         self.assertEqual(rows,again)
         self.assertEqual(api.graph.call_count,1)
+        row["author"]["user"]["login"]=h.OWNER
+        row["committer"]["user"]={"login":"github-actions[bot]","__typename":"Bot"}
+        authored,_=h.commits(api,repo,[],{},True)
+        self.assertEqual(authored[0]["role"],"authored")
         row["authors"]["nodes"]=[{"user":None,"name":"Jatin dalal","email":"unverified"}]
+        row["author"]["user"]["login"]="someone-else"
         self.assertIsNone(h.commit_role(api,repo,row))
 
     def test_unknown_cursor_fails_and_inaccessible_source_retains_date(self):

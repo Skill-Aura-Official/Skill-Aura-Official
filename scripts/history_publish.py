@@ -11,12 +11,14 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from render_history import render, graphic
+from render_history import render, graphic, artwork
 
 ACCOUNT = "Skill-Aura-Official"
 PROFILE = ACCOUNT + "/" + ACCOUNT
 STATE_MARKER = "Private personal work inventory and history checkpoints"
 IDENTITY_COMMIT = "17a7b2d0da3b0a6f1a64c124170cbb940ef7d042"
+AUTOMATION_COMMIT = "0ada23ca622a2e37b15b20c11862884d5b98626a"
+AUTOMATION_ACCOUNT = "github-actions[bot]"
 
 
 class Publisher:
@@ -28,7 +30,10 @@ class Publisher:
         linked = self.api("repos/" + PROFILE + "/commits/" + IDENTITY_COMMIT)
         if linked["author"]["login"] != ACCOUNT or linked["committer"]["login"] != ACCOUNT:
             raise ValueError("Publication identity linkage failed")
-        self.identity = {k: linked["commit"]["author"][k] for k in ("name", "email")}
+        automated = self.api("repos/" + PROFILE + "/commits/" + AUTOMATION_COMMIT)
+        if any((automated.get(key) or {}).get("login") != AUTOMATION_ACCOUNT for key in ("author","committer")):
+            raise ValueError("Historical automation identity linkage failed")
+        self.identity = {k: automated["commit"]["author"][k] for k in ("name", "email")}
         self.state_repo = None
         page = 1
         while True:
@@ -117,7 +122,7 @@ class Publisher:
         else:
             self.api("repos/" + repo + "/git/refs", {"ref": "refs/heads/main", "sha": commit})
         verified = self.api("repos/" + repo + "/commits/" + commit)
-        if any((verified.get(key) or {}).get("login") != ACCOUNT for key in ("author", "committer")):
+        if any((verified.get(key) or {}).get("login") != AUTOMATION_ACCOUNT for key in ("author", "committer")):
             raise ValueError("Published commit identity could not be verified")
         return commit
 
@@ -143,7 +148,7 @@ def semantic_public(data):
     # and individual source scan times must never create another profile commit.
     stable = dict(data, snapshot_at="2000-01-01T00:00:00Z")
     readme, directory = render(stable)
-    return {"readme": readme, "directory": directory, "graphic": graphic(stable).decode()}
+    return {"readme": readme, "directory": directory, "artwork": {k:v.decode() for k,v in artwork(stable).items()}}
 
 
 def semantic_private(data):
@@ -198,7 +203,7 @@ def main():
         print("Public history data unchanged; no profile commit created.")
         return
     readme, directory = render(data)
-    commit = publisher.commit_files(PROFILE, {"README.md": readme.encode(), "PUBLIC_PROJECTS.md": directory.encode(), "assets/activity.svg": graphic(data),
+    commit = publisher.commit_files(PROFILE, {"README.md": readme.encode(), "PUBLIC_PROJECTS.md": directory.encode(), **artwork(data),
         "assets/history-signature.txt": signature},
         "Automated profile inventory snapshot\n\nAutomation: profile-history")
     print("Published sanitized all-time profile snapshot " + commit)

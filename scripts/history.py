@@ -20,8 +20,11 @@ DAY = dt.timedelta(days=1)
 PAGE = "pageInfo {hasNextPage endCursor}"
 PROFILE = f"{OWNER}/{OWNER}".lower()
 STATE_MARKER = "Private personal work inventory and history checkpoints"
-AUTOMATION_PATHS = {"README.md","PUBLIC_PROJECTS.md","assets/activity.svg","assets/history-signature.txt"}
+AUTOMATION_PATHS = {"README.md","PUBLIC_PROJECTS.md","assets/activity.svg","assets/activity-mobile.svg",
+                    "assets/timeline.svg","assets/timeline-mobile.svg","assets/projects.svg","assets/projects-mobile.svg",
+                    "assets/history-signature.txt"}
 TYPES = {"commit","pr","issue","review","issue_comment","review_comment","release","discussion"}
+COLLECTION_REVISION = 2
 
 
 class Failure(Exception):
@@ -175,6 +178,9 @@ def repo_meta(value):
             "visibility":visibility,
             "default_branch":value["default_branch"],"fork":value["fork"],"archived":value["archived"],
             "inventory_storage":value.get("description")==STATE_MARKER,
+            "description":value.get("description") or "", "language":value.get("language"),
+            "stars":value.get("stargazers_count",0),"forks":value.get("forks_count",0),
+            "topics":value.get("topics",[]),"updated_at":value.get("updated_at"),"pushed_at":value.get("pushed_at"),
             "owner_type":value["owner"].get("type","Unknown"),"has_discussions":value.get("has_discussions",False),
             "created_at":value["created_at"],"scanned":False,"relationship":"accessible"}
 
@@ -348,9 +354,6 @@ def commits(api,repo,previous,prior_tips,force):
             for c in connection(page):
                 role=commit_role(api,repo,c)
                 if not role:continue
-                actor=(c.get("committer") or {}).get("user") or {}
-                if actor.get("__typename")=="Bot" or actor.get("login","").endswith("[bot]"):
-                    continue
                 title=c["messageHeadline"]
                 if profile_automation(api,repo,c):
                     continue
@@ -470,7 +473,7 @@ def optional_discovery(optional_clients,created,start,end,gaps):
 
 def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None,optional_clients=()):
     now=dt.datetime.now(UTC).replace(microsecond=0)
-    key={"source":4,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
+    key={"source":5,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
     progress={}
     if progress_path and progress_path.is_file():
         stored=json.loads(progress_path.read_text(encoding="utf8"))
@@ -486,7 +489,7 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
         raise Failure("incompatible checkpoint","history inventory")
     if required_owners and len(required_owners)!=len(clients):
         raise Failure("missing owner-specific credential","private scope")
-    full=not previous or force or now-parse(previous["last_full_at"])>=7*DAY
+    full=not previous or force or previous.get("collection_revision")!=COLLECTION_REVISION or now-parse(previous["last_full_at"])>=7*DAY
     start=created if full else max(created,parse(previous["snapshot_at"])-2*DAY)
     gaps=[]
     repos,sources=discovery(clients,created,start,now,gaps,required_owners)
@@ -627,7 +630,7 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
     source_list=[{"source":name,"repositories":len(ids),"status":"PARTIAL" if name in partial_sources else "SCANNED",
                 "from":("GitHub-retained recent window" if name=="recent public event repository discovery" else timestamp(start)),
                 "to":cutoff,"permission":"account-visible repository metadata and GitHub search"} for name,ids in sorted(sources.items())]
-    return {"schema":1,"account":OWNER,"account_created_at":timestamp(created),"snapshot_at":cutoff,
+    return {"schema":1,"collection_revision":COLLECTION_REVISION,"account":OWNER,"account_created_at":timestamp(created),"snapshot_at":cutoff,
             "last_attempt_at":cutoff,"last_success_at":timestamp(dt.datetime.now(UTC)),
             "last_full_at":cutoff if full else previous["last_full_at"],
             "repositories":metadata,"records":results,

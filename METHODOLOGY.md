@@ -18,6 +18,8 @@ The public profile shows account-wide attributable activity, with public totals 
 
 The account-wide commit total deduplicates identical SHAs across forks and branches. A SHA visible in both public and private repositories counts publicly. Per-repository commit totals may therefore sum to more than the account-wide figure. Cherry-picks and squash merges have different SHAs and remain distinct objects when both are reachable. Year tables use the record's event timestamp. Authored and committed timestamps are retained separately for commits.
 
+A human-authored commit remains eligible when an automation account is its committer. Automated profile snapshots are excluded after their exact message, automation trailer and generated file paths are checked. Repository descriptions, primary language, stars and fork counts describe the project as a whole.
+
 ## Discovery and coverage
 
 The collector combines paginated personal, organization and collaboration inventories with contribution discovery and date-split search queries. Stable IDs join renamed repositories. Archived projects and forks remain eligible. Source receipts in the private inventory record date ranges, access results and scanning outcomes. A failed source preserves previous known records and records its gap. Unknown coverage does not become zero.
@@ -30,6 +32,10 @@ One Actions workflow requests refresh at minutes 07, 22, 37 and 52 UTC. GitHub m
 
 The public README contains native Markdown numbers and the dataset snapshot date. The graphic supplements those numbers. A public snapshot commit is created only when the represented data changes. Timestamp-only refreshes create no public commit. Automated snapshot commits are labelled explicitly and excluded from engineering activity. Collector code repairs requested by the owner remain normal engineering changes.
 
+Generated snapshots use the verified github-actions[bot] author and committer from an existing GitHub-linked automation commit. The publishing credential is separately checked against the authorized account. This identifies machine output transparently and prevents generated commits from appearing as personal authorship.
+
 Private checkpoints and exports are published to an access-controlled repository. Public files are derived separately from the inventory. Failure preserves the last published snapshot. Last attempted and successful refreshes can be checked independently from the dataset snapshot, in workflow metadata and the private report. A successful workflow badge alone does not establish freshness.
 
 [Refresh workflow](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)
+
+[GitHub scheduling constraints](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)

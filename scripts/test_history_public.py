@@ -1,7 +1,8 @@
 import copy
 import unittest
-from render_history import render, summarize
-from history_publish import csv_bytes, semantic_public, semantic_private
+from unittest.mock import patch
+from render_history import render, summarize, artwork
+from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
 
 
 class PublicHistoryTests(unittest.TestCase):
@@ -23,12 +24,29 @@ class PublicHistoryTests(unittest.TestCase):
 
     def test_no_private_identifiers_in_public_markdown(self):
         readme, directory = render(self.data)
+        all_images="".join(value.decode() for value in artwork(self.data).values())
         for secret in ("secret-client", "private-project", "secret-sha", "secret-branch", "secret-title"):
-            self.assertNotIn(secret, readme + directory)
+            self.assertNotIn(secret, readme + directory + all_images)
         self.assertIn("| Commits | 1 | 1 |", readme)
         self.assertIn("| PRs opened | 0 | 1 |", readme)
         self.assertIn("2025", readme)
         self.assertIn("2026", readme)
+
+    def test_generated_identity_comes_from_linked_automation_and_actor_is_checked(self):
+        human={"author":{"login":ACCOUNT},"committer":{"login":ACCOUNT}}
+        machine={"author":{"login":AUTOMATION_ACCOUNT},"committer":{"login":AUTOMATION_ACCOUNT},
+                 "commit":{"author":{"name":"verified automation","email":"existing-public-bot-address"}}}
+        def response(route):
+            return {"user":{"login":ACCOUNT},
+                    "repos/"+PROFILE+"/commits/"+IDENTITY_COMMIT:human,
+                    "repos/"+PROFILE+"/commits/"+AUTOMATION_COMMIT:machine,
+                    "user/repos?per_page=100&page=1":[{"private":True,"owner":{"login":ACCOUNT},"description":STATE_MARKER,"full_name":"owner/private-state"}]}[route]
+        with patch.object(Publisher,"api",side_effect=response):
+            publisher=Publisher("test")
+        self.assertEqual(publisher.identity,machine["commit"]["author"])
+        with patch.object(Publisher,"api",return_value={"login":"wrong-account"}):
+            with self.assertRaises(ValueError):
+                Publisher("test")
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)
