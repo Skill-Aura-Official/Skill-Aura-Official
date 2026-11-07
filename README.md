@@ -105,4 +105,28 @@ Every discovered public repository is included below. Activity reflects my accou
 
 ## Technologies
 
-Python · JavaScript · React · SQL
+Technologies verified in project source and configuration across my portfolio.
+
+**💻 Languages**<br>
+`Batchfile` `CSS` `Go` `HTML` `JavaScript` `PHP` `PowerShell` `Python` `Shell` `SQL` `TypeScript`
+
+**🎨 Frontend & UI**<br>
+`Bootstrap` `Framer Motion` `Lucide` `Next.js` `Radix UI` `React` `React Hook Form` `React Icons` `React Router` `Recharts` `Tailwind CSS` `TanStack Query` `Three.js` `Vite` `Zustand`
+
+**🔌 Backend & APIs**<br>
+`aiohttp` `Axios` `bcrypt` `Express` `FastAPI` `Fastify` `HTTPX` `JWT` `Node.js` `OAuth` `OpenAPI` `Pydantic` `Python Cryptography` `Requests` `REST APIs` `Uvicorn` `WebSockets` `Zod`
+
+**🗄️ Databases & Storage**<br>
+`Drizzle ORM` `Firebase` `Microsoft Excel` `MongoDB` `MySQL` `PostgreSQL` `Redis` `SQLAlchemy` `SQLite` `Supabase`
+
+**🧠 AI, ML & Inference**<br>
+`NumPy` `Ollama` `ONNX Runtime` `OpenAI SDK` `OpenAI-compatible API` `Pillow` `Qwen` `YOLO` `YOLOX`
+
+**🎥 Video & Camera Systems**<br>
+`FFmpeg` `HLS` `MediaMTX` `ONVIF` `OpenCV` `RTSP` `WebRTC`
+
+**📦 Infrastructure & Delivery**<br>
+`Docker` `Docker Compose` `GitHub Actions` `Nginx` `systemd`
+
+**🧪 Development & Testing**<br>
+`ESLint` `Git` `Node.js test runner` `npm` `pip` `Playwright` `pytest` `Python unittest` `Testing Library` `Vitest`

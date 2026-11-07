@@ -14,6 +14,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
+import technologies
+
 OWNER = "Skill-Aura-Official"
 UTC = dt.timezone.utc
 DAY = dt.timedelta(days=1)
@@ -54,6 +56,7 @@ def operation(path):
         (r"repos/[^/]+/[^/]+/issues","issue inventory"),(r"repos/[^/]+/[^/]+/pulls","pull request inventory"),
         (r"repos/[^/]+/[^/]+/pulls/\d+/reviews","review inventory"),(r"repos/[^/]+/[^/]+/issues/comments","issue comments"),
         (r"repos/[^/]+/[^/]+/pulls/comments","review comments"),(r"repos/[^/]+/[^/]+/releases","release inventory"),
+        (r"repos/[^/]+/[^/]+/(?:languages|git/(?:trees|blobs)/[^/]+)","technology source inventory"),
     ]
     return next((label for regex,label in routes if re.fullmatch(regex,path)),"unclassified API operation")
 
@@ -471,7 +474,8 @@ def optional_discovery(optional_clients,created,start,end,gaps):
     return repos,sources,accepted
 
 
-def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None,optional_clients=()):
+def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None,optional_clients=(),
+          collect_technologies=False):
     now=dt.datetime.now(UTC).replace(microsecond=0)
     key={"source":5,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
     progress={}
@@ -630,7 +634,7 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
     source_list=[{"source":name,"repositories":len(ids),"status":"PARTIAL" if name in partial_sources else "SCANNED",
                 "from":("GitHub-retained recent window" if name=="recent public event repository discovery" else timestamp(start)),
                 "to":cutoff,"permission":"account-visible repository metadata and GitHub search"} for name,ids in sorted(sources.items())]
-    return {"schema":1,"collection_revision":COLLECTION_REVISION,"account":OWNER,"account_created_at":timestamp(created),"snapshot_at":cutoff,
+    state = {"schema":1,"collection_revision":COLLECTION_REVISION,"account":OWNER,"account_created_at":timestamp(created),"snapshot_at":cutoff,
             "last_attempt_at":cutoff,"last_success_at":timestamp(dt.datetime.now(UTC)),
             "last_full_at":cutoff if full else previous["last_full_at"],
             "repositories":metadata,"records":results,
@@ -638,6 +642,12 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
                         "storage_repositories_excluded":stored,"sources":source_list,"gaps":gaps,
                         "limitations":standard_gaps,"mode":"full" if full else "incremental",
                         "earliest_record":results[0]["date"] if results else None}}
+    if collect_technologies:
+        prior = (previous or {}).get("technology_inventory")
+        state["technology_inventory"] = technologies.collect(((repo, repos[repo["id"]][1]) for repo in metadata), prior)
+    elif previous and "technology_inventory" in previous:
+        state["technology_inventory"] = previous["technology_inventory"]
+    return state
 
 
 def atomic(path,state):
@@ -670,7 +680,7 @@ def main():
     progress_path=output.with_name("inventory.partial.json")
     optional_token=os.getenv("SKILLAURA_PROFILE_TOKEN")
     state=build([GitHub(t) for t in tokens],previous,args.full,(OWNER,"Evisionindia"),progress_path=progress_path,
-                optional_clients=[GitHub(optional_token) if optional_token else None])
+                optional_clients=[GitHub(optional_token) if optional_token else None], collect_technologies=True)
     atomic(output,state)
     progress_path.unlink(missing_ok=True)
     atomic(attempt,{"attempt_at":state["last_attempt_at"],"success":True,"last_success":state["snapshot_at"]})

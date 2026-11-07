@@ -8,6 +8,8 @@ import textwrap
 from html import escape
 from pathlib import Path
 
+from technologies import public_rows
+
 ACCOUNT = "Skill-Aura-Official"
 METRICS = (
     ("commit", "Commits"), ("pr", "PRs opened"), ("issue", "Issues opened"),
@@ -146,7 +148,9 @@ def render(data):
                 "", " · ".join(f"{label} **{counts[kind] if repo['scanned'] else ('≥' + str(counts[kind]) if counts[kind] else 'Unknown')}**" for kind, label in METRICS), ""])
         lines.append("")
     lines.extend(["</details>", "", "[Open the full repository metrics and activity index](PUBLIC_PROJECTS.md)", "",
-                  "## Technologies", "", "Python · JavaScript · React · SQL", ""])
+                  "## Technologies", "",
+                  "Technologies verified in project source and configuration across my portfolio.", ""])
+    lines.extend(["\n\n".join(public_rows(data.get("technology_inventory"))), ""])
     directory.extend(["## Personal activity by month", "",
                       "| Month | Public commits | Private commits |",
                       "|---|---:|---:|"])
