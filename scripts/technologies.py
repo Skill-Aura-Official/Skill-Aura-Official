@@ -7,7 +7,7 @@ import re
 from urllib.parse import quote
 
 
-REVISION = 2
+REVISION = 3
 PROFILE = "skill-aura-official/skill-aura-official"
 GROUPS = (
     ("💻", "Languages"),
@@ -74,6 +74,11 @@ RULES = {
         "aiohttp": r"(?:from|import)\s+aiohttp\b",
         "bcrypt": r"(?:from|import)\s+bcrypt\b|(?:from\s+|require\()['\"]bcrypt(?:js)?['\"]",
         "Python Cryptography": r"(?:from|import)\s+cryptography\b",
+        "Telegram Bot API": r"(?:from|import)\s+(?:telegram|telebot)\b|api\.telegram\.org/bot|['\"](?:telegraf|grammy|node-telegram-bot-api)['\"]",
+        "Celery": r"(?:from|import)\s+celery\b|\bcelery -A\b",
+        "Beautiful Soup": r"(?:from|import)\s+bs4\b",
+        "lxml": r"(?:from|import)\s+lxml\b",
+        "Helmet": r"(?:from\s+|require\()['\"]helmet['\"]",
     },
     3: {
         "MySQL": r"['\"]mysql2(?:/promise)?['\"]\s*\)?[;\n]|(?:from|import)\s+(?:mysql\.connector|pymysql)\b|\bimage:\s*mysql:",
@@ -86,6 +91,7 @@ RULES = {
         "Firebase": r"['\"]firebase(?:-admin)?/|(?:from|import)\s+firebase_admin\b",
         "Amazon S3": r"['\"]@aws-sdk/client-s3['\"]|\b(?:client|resource)\(['\"]s3['\"]",
         "SQLAlchemy": r"(?:from|import)\s+sqlalchemy\b", "Prisma": r"['\"]@prisma/client['\"]|(?m:^datasource\s+\w+\s*\{)",
+        "Alembic": r"(?:from|import)\s+alembic\b|(?m:^\[alembic\]\s*$)",
         "Drizzle ORM": r"['\"]drizzle-orm(?:/[^'\"]+)?['\"]",
         "Microsoft Excel": r"['\"](?:exceljs|xlsx)['\"]\s*\)?[;\n]|(?:from|import)\s+(?:openpyxl|xlsxwriter)\b|spreadsheetml\.sheet",
     },

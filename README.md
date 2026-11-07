@@ -114,10 +114,10 @@ Technologies verified in project source and configuration across my portfolio.
 `Bootstrap` `Framer Motion` `Lucide` `Next.js` `Radix UI` `React` `React Hook Form` `React Icons` `React Router` `Recharts` `Tailwind CSS` `TanStack Query` `Three.js` `Vite` `Zustand`
 
 **🔌 Backend & APIs**<br>
-`aiohttp` `Axios` `bcrypt` `Express` `FastAPI` `Fastify` `HTTPX` `JWT` `Node.js` `OAuth` `OpenAPI` `Pydantic` `Python Cryptography` `Requests` `REST APIs` `Uvicorn` `WebSockets` `Zod`
+`aiohttp` `Axios` `bcrypt` `Beautiful Soup` `Celery` `Express` `FastAPI` `Fastify` `Helmet` `HTTPX` `JWT` `Node.js` `OAuth` `OpenAPI` `Pydantic` `Python Cryptography` `Requests` `REST APIs` `Telegram Bot API` `Uvicorn` `WebSockets` `Zod`
 
 **🗄️ Databases & Storage**<br>
-`Drizzle ORM` `Firebase` `Microsoft Excel` `MongoDB` `MySQL` `PostgreSQL` `Redis` `SQLAlchemy` `SQLite` `Supabase`
+`Alembic` `Drizzle ORM` `Firebase` `Microsoft Excel` `MongoDB` `MySQL` `PostgreSQL` `Redis` `SQLAlchemy` `SQLite` `Supabase`
 
 **🧠 AI, ML & Inference**<br>
 `NumPy` `Ollama` `ONNX Runtime` `OpenAI SDK` `OpenAI-compatible API` `Pillow` `Qwen` `YOLO` `YOLOX`
@@ -130,5 +130,3 @@ Technologies verified in project source and configuration across my portfolio.
 
 **🧪 Development & Testing**<br>
 `ESLint` `Git` `Node.js test runner` `npm` `pip` `Playwright` `pytest` `Python unittest` `Testing Library` `Vitest`
-
-Some repository evidence is unavailable. Previously verified technologies remain listed.
