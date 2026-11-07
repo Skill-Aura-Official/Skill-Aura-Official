@@ -7,6 +7,31 @@ import history as h
 
 
 class HistoryTests(unittest.TestCase):
+    def test_optional_client_rejected_without_access_or_expected_identity(self):
+        expired=Mock()
+        expired.request.side_effect=h.Failure(401,"account identity")
+        wrong=Mock()
+        wrong.request.return_value={"login":"other","type":"User"}
+        stamp=h.parse("2026-11-06T00:00:00Z")
+        gaps=[]
+        with patch.object(h,"discovery") as discovery:
+            repos,sources,accepted=h.optional_discovery([None,expired,wrong],stamp,stamp,stamp,gaps)
+        self.assertEqual(repos,{})
+        self.assertEqual(accepted,[])
+        self.assertEqual(len(gaps),3)
+        discovery.assert_not_called()
+
+    def test_optional_correct_account_can_add_collaborator_repository(self):
+        api=Mock()
+        api.request.return_value={"login":h.OWNER,"type":"User"}
+        stamp=h.parse("2026-11-06T00:00:00Z")
+        with patch.object(h,"discovery",return_value=({42:("repository",api)},{"affiliation":{42}})) as discovery:
+            repos,sources,accepted=h.optional_discovery([api],stamp,stamp,stamp,[])
+        self.assertEqual(repos[42],("repository",api))
+        self.assertEqual(sources["affiliation"],{42})
+        self.assertEqual(accepted,[api])
+        self.assertIsNone(discovery.call_args.args[-1])
+
     def test_scoped_search_exhausts_both_types_without_mixed_query(self):
         searches=list(h.typed_searches())
         self.assertEqual(len(searches),5)

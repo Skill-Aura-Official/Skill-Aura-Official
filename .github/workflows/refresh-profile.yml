@@ -31,6 +31,7 @@ jobs:
         env:
           PROFILE_ACTIVITY_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_READ_TOKEN }}
           PROFILE_ACTIVITY_ORG_READ_TOKEN: ${{ secrets.PROFILE_ACTIVITY_ORG_READ_TOKEN }}
+          SKILLAURA_PROFILE_TOKEN: ${{ secrets.SKILLAURA_PROFILE_TOKEN }}
           FULL_RECONCILE: ${{ inputs.reconcile }}
         shell: bash
         run: |

@@ -444,9 +444,33 @@ def retain_inaccessible(repo,attempt,last_snapshot):
     return retained
 
 
-def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None):
+def optional_discovery(optional_clients,created,start,end,gaps):
+    repos={}
+    sources=defaultdict(set)
+    accepted=[]
+    for api in optional_clients:
+        try:
+            if api is None:
+                raise Failure("credential not configured","optional collector")
+            if not person(api.request("user")):
+                raise Failure("unexpected account","optional collector")
+            optional_gaps=[]
+            found,source_ids=discovery([api],created,start,end,optional_gaps,None)
+        except Failure as exc:
+            gaps.append({"source":"optional collaborator credential","status":"UNKNOWN",
+                         "reason":str(exc),"last_attempt_at":timestamp(end)})
+            continue
+        repos.update(found)
+        for name,ids in source_ids.items():
+            sources[name].update(ids)
+        gaps.extend(optional_gaps)
+        accepted.append(api)
+    return repos,sources,accepted
+
+
+def build(clients,previous,force=False,required_owners=None,storage_marker=STATE_MARKER,progress_path=None,optional_clients=()):
     now=dt.datetime.now(UTC).replace(microsecond=0)
-    key={"source":3,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
+    key={"source":4,"base":(previous or {}).get("snapshot_at"),"force":force,"owners":required_owners and list(required_owners)}
     progress={}
     if progress_path and progress_path.is_file():
         stored=json.loads(progress_path.read_text(encoding="utf8"))
@@ -466,13 +490,19 @@ def build(clients,previous,force=False,required_owners=None,storage_marker=STATE
     start=created if full else max(created,parse(previous["snapshot_at"])-2*DAY)
     gaps=[]
     repos,sources=discovery(clients,created,start,now,gaps,required_owners)
+    extra,extra_sources,accepted=optional_discovery(optional_clients,created,start,now,gaps)
+    for rid,value in extra.items():
+        repos.setdefault(rid,value)
+    for source,ids in extra_sources.items():
+        sources.setdefault(source,set()).update(ids)
+    lookup_clients=[*clients,*accepted]
     old_repos={r["id"]:r for r in (previous or {}).get("repositories",[])}
     missing=set(old_repos)-set(repos)
     if missing:
         # Outside collaborators with only historical activity may be absent in the incremental discovery window.
         for rid in missing:
             restored=False
-            for api in clients:
+            for api in lookup_clients:
                 try:
                     raw=api.request("repositories/"+str(rid))
                 except Failure as exc:
@@ -635,7 +665,9 @@ def main():
     atomic(attempt,{"attempt_at":timestamp(dt.datetime.now(UTC)),"success":False,
                     "last_success":previous["snapshot_at"] if previous else None})
     progress_path=output.with_name("inventory.partial.json")
-    state=build([GitHub(t) for t in tokens],previous,args.full,(OWNER,"Evisionindia"),progress_path=progress_path)
+    optional_token=os.getenv("SKILLAURA_PROFILE_TOKEN")
+    state=build([GitHub(t) for t in tokens],previous,args.full,(OWNER,"Evisionindia"),progress_path=progress_path,
+                optional_clients=[GitHub(optional_token) if optional_token else None])
     atomic(output,state)
     progress_path.unlink(missing_ok=True)
     atomic(attempt,{"attempt_at":state["last_attempt_at"],"success":True,"last_success":state["snapshot_at"]})
