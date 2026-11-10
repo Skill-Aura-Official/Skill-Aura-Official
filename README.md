@@ -13,7 +13,7 @@ I build software and web applications, from SkillAura’s career tools and hacka
 
 ## Personal engineering history
 
-Snapshot 09 Nov 2026, 19:13 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 10 Nov 2026, 02:16 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 <picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>
 
@@ -22,14 +22,14 @@ Snapshot 09 Nov 2026, 19:13 UTC. Coverage **PARTIAL**. Private coverage **Partia
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 11 | 14 |
-| Commits | 205 | ≥529 |
-| PRs opened | 12 | ≥8 |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 2 | ≥7 |
-| Discussions | 0 | Unknown |
+| Commits | 205 | 529 |
+| PRs opened | 12 | 8 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
 
 </details>
 
@@ -43,14 +43,14 @@ Snapshot 09 Nov 2026, 19:13 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 202 | ≥524 |
-| PRs opened | 12 | ≥8 |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 2 | ≥7 |
-| Discussions | 0 | Unknown |
+| Commits | 202 | 524 |
+| PRs opened | 12 | 8 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
 
 </details>
 
@@ -58,14 +58,14 @@ Snapshot 09 Nov 2026, 19:13 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 3 | ≥5 |
-| PRs opened | 0 | Unknown |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 0 | Unknown |
-| Discussions | 0 | Unknown |
+| Commits | 3 | 5 |
+| PRs opened | 0 | 0 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 0 | 0 |
+| Discussions | 0 | 0 |
 
 </details>
 
@@ -147,5 +147,3 @@ Technologies verified in project source and configuration across my portfolio.
 
 **🧪 Development & Testing**<br>
 `ESLint` `Git` `Node.js test runner` `npm` `pip` `Playwright` `pytest` `Python unittest` `Testing Library` `Vitest`
-
-Some repository evidence is unavailable. Previously verified technologies remain listed.
