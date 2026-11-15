@@ -1,7 +1,7 @@
 import copy
 import unittest
 from unittest.mock import patch
-from render_history import render, summarize, artwork, INTRODUCTION, CLOSED_SOURCE
+from render_history import render, summarize, artwork, graphic, INTRODUCTION, CLOSED_SOURCE
 from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
 
 
@@ -59,8 +59,8 @@ class PublicHistoryTests(unittest.TestCase):
         self.data["repositories"][1]["html_url"] = "https://github.com/secret-client/private-project"
         readme, directory = render(self.data)
         section = readme.split("## Private / Closed-source Projects", 1)[1].split("## Complete public projects", 1)[0]
-        self.assertEqual(len(CLOSED_SOURCE), 10)
-        self.assertEqual(len([line for line in section.splitlines() if line.startswith("- **")]), 10)
+        self.assertEqual(len(CLOSED_SOURCE), 13)
+        self.assertEqual(len([line for line in section.splitlines() if line.startswith("### ")]), 13)
         for name, summary, attribution, url in CLOSED_SOURCE:
             self.assertIn(name, section)
             self.assertIn(summary, section)
@@ -69,6 +69,18 @@ class PublicHistoryTests(unittest.TestCase):
                 self.assertIn(url, section)
         for private in ("PRIVATE CUSTOMER DESCRIPTION", "secret-client/private-project"):
             self.assertNotIn(private, readme + directory)
+
+    def test_development_credit_and_readable_complete_directory_survive_regeneration(self):
+        readme, directory = render(self.data)
+        self.assertIn("Riya Yadav owns and leads the project", readme)
+        for name in ("WebGuide AI", "TenderIQ", "Tutor"):
+            card = next(card for card in CLOSED_SOURCE if card[0] == name)
+            self.assertIn("I contribute to its development.", card[1])
+        self.assertIn("**[Skill-Aura-Official/public](https://github.com/Skill-Aura-Official/public)**", readme)
+        self.assertNotIn('src="assets/projects.svg"', readme)
+        self.assertLess(readme.index("## Private / Closed-source Projects"), readme.index("## Personal engineering history"))
+        self.assertIn("not a measure of all development work", readme)
+        self.assertIn("Skill-Aura-Official/public", directory)
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)
@@ -87,6 +99,16 @@ class PublicHistoryTests(unittest.TestCase):
         readme, _ = render(self.data)
         self.assertIn("Unavailable", readme)
         self.assertIn("| Commits | 1 | Unknown |", readme)
+        self.assertIn("Unknown", graphic(self.data).decode())
+
+    def test_chart_combined_comments_does_not_hide_review_comment_gap(self):
+        self.data["repositories"][0]["source_coverage"] = {
+            "issue and PR conversation comments": {"status": "SCANNED"},
+            "inline PR review comments": {"status": "UNKNOWN"},
+        }
+        chart = graphic(self.data).decode()
+        self.assertIn("Unknown", chart)
+        self.assertIn("Repos with activity", chart)
 
     def test_export_escapes_formula_but_preserves_records(self):
         exported = csv_bytes(self.data).decode("utf-8-sig")

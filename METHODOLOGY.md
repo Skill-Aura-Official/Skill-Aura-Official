@@ -4,6 +4,12 @@ This custom inventory covers all retrievable event dates and reachable attributa
 
 ## What the figures mean
 
+Project cards describe development contributions, including contributions confirmed by the profile owner. These statements are separate from the collector's GitHub-linked event counts. A zero or absent account-linked commit count does not mean someone did no development work. Work under another author identity, unpushed local changes and other contributions are not reassigned or converted into invented commits.
+
+GitHub's native contribution calendar uses its own rules and displayed time window. This inventory includes retrievable history across years and reachable branches, deduplicates commits and excludes identified automated profile refreshes. Do not compare the native calendar's contribution total directly with this inventory's all-time commit total, or add different event types to force a match. See [GitHub's contribution documentation](https://docs.github.com/en/account-and-profile/concepts/contributions-on-your-profile).
+
+The public directory includes repositories without a recorded account-linked event. The activity tile counts only repositories with such an event. These are different populations; neither number is a count of completed products.
+
 The public profile shows account-wide attributable activity, with public totals and anonymous private totals separately. It also links every discovered public repository. The private owner report holds the actual authorized names, branches, dates and event records. Accessible repositories with no attributable event remain in the owner directory.
 
 | Metric | Definition |

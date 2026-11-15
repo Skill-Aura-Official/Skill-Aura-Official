@@ -24,6 +24,9 @@ INTRODUCTION = (
 # Copy explicitly approved for the public profile. Keep private inventory
 # records out of this rendering path.
 CLOSED_SOURCE = (
+    ("WebGuide AI", "Voice-assisted website guidance for blind and low-vision users. I contribute to its development. Riya Yadav owns and leads the project.", "Owner and lead: Riya Yadav · Development contributor: Jatin Dalal", "https://webguide-ai-live.plushmole8.chatgpt.site/"),
+    ("TenderIQ", "A tender-discovery and bid-management application. I contribute to its development.", "Personal repository · Development contribution", None),
+    ("Tutor", "A private Next.js web application. I contribute to its development.", "Personal repository · Development contribution", None),
     ("E-VMS", "E-Vision India’s video-management product. I contribute to camera, recording, playback and operator workflows.", "E-Vision India", "https://github.com/Evisionindia/EVMS-website"),
     ("CAAMOO", "A conversational CCTV investigation application. Ishika leads CAAMOO and its training work. I contribute to the web and investigation interface.", "E-Vision India", None),
     ("ANPR", "A plate-recognition application for reviewing vehicle observations. I contribute to plate review, evidence and integration workflows.", "Personal repository and E-Vision integration", "https://github.com/Skill-Aura-Official/ANPR"),
@@ -35,6 +38,29 @@ CLOSED_SOURCE = (
     ("Kiru", "I contributed to the web application for an AI-assisted recruitment project, including application and hiring workflows.", "Personal repository", None),
     ("Nexus VMS", "I contributed to an earlier E-Vision India video-management codebase and its engineering workflow.", "E-Vision India", None),
 )
+# Public descriptions reviewed against project documentation. These describe
+# the project, not a claim of sole authorship or connected-service acceptance.
+PUBLIC_SUMMARIES = {
+    "Evisionindia/.github": "E-Vision India’s company profile, product portfolio and service information.",
+    "Evisionindia/EVMS-website": "E-VMS product website, download information and enquiry workflows.",
+    "Skill-Aura-Official/Anisha": "Telegram music bot with group-call media playback and queue controls.",
+    "Skill-Aura-Official/ANPR": "Vehicle-observation and plate-review prototype with image evidence and alerts.",
+    "Skill-Aura-Official/EmpireRPG_Bot": "A text-based empire-building RPG bot for Telegram communities.",
+    "Skill-Aura-Official/Innovathon-Public": "SkillAura’s hackathon platform: teams, submissions, judging and leaderboards.",
+    "Skill-Aura-Official/Shivratri": "A Python sketch-animation project using a Shiva illustration.",
+    "Skill-Aura-Official/Skill-Aura-Official": "My portfolio, approved project contributions and GitHub activity reporting.",
+    "Skill-Aura-Official/SkillAura-Pathfinder": "A career-development frontend with onboarding, quests, skill trees and progress views.",
+    "Skill-Aura-Official/skillpath-launch": "A career-platform prototype with candidate, recruiter and job-discovery interfaces.",
+    "Skill-Aura-Official/TSB-Council": "The Sovereign Brotherhood’s community governance, moderation and policy documents.",
+    "Skill-Aura-Official/Hoo-Bank": "My fork of SIYA1104’s banking-style demonstration, with registration, login and dashboard interfaces.",
+    "SIYA1104/Hoo-Bank": "Upstream banking-style demonstration by SIYA1104; retained here with its original ownership credit.",
+}
+
+
+def project_summary(repo):
+    return PUBLIC_SUMMARIES.get(repo["full_name"], repo.get("description") or
+                                "Project details and contributor attribution are available in the repository.")
+
 METRICS = (
     ("commit", "Commits"), ("pr", "PRs opened"), ("issue", "Issues opened"),
     ("review", "Reviews submitted"), ("issue_comment", "Issue / PR comments"),
@@ -103,12 +129,15 @@ def render(data):
         "[Public projects](#complete-public-projects) · [Closed-source work](#private--closed-source-projects) · [Technologies](#technologies) · [Activity](#personal-engineering-history)", "",
         "### Work at a glance", "",
         "- **💻 Web products** · [SkillAura PathFinder AI](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) and [Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)",
+        "- **🌱 Recent development work** · [WebGuide AI](#webguide-ai), [TenderIQ](#tenderiq) and [Tutor](#tutor)",
         "- **🤖 Bots and communities** · [Anisha](https://github.com/Skill-Aura-Official/Anisha) and [Empire RPG](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)",
         "- **🧰 Developer tools and automation** · [Portfolio collection and attribution](METHODOLOGY.md)",
         "- **🎥 Video systems and AI** · Contributions to E-Vision’s E-VMS, CAAMOO and ANPR workflows; [roles and team credits below](#private--closed-source-projects)",
         "", "## Personal engineering history", "",
         f"Snapshot {stamp:%d %b %Y, %H:%M UTC}. Coverage **{safe(coverage['status'])}**. Private coverage **{private_status}**.",
         "",
+        "These are recorded GitHub events across retrievable history, not a measure of all development work. Project contributions above also include work confirmed by me that is not linked to my GitHub account in commit metadata.", "",
+        "**Different scopes:** the repository directory lists projects; ‘Repos with activity’ counts repositories with recorded account-linked events. GitHub’s native calendar below uses its own contribution rules and time window, so its total will differ. [Counting details](METHODOLOGY.md)", "",
         '<picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>', "",
         '<details><summary>Read the activity figures as text</summary>', "",
         "| My activity | Public | Private |", "|---|---:|---:|",
@@ -127,14 +156,12 @@ def render(data):
             lines.append(f"| {label} | {figure(repos,'public',kind,years[year]['public',kind])} | {figure(repos,'private',kind,years[year]['private',kind]) if private_available else 'Unknown'} |")
         lines.extend(["", "</details>", ""])
     lines.extend(["</details>", "", "## Private / Closed-source Projects", "",
-                  "These entries cover work I can describe publicly. Linked titles open public project pages or case studies.", ""])
+                  "Development contributions across personal, team and customer work. Repositories remain private where applicable; links lead only to public pages. Ownership and lead credits are shown separately.", ""])
     for name, summary, attribution, url in CLOSED_SOURCE:
         label = f"[{name}]({url})" if url else name
-        lines.append(f"- **{label}** · *{attribution}* · {summary}")
+        lines.extend([f"### {label}", "", f"*{attribution}*", "", summary, ""])
     lines.extend(["", "## Complete public projects", "",
-        "Every discovered public repository is included below. Activity reflects my account-linked work.", "",
-        '<picture><source media="(max-width: 600px)" srcset="assets/projects-mobile.svg"><img src="assets/projects.svg" alt="Complete public repository inventory" width="100%"></picture>', "",
-        '<details><summary>Open every repository link</summary>', ""])
+        "Every public repository in the current inventory is linked below, including forks and collaborations. Repository ownership does not imply sole authorship. Detailed commit counts stay in the [activity index](PUBLIC_PROJECTS.md).", ""])
 
     directory = ["# Complete public project directory", "",
                  f"Reconciled {stamp:%d %b %Y, %H:%M UTC}. Every discovered public repository appears below, including repositories with no attributable activity found.", ""]
@@ -159,7 +186,7 @@ def render(data):
             name = repo["full_name"]
             if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
                 raise ValueError("Unsafe public repository name")
-            lines.append(f"- [{safe(name)}](https://github.com/{name}) · {safe(repo['relationship'])}")
+            lines.extend([f"- **[{safe(name)}](https://github.com/{name})** — {safe(project_summary(repo))}", ""])
             records = per_repo[str(repo["id"])]
             counts = collections.Counter()
             for kind, _ in METRICS:
@@ -174,11 +201,11 @@ def render(data):
                 safe(repo.get("language") or ""), f"{repo.get('stars',0)} stars" if 'stars' in repo else "",
                 f"{repo.get('forks',0)} forks" if 'forks' in repo else ""] if x)
             directory.extend([f"### [{safe(name)}](https://github.com/{name})", "",
-                safe(repo.get("description") or ""), metadata, "",
+                safe(project_summary(repo)), metadata, "",
                 f"{safe(repo['relationship'])}. {'Archived. ' if repo['archived'] else ''}{period}.",
-                "", " · ".join(f"{label} **{counts[kind] if repo['scanned'] else ('≥' + str(counts[kind]) if counts[kind] else 'Unknown')}**" for kind, label in METRICS), ""])
+                "", " · ".join(f"{'Account-linked commits' if kind == 'commit' else label} **{counts[kind] if repo['scanned'] else ('≥' + str(counts[kind]) if counts[kind] else 'Unknown')}**" for kind, label in METRICS), ""])
         lines.append("")
-    lines.extend(["</details>", "", "[Open the full repository metrics and activity index](PUBLIC_PROJECTS.md)", "",
+    lines.extend(["[Open the full repository metrics and activity index](PUBLIC_PROJECTS.md)", "",
                   "## Technologies", "",
                   "Technologies verified in project source and configuration across my portfolio.", ""])
     lines.extend(["\n\n".join(public_rows(data.get("technology_inventory"))), ""])
@@ -194,7 +221,12 @@ def render(data):
         monthly[row["date"][:7]][scope].add(sha)
     for month in sorted(monthly,reverse=True):
         directory.append(f"| {month} | {figure(repos,'public','commit',len(monthly[month]['public']))} | {figure(repos,'private','commit',len(monthly[month]['private']))} |")
-    return "\n".join(lines), "\n".join(directory)
+    # Put the work before the metrics; retain every section and generated record.
+    content = "\n".join(lines)
+    intro, rest = content.split("## Personal engineering history", 1)
+    history, portfolio = rest.split("## Private / Closed-source Projects", 1)
+    content = intro + "## Private / Closed-source Projects" + portfolio + "\n\n## Personal engineering history" + history
+    return content.rstrip() + "\n", "\n".join(directory)
 
 
 def svg_start(width, height, title):
@@ -209,33 +241,43 @@ def svg_text(x,y,text,size=16,color="#c6d4e5",weight=400):
 
 def graphic(data, mobile=False):
     repos,totals,years,worked=summarize(data)
-    width=360 if mobile else 1100
+    private_available = any(r["private"] and r["scanned"] for r in repos.values())
+    width=360 if mobile else 840
     columns=2 if mobile else 4
     card_width=(width-36-(columns-1)*12)/columns
-    metrics=[("Repositories",len(worked["public"]),len(worked["private"]),None)]
+    metrics=[("Repos with activity",len(worked["public"]),len(worked["private"]),None)]
     metrics.extend((label,totals["public",kind],totals["private",kind],kind) for kind,label in METRICS if kind not in ("issue_comment","review_comment"))
     metrics.insert(5,("Comments",sum(totals["public",k] for k in ("issue_comment","review_comment")),
                      sum(totals["private",k] for k in ("issue_comment","review_comment")),"issue_comment"))
     rows=(len(metrics)+columns-1)//columns
     parts=svg_start(width,58+rows*112,"All-time attributable personal activity")
-    parts.append(svg_text(18,29,"ALL-TIME PERSONAL ACTIVITY",13,"#79d5fa",700))
+    parts.append(svg_text(18,29,"RECORDED ACTIVITY · ALL TIME",14,"#79d5fa",700))
     for i,(label,pub,private,kind) in enumerate(metrics):
         x=18+(i%columns)*(card_width+12)
         y=48+(i//columns)*112
         public_text=figure(repos,"public",kind,pub) if kind else str(pub)
         private_text=figure(repos,"private",kind,private) if kind else str(private)
+        if label == "Comments":
+            # Both comment sources must be covered before showing an exact sum.
+            for scope, value in (("public", pub), ("private", private)):
+                figures = [figure(repos, scope, source, value) for source in ("issue_comment", "review_comment")]
+                combined = str(value) if all(v == str(value) for v in figures) else ("≥" + str(value) if value else "Unknown")
+                if scope == "public": public_text = combined
+                else: private_text = combined
+        if not private_available:
+            private_text = "Unknown"
         parts.extend([f'<rect x="{x}" y="{y}" width="{card_width}" height="100" rx="10" fill="#101f32" stroke="#2b3c55"/>',
-                      svg_text(x+12,y+23,label,13,"#bfcddd",600),
+                      svg_text(x+12,y+23,label,13 if mobile else 16,"#bfcddd",600),
                       svg_text(x+12,y+54,public_text,25,"#73d3fa",700),
                       svg_text(x+card_width/2+8,y+54,private_text,25,"#b6a2fa",700),
-                      svg_text(x+12,y+80,"Public",12),
-                      svg_text(x+card_width/2+8,y+80,"Private",12)])
+                      svg_text(x+12,y+80,"Public",14),
+                      svg_text(x+card_width/2+8,y+80,"Private",14)])
     return ("".join(parts)+"</svg>").encode()
 
 
 def timeline(data,mobile=False):
     repos,_,years,_=summarize(data)
-    width=360 if mobile else 1100
+    width=360 if mobile else 840
     months=collections.defaultdict(set)
     for row in data["records"]:
         if row["type"]=="commit":
@@ -272,9 +314,10 @@ def timeline(data,mobile=False):
         h=100*value/max_count
         x=18+i*step
         parts.append(f'<rect x="{x:.2f}" y="{year_height+155-h:.2f}" width="{max(step-4,1):.2f}" height="{h:.2f}" rx="2" fill="#48bce9"><title>{month}: {value} commits</title></rect>')
-        if i in (0,len(ordered)-1) or not mobile:
-            parts.append(svg_text(x,year_height+176,month[2:],9))
-    parts.append(svg_text(18,height-15,"Every available year. Monthly details in the public index.",11))
+        label_step = max(1, (len(ordered) + 9) // 10)
+        if i in (0,len(ordered)-1) or (not mobile and i % label_step == 0):
+            parts.append(svg_text(x,year_height+176,month[2:],11))
+    parts.append(svg_text(18,height-15,"Monthly values in the activity index.",12))
     return ("".join(parts)+"</svg>").encode()
 
 
@@ -296,7 +339,7 @@ def project_graphic(data,mobile=False):
         x=18+(i%columns)*(card_width+16)
         y=48+(i//columns)*150
         name=repo["full_name"].split("/",1)[-1]
-        desc=repo.get("description") or repo["relationship"].capitalize()+" repository"
+        desc=project_summary(repo)
         desc_lines=textwrap.wrap(desc,width=41 if mobile else 66)[:2]
         count=len({r.get("sha") or r["id"] for r in data["records"] if str(r["repo_id"])==str(repo["id"]) and r["type"]=="commit"})
         parts.append(f'<rect x="{x}" y="{y}" width="{card_width}" height="138" rx="12" fill="#101f32" stroke="#2b3c55"/>')
@@ -304,7 +347,7 @@ def project_graphic(data,mobile=False):
         parts.append(svg_text(x+14,y+47,repo["owner"],12,"#79d5fa"))
         for n,line in enumerate(desc_lines):
             parts.append(svg_text(x+14,y+71+n*17,line,12))
-        details=[repo.get("language") or "",f"{count} personal commits" if repo["scanned"] else "Activity partially available"]
+        details=[repo.get("language") or "",f"{count} account-linked commits" if repo["scanned"] else "Activity partially available"]
         parts.append(svg_text(x+14,y+118," · ".join(v for v in details if v),12,"#b6a2fa"))
     return ("".join(parts)+"</svg>").encode()
 
