@@ -2,14 +2,18 @@
 
 # Jatin Dalal · Software, AI & Automation
 
-I build software and web applications, from SkillAura’s career tools and hackathon platform to community bots and workflow automation. I work across web interfaces, backend integrations, and developer tooling. My public projects include personal builds and community work, and I contribute to team-owned products at E-Vision India. My current work there covers video management, plate recognition, and AI-assisted investigations. I like taking a workflow from an early prototype through the details that make it usable and easier to verify.
+Hi, I’m Jatin. I build web applications, AI interfaces, community bots and automation. Through SkillAura, I work on career tools and hackathon experiences; my other projects span backend integrations, developer tooling and community work.
+
+At E-Vision India, I contribute to team-owned products for video management, plate recognition and AI-assisted investigations. I enjoy connecting the interface to what happens behind it: the data, permissions and integrations that make a workflow useful. This profile brings together my personal projects and contributions, with ownership and team credits kept visible.
+
+[Public projects](#complete-public-projects) · [Closed-source work](#private--closed-source-projects) · [Technologies](#technologies) · [Activity](#personal-engineering-history)
 
 ### Work at a glance
 
 - **💻 Web products** · [SkillAura PathFinder AI](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) and [Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)
 - **🤖 Bots and communities** · [Anisha](https://github.com/Skill-Aura-Official/Anisha) and [Empire RPG](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)
 - **🧰 Developer tools and automation** · [Portfolio collection and attribution](METHODOLOGY.md)
-- **🎥 Video systems and AI** · Camera, recording, plate review and investigation workflows
+- **🎥 Video systems and AI** · Contributions to E-Vision’s E-VMS, CAAMOO and ANPR workflows; [roles and team credits below](#private--closed-source-projects)
 
 ## Personal engineering history
 
