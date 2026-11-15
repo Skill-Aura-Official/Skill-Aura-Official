@@ -105,6 +105,8 @@ class PublicHistoryTests(unittest.TestCase):
         self.assertIn('<details open><summary><strong>Recent development', readme)
         self.assertIn('event=schedule', readme)
         self.assertNotIn('### WebGuide AI', readme)
+        self.assertNotIn('](#webguide-ai)', readme)
+        self.assertIn('[WebGuide AI, TenderIQ and Tutor](#private--closed-source-projects)', readme)
         for name in ('assets/hero.svg', 'assets/hero-mobile.svg'):
             svg = artwork(self.data)[name]
             ET.fromstring(svg)

@@ -147,7 +147,7 @@ def render(data):
         "[![Scheduled portfolio refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg?event=schedule)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)", "",
         "### Work at a glance", "",
         "- **💻 Web products** · [SkillAura PathFinder AI](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) and [Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)",
-        "- **🌱 Recent development work** · [WebGuide AI](#webguide-ai), [TenderIQ](#tenderiq) and [Tutor](#tutor)",
+        "- **🌱 Recent development work** · [WebGuide AI, TenderIQ and Tutor](#private--closed-source-projects)",
         "- **🤖 Bots and communities** · [Anisha](https://github.com/Skill-Aura-Official/Anisha) and [Empire RPG](https://github.com/Skill-Aura-Official/EmpireRPG_Bot)",
         "- **🧰 Developer tools and automation** · [Portfolio collection and attribution](METHODOLOGY.md)",
         "- **🎥 Video systems and AI** · Contributions to E-Vision’s E-VMS, CAAMOO and ANPR workflows; [roles and team credits below](#private--closed-source-projects)",
