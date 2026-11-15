@@ -1,5 +1,7 @@
 import copy
+import re
 import unittest
+import xml.etree.ElementTree as ET
 from unittest.mock import patch
 from render_history import render, summarize, artwork, graphic, INTRODUCTION, CLOSED_SOURCE
 from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
@@ -81,6 +83,19 @@ class PublicHistoryTests(unittest.TestCase):
         self.assertLess(readme.index("## Private / Closed-source Projects"), readme.index("## Personal engineering history"))
         self.assertIn("not a measure of all development work", readme)
         self.assertIn("Skill-Aura-Official/public", directory)
+
+    def test_all_cards_have_generated_desktop_mobile_assets_and_credits(self):
+        readme, _ = render(self.data)
+        images = artwork(self.data)
+        referenced = re.findall(r'(?:src|srcset)="(assets/cards/[^"]+)"', readme)
+        self.assertEqual(len(referenced), (len(CLOSED_SOURCE) + 1) * 2)
+        for path in referenced:
+            self.assertIn(path, images)
+            ET.fromstring(images[path])
+        webguide = images['assets/cards/closed-webguide-ai-mobile.svg'].decode()
+        self.assertIn('Riya Yadav', webguide)
+        self.assertIn('Jatin Dalal', webguide)
+        self.assertNotIn('secret-client', '\n'.join(images))
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)

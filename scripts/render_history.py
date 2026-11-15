@@ -61,6 +61,16 @@ def project_summary(repo):
     return PUBLIC_SUMMARIES.get(repo["full_name"], repo.get("description") or
                                 "Project details and contributor attribution are available in the repository.")
 
+
+def card_key(name):
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def card_picture(key, description, url=None):
+    picture = (f'<picture><source media="(max-width: 600px)" srcset="assets/cards/{key}-mobile.svg">'
+               f'<img src="assets/cards/{key}.svg" alt="{escape(description, quote=True)}" width="100%"></picture>')
+    return f'<a href="{escape(url, quote=True)}">{picture}</a>' if url else picture
+
 METRICS = (
     ("commit", "Commits"), ("pr", "PRs opened"), ("issue", "Issues opened"),
     ("review", "Reviews submitted"), ("issue_comment", "Issue / PR comments"),
@@ -159,7 +169,7 @@ def render(data):
                   "Development contributions across personal, team and customer work. Repositories remain private where applicable; links lead only to public pages. Ownership and lead credits are shown separately.", ""])
     for name, summary, attribution, url in CLOSED_SOURCE:
         label = f"[{name}]({url})" if url else name
-        lines.extend([f"### {label}", "", f"*{attribution}*", "", summary, ""])
+        lines.extend([f"### {label}", "", card_picture("closed-" + card_key(name), attribution + ". " + summary, url), ""])
     lines.extend(["", "## Complete public projects", "",
         "Every public repository in the current inventory is linked below, including forks and collaborations. Repository ownership does not imply sole authorship. Detailed commit counts stay in the [activity index](PUBLIC_PROJECTS.md).", ""])
 
@@ -186,7 +196,8 @@ def render(data):
             name = repo["full_name"]
             if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
                 raise ValueError("Unsafe public repository name")
-            lines.extend([f"- **[{safe(name)}](https://github.com/{name})** — {safe(project_summary(repo))}", ""])
+            lines.extend([f"**[{safe(name)}](https://github.com/{name})**", "",
+                          card_picture("public-" + str(repo["id"]), project_summary(repo), "https://github.com/" + name), ""])
             records = per_repo[str(repo["id"])]
             counts = collections.Counter()
             for kind, _ in METRICS:
@@ -322,9 +333,40 @@ def timeline(data,mobile=False):
 
 
 def artwork(data):
-    return {"assets/activity.svg":graphic(data),"assets/activity-mobile.svg":graphic(data,True),
+    result = {"assets/activity.svg":graphic(data),"assets/activity-mobile.svg":graphic(data,True),
             "assets/timeline.svg":timeline(data),"assets/timeline-mobile.svg":timeline(data,True),
             "assets/projects.svg":project_graphic(data),"assets/projects-mobile.svg":project_graphic(data,True)}
+    cards = [("closed-" + card_key(name), name, attribution, summary)
+             for name, summary, attribution, _ in CLOSED_SOURCE]
+    cards.extend(("public-" + str(repo["id"]), repo["full_name"].split("/")[-1],
+                  repo["owner"] + " · " + repo["relationship"], project_summary(repo))
+                 for repo in data["repositories"] if not repo["private"])
+    for key, title, credit, description in cards:
+        for mobile in (False, True):
+            suffix = "-mobile" if mobile else ""
+            result[f"assets/cards/{key}{suffix}.svg"] = portfolio_card(title, credit, description, mobile)
+    return result
+
+
+def portfolio_card(title, credit, description, mobile=False):
+    width = 360 if mobile else 840
+    # Separate variants keep type readable instead of scaling a desktop grid down.
+    title_lines = textwrap.wrap(title, width=26 if mobile else 62)
+    credit_lines = textwrap.wrap(credit, width=39 if mobile else 94)
+    body_lines = textwrap.wrap(description, width=36 if mobile else 83)
+    height = 44 + len(title_lines) * 28 + len(credit_lines) * 21 + len(body_lines) * 25
+    parts = svg_start(width, height, title + ". " + credit + ". " + description)
+    parts.append(f'<rect x="1" y="1" width="{width-2}" height="{height-2}" rx="17" fill="none" stroke="#334865"/>')
+    parts.append(f'<rect x="0" y="20" width="4" height="{height-40}" rx="2" fill="#79d5fa"/>')
+    y = 34
+    for line in title_lines:
+        parts.append(svg_text(22, y, line, 22, "#f4f7ff", 700)); y += 28
+    for line in credit_lines:
+        parts.append(svg_text(22, y, line, 14, "#91ddfa")); y += 21
+    y += 10
+    for line in body_lines:
+        parts.append(svg_text(22, y, line, 16 if mobile else 18, "#e0e8f2")); y += 25
+    return ("".join(parts) + "</svg>").encode()
 
 
 def project_graphic(data,mobile=False):

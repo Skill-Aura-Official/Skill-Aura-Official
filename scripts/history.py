@@ -349,7 +349,9 @@ def profile_automation(api,repo,item):
         return False
     detail=api.request(f"repos/{repo['full_name']}/commits/{item['oid']}",{"per_page":100})
     files=detail.get("files",[])
-    return bool(files) and all(f["filename"] in AUTOMATION_PATHS and f.get("previous_filename",f["filename"]) in AUTOMATION_PATHS for f in files)
+    def generated_path(path):
+        return path in AUTOMATION_PATHS or bool(re.fullmatch(r"assets/cards/(?:public-[0-9]+|closed-[a-z0-9-]+)(?:-mobile)?\.svg", path))
+    return bool(files) and all(generated_path(f["filename"]) and generated_path(f.get("previous_filename",f["filename"])) for f in files)
 
 
 def commits(api,repo,previous,prior_tips,force):

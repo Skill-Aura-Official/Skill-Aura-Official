@@ -148,6 +148,10 @@ class HistoryTests(unittest.TestCase):
         api=Mock()
         api.request.return_value={"files":[{"filename":"README.md"},{"filename":"assets/history-signature.txt"}]}
         self.assertTrue(h.profile_automation(api,repo,item))
+        api.request.return_value={"files":[{"filename":"assets/cards/closed-webguide-ai-mobile.svg"},{"filename":"assets/cards/public-123.svg"}]}
+        self.assertTrue(h.profile_automation(api,repo,item))
+        api.request.return_value={"files":[{"filename":"assets/cards/helper.py"}]}
+        self.assertFalse(h.profile_automation(api,repo,item))
         api.request.return_value={"files":[{"filename":"src/product.py"}]}
         self.assertFalse(h.profile_automation(api,repo,item))
         self.assertFalse(h.profile_automation(api,{"full_name":"unrelated/repository"},item))
