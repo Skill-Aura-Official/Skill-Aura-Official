@@ -171,7 +171,7 @@ Technologies verified in project source and configuration across my portfolio.
 
 ## Personal engineering history
 
-Snapshot 15 Nov 2026, 20:24 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 15 Nov 2026, 20:28 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 These are recorded GitHub events across retrievable history, not a measure of all development work. Project contributions above also include work confirmed by me that is not linked to my GitHub account in commit metadata.
 
@@ -184,7 +184,7 @@ These are recorded GitHub events across retrievable history, not a measure of al
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 11 | 15 |
-| Commits | 211 | 545 |
+| Commits | 213 | 545 |
 | PRs opened | 12 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -205,7 +205,7 @@ These are recorded GitHub events across retrievable history, not a measure of al
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 208 | 540 |
+| Commits | 210 | 540 |
 | PRs opened | 12 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
