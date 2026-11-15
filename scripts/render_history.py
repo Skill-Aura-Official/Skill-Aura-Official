@@ -38,6 +38,12 @@ CLOSED_SOURCE = (
     ("Kiru", "I contributed to the web application for an AI-assisted recruitment project, including application and hiring workflows.", "Personal repository", None),
     ("Nexus VMS", "I contributed to an earlier E-Vision India video-management codebase and its engineering workflow.", "E-Vision India", None),
 )
+PORTFOLIO_GROUPS = (
+    ("Recent development", ("WebGuide AI", "TenderIQ", "Tutor")),
+    ("Video systems & investigation", ("E-VMS", "CAAMOO", "ANPR", "Nexus VMS")),
+    ("Web products & interfaces", ("Innovathon", "Aurora Ink Genie", "Beauty and wellness website", "Kiru")),
+    ("Community bots & automation", ("Age of Telegram · Empire RPG", "Nyther")),
+)
 # Public descriptions reviewed against project documentation. These describe
 # the project, not a claim of sole authorship or connected-service acceptance.
 PUBLIC_SUMMARIES = {
@@ -136,7 +142,9 @@ def render(data):
         '<picture><source media="(max-width: 600px)" srcset="assets/hero-mobile.svg"><img src="assets/hero.svg" alt="SkillAura — software products, web platforms and automation" width="100%"></picture>', "",
         "# " + HEADLINE, "",
         INTRODUCTION, "",
+        f"**Explore the portfolio** · {len(CLOSED_SOURCE)} approved project stories · {sum(not r['private'] for r in repos.values())} public repository entries", "",
         "[Public projects](#complete-public-projects) · [Closed-source work](#private--closed-source-projects) · [Technologies](#technologies) · [Activity](#personal-engineering-history)", "",
+        "[![Scheduled portfolio refresh](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml/badge.svg?event=schedule)](https://github.com/Skill-Aura-Official/Skill-Aura-Official/actions/workflows/refresh-profile.yml)", "",
         "### Work at a glance", "",
         "- **💻 Web products** · [SkillAura PathFinder AI](https://github.com/Skill-Aura-Official/SkillAura-Pathfinder) and [Innovathon](https://github.com/Skill-Aura-Official/Innovathon-Public)",
         "- **🌱 Recent development work** · [WebGuide AI](#webguide-ai), [TenderIQ](#tenderiq) and [Tutor](#tutor)",
@@ -167,9 +175,16 @@ def render(data):
         lines.extend(["", "</details>", ""])
     lines.extend(["</details>", "", "## Private / Closed-source Projects", "",
                   "Development contributions across personal, team and customer work. Repositories remain private where applicable; links lead only to public pages. Ownership and lead credits are shown separately.", ""])
-    for name, summary, attribution, url in CLOSED_SOURCE:
-        label = f"[{name}]({url})" if url else name
-        lines.extend([f"### {label}", "", card_picture("closed-" + card_key(name), attribution + ". " + summary, url), ""])
+    lines.extend(["**Choose a collection below.** Recent work is open; expand the other collections to browse every card.", ""])
+    by_name = {card[0]: card for card in CLOSED_SOURCE}
+    for index, (group, names) in enumerate(PORTFOLIO_GROUPS):
+        opened = " open" if index == 0 else ""
+        lines.extend([f'<details{opened}><summary><strong>{escape(group)}</strong> · {len(names)} projects</summary>', ""])
+        for name in names:
+            _, summary, attribution, url = by_name[name]
+            lines.extend([f'<a name="{card_key(name)}"></a>', "",
+                          card_picture("closed-" + card_key(name), name + ". " + attribution + ". " + summary, url), ""])
+        lines.extend(["</details>", ""])
     lines.extend(["", "## Complete public projects", "",
         "Every public repository in the current inventory is linked below, including forks and collaborations. Repository ownership does not imply sole authorship. Detailed commit counts stay in the [activity index](PUBLIC_PROJECTS.md).", ""])
 
@@ -191,13 +206,12 @@ def render(data):
         groups[group].append(repo)
     for group in ("Owned projects", "Organization and professional work", "Forks and collaborations"):
         directory.extend(["## " + group, ""])
-        lines.extend([f"**{group} · {len(groups[group])}**", ""])
+        lines.extend([f'<details><summary><strong>{escape(group)}</strong> · {len(groups[group])} repositories</summary>', ""])
         for repo in sorted(groups[group], key=lambda r: r["full_name"].casefold()):
             name = repo["full_name"]
             if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", name):
                 raise ValueError("Unsafe public repository name")
-            lines.extend([f"**[{safe(name)}](https://github.com/{name})**", "",
-                          card_picture("public-" + str(repo["id"]), project_summary(repo), "https://github.com/" + name), ""])
+            lines.extend([card_picture("public-" + str(repo["id"]), name + ". " + project_summary(repo), "https://github.com/" + name), ""])
             records = per_repo[str(repo["id"])]
             counts = collections.Counter()
             for kind, _ in METRICS:
@@ -215,7 +229,7 @@ def render(data):
                 safe(project_summary(repo)), metadata, "",
                 f"{safe(repo['relationship'])}. {'Archived. ' if repo['archived'] else ''}{period}.",
                 "", " · ".join(f"{'Account-linked commits' if kind == 'commit' else label} **{counts[kind] if repo['scanned'] else ('≥' + str(counts[kind]) if counts[kind] else 'Unknown')}**" for kind, label in METRICS), ""])
-        lines.append("")
+        lines.extend(["</details>", ""])
     lines.extend(["[Open the full repository metrics and activity index](PUBLIC_PROJECTS.md)", "",
                   "## Technologies", "",
                   "Technologies verified in project source and configuration across my portfolio.", ""])
@@ -333,7 +347,8 @@ def timeline(data,mobile=False):
 
 
 def artwork(data):
-    result = {"assets/activity.svg":graphic(data),"assets/activity-mobile.svg":graphic(data,True),
+    result = {"assets/hero.svg":hero(),"assets/hero-mobile.svg":hero(True),
+            "assets/activity.svg":graphic(data),"assets/activity-mobile.svg":graphic(data,True),
             "assets/timeline.svg":timeline(data),"assets/timeline-mobile.svg":timeline(data,True),
             "assets/projects.svg":project_graphic(data),"assets/projects-mobile.svg":project_graphic(data,True)}
     cards = [("closed-" + card_key(name), name, attribution, summary)
@@ -346,6 +361,28 @@ def artwork(data):
             suffix = "-mobile" if mobile else ""
             result[f"assets/cards/{key}{suffix}.svg"] = portfolio_card(title, credit, description, mobile)
     return result
+
+
+def hero(mobile=False):
+    width, height = (360, 260) if mobile else (840, 246)
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img">',
+             '<title>Jatin Dalal — software, AI interfaces and automation. SkillAura, community work and E-Vision contributions.</title>',
+             '<style>.trace{stroke-dasharray:22 380;animation:travel 14s linear infinite}@keyframes travel{to{stroke-dashoffset:-804}}@media(prefers-reduced-motion:reduce){.trace{animation:none;stroke-dasharray:none}}</style>',
+             f'<rect width="{width}" height="{height}" rx="20" fill="#09171c"/>',
+             f'<path d="M24 {height-25} H{width-24}" stroke="#28434a" stroke-width="1"/>',
+             f'<path class="trace" d="M24 {height-25} H{width-24}" stroke="#7ee1cb" stroke-width="3" fill="none"/>']
+    x = 24 if mobile else 32
+    parts.extend([svg_text(x, 40, "SKILLAURA / PERSONAL PORTFOLIO", 12, "#7ee1cb", 700),
+                  svg_text(x, 93, "Jatin Dalal", 39 if mobile else 49, "#f2f3ec", 700),
+                  svg_text(x, 127, "Software · AI interfaces", 18 if mobile else 21, "#e0e8e4"),
+                  svg_text(x, 154, "& automation", 18 if mobile else 21, "#e0e8e4"),
+                  svg_text(x, 196 if mobile else 200, "Build. Connect. Keep improving.", 15, "#b4c8c3")])
+    if not mobile:
+        parts.extend(['<rect x="555" y="44" width="250" height="134" rx="12" fill="#11272c" stroke="#365058"/>',
+                      svg_text(576, 74, "IDEA  →  INTERFACE", 15, "#7ee1cb", 700),
+                      svg_text(576, 109, "API   →  WORKFLOW", 15, "#d9e8e0", 700),
+                      svg_text(576, 144, "TEST  →  ITERATE", 15, "#e6c28c", 700)])
+    return ("".join(parts) + "</svg>").encode()
 
 
 def portfolio_card(title, credit, description, mobile=False):

@@ -22,7 +22,7 @@ DAY = dt.timedelta(days=1)
 PAGE = "pageInfo {hasNextPage endCursor}"
 PROFILE = f"{OWNER}/{OWNER}".lower()
 STATE_MARKER = "Private personal work inventory and history checkpoints"
-AUTOMATION_PATHS = {"README.md","PUBLIC_PROJECTS.md","assets/activity.svg","assets/activity-mobile.svg",
+AUTOMATION_PATHS = {"README.md","PUBLIC_PROJECTS.md","assets/hero.svg","assets/hero-mobile.svg","assets/activity.svg","assets/activity-mobile.svg",
                     "assets/timeline.svg","assets/timeline-mobile.svg","assets/projects.svg","assets/projects-mobile.svg",
                     "assets/history-signature.txt"}
 TYPES = {"commit","pr","issue","review","issue_comment","review_comment","release","discussion"}

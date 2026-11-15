@@ -3,7 +3,7 @@ import re
 import unittest
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
-from render_history import render, summarize, artwork, graphic, INTRODUCTION, CLOSED_SOURCE
+from render_history import render, summarize, artwork, graphic, INTRODUCTION, CLOSED_SOURCE, PORTFOLIO_GROUPS
 from history_publish import csv_bytes, semantic_public, semantic_private, Publisher, PROFILE, ACCOUNT, IDENTITY_COMMIT, AUTOMATION_COMMIT, AUTOMATION_ACCOUNT, STATE_MARKER
 
 
@@ -62,7 +62,7 @@ class PublicHistoryTests(unittest.TestCase):
         readme, directory = render(self.data)
         section = readme.split("## Private / Closed-source Projects", 1)[1].split("## Complete public projects", 1)[0]
         self.assertEqual(len(CLOSED_SOURCE), 13)
-        self.assertEqual(len([line for line in section.splitlines() if line.startswith("### ")]), 13)
+        self.assertEqual(len([line for line in section.splitlines() if line.startswith('<a name="')]), 13)
         for name, summary, attribution, url in CLOSED_SOURCE:
             self.assertIn(name, section)
             self.assertIn(summary, section)
@@ -78,7 +78,7 @@ class PublicHistoryTests(unittest.TestCase):
         for name in ("WebGuide AI", "TenderIQ", "Tutor"):
             card = next(card for card in CLOSED_SOURCE if card[0] == name)
             self.assertIn("I contribute to its development.", card[1])
-        self.assertIn("**[Skill-Aura-Official/public](https://github.com/Skill-Aura-Official/public)**", readme)
+        self.assertIn('href="https://github.com/Skill-Aura-Official/public"', readme)
         self.assertNotIn('src="assets/projects.svg"', readme)
         self.assertLess(readme.index("## Private / Closed-source Projects"), readme.index("## Personal engineering history"))
         self.assertIn("not a measure of all development work", readme)
@@ -96,6 +96,20 @@ class PublicHistoryTests(unittest.TestCase):
         self.assertIn('Riya Yadav', webguide)
         self.assertIn('Jatin Dalal', webguide)
         self.assertNotIn('secret-client', '\n'.join(images))
+
+    def test_explorer_keeps_every_card_once_and_motion_has_accessible_fallback(self):
+        names = [name for _, group in PORTFOLIO_GROUPS for name in group]
+        self.assertEqual(set(names), {card[0] for card in CLOSED_SOURCE})
+        self.assertEqual(len(names), len(set(names)))
+        readme, _ = render(self.data)
+        self.assertIn('<details open><summary><strong>Recent development', readme)
+        self.assertIn('event=schedule', readme)
+        self.assertNotIn('### WebGuide AI', readme)
+        for name in ('assets/hero.svg', 'assets/hero-mobile.svg'):
+            svg = artwork(self.data)[name]
+            ET.fromstring(svg)
+            self.assertIn(b'prefers-reduced-motion:reduce', svg)
+            self.assertNotIn(b'<script', svg)
 
     def test_sha_dedup_and_year_reconciliation(self):
         _, totals, years, _ = summarize(self.data)
