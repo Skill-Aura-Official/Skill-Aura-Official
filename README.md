@@ -17,7 +17,7 @@ At E-Vision India, I contribute to team-owned products for video management, pla
 
 ## Personal engineering history
 
-Snapshot 14 Nov 2026, 09:21 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 15 Nov 2026, 19:59 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 <picture><source media="(max-width: 600px)" srcset="assets/activity-mobile.svg"><img src="assets/activity.svg" alt="All-time personal activity, with public and private counts" width="100%"></picture>
 
@@ -26,7 +26,7 @@ Snapshot 14 Nov 2026, 09:21 UTC. Coverage **PARTIAL**. Private coverage **Partia
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 11 | 15 |
-| Commits | 209 | 545 |
+| Commits | 210 | 545 |
 | PRs opened | 12 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -47,7 +47,7 @@ Snapshot 14 Nov 2026, 09:21 UTC. Coverage **PARTIAL**. Private coverage **Partia
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 206 | 540 |
+| Commits | 207 | 540 |
 | PRs opened | 12 | 8 |
 | Issues opened | 0 | 0 |
 | Reviews submitted | 0 | 0 |
@@ -141,7 +141,7 @@ Technologies verified in project source and configuration across my portfolio.
 `Alembic` `Drizzle ORM` `Firebase` `Microsoft Excel` `MongoDB` `MySQL` `PostgreSQL` `Redis` `SQLAlchemy` `SQLite` `Supabase`
 
 **🧠 AI, ML & Inference**<br>
-`NumPy` `Ollama` `ONNX Runtime` `OpenAI SDK` `OpenAI-compatible API` `Pillow` `Qwen` `YOLO` `YOLOX`
+`llama.cpp` `NumPy` `Ollama` `ONNX Runtime` `OpenAI SDK` `OpenAI-compatible API` `Pillow` `Qwen` `YOLO` `YOLOX`
 
 **🎥 Video & Camera Systems**<br>
 `FFmpeg` `HLS` `MediaMTX` `ONVIF` `OpenCV` `RTSP` `WebRTC`
