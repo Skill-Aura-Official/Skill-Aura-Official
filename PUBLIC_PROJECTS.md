@@ -1,6 +1,6 @@
 # Complete public project directory
 
-Reconciled 17 Nov 2026, 17:35 UTC. Every discovered public repository appears below, including repositories with no attributable activity found.
+Reconciled 18 Nov 2026, 16:32 UTC. Every discovered public repository appears below, including repositories with no attributable activity found.
 
 ## Owned projects
 
@@ -129,14 +129,14 @@ Account-linked commits **4** · PRs opened **1** · Issues opened **0** · Revie
 
 | Month | Public commits | Private commits |
 |---|---:|---:|
-| 2026-11 | 63 | 80 |
-| 2026-10 | 12 | 42 |
-| 2026-09 | 3 | 136 |
-| 2026-08 | 0 | 38 |
-| 2026-07 | 0 | 28 |
-| 2026-06 | 0 | 95 |
-| 2026-05 | 52 | 45 |
-| 2026-04 | 9 | 46 |
-| 2026-03 | 73 | 30 |
-| 2025-12 | 0 | 5 |
-| 2025-07 | 3 | 0 |
+| 2026-11 | 63 | ≥80 |
+| 2026-10 | 12 | ≥42 |
+| 2026-09 | 3 | ≥136 |
+| 2026-08 | 0 | ≥38 |
+| 2026-07 | 0 | ≥28 |
+| 2026-06 | 0 | ≥95 |
+| 2026-05 | 52 | ≥45 |
+| 2026-04 | 9 | ≥46 |
+| 2026-03 | 73 | ≥30 |
+| 2025-12 | 0 | ≥5 |
+| 2025-07 | 3 | Unknown |
