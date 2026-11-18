@@ -167,12 +167,10 @@ Technologies verified in project source and configuration across my portfolio.
 **🧪 Development & Testing**<br>
 `ESLint` `Git` `Node.js test runner` `npm` `pip` `Playwright` `pytest` `Python unittest` `Testing Library` `Vitest`
 
-Some repository evidence is unavailable. Previously verified technologies remain listed.
-
 
 ## Personal engineering history
 
-Snapshot 18 Nov 2026, 16:32 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
+Snapshot 18 Nov 2026, 23:04 UTC. Coverage **PARTIAL**. Private coverage **Partial**.
 
 These are recorded GitHub events across retrievable history, not a measure of all development work. Project contributions above also include work confirmed by me that is not linked to my GitHub account in commit metadata.
 
@@ -185,14 +183,14 @@ These are recorded GitHub events across retrievable history, not a measure of al
 | My activity | Public | Private |
 |---|---:|---:|
 | Repositories with activity | 11 | 15 |
-| Commits | 215 | ≥545 |
-| PRs opened | 12 | ≥9 |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 2 | ≥7 |
-| Discussions | 0 | Unknown |
+| Commits | 215 | 545 |
+| PRs opened | 12 | 9 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
 
 </details>
 
@@ -206,14 +204,14 @@ These are recorded GitHub events across retrievable history, not a measure of al
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 212 | ≥540 |
-| PRs opened | 12 | ≥9 |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 2 | ≥7 |
-| Discussions | 0 | Unknown |
+| Commits | 212 | 540 |
+| PRs opened | 12 | 9 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 2 | 7 |
+| Discussions | 0 | 0 |
 
 </details>
 
@@ -221,14 +219,14 @@ These are recorded GitHub events across retrievable history, not a measure of al
 
 | My activity | Public | Private |
 |---|---:|---:|
-| Commits | 3 | ≥5 |
-| PRs opened | 0 | Unknown |
-| Issues opened | 0 | Unknown |
-| Reviews submitted | 0 | Unknown |
-| Issue / PR comments | 0 | Unknown |
-| Review comments | 0 | Unknown |
-| Releases | 0 | Unknown |
-| Discussions | 0 | Unknown |
+| Commits | 3 | 5 |
+| PRs opened | 0 | 0 |
+| Issues opened | 0 | 0 |
+| Reviews submitted | 0 | 0 |
+| Issue / PR comments | 0 | 0 |
+| Review comments | 0 | 0 |
+| Releases | 0 | 0 |
+| Discussions | 0 | 0 |
 
 </details>
 
